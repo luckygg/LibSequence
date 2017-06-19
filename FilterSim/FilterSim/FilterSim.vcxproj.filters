@@ -1,0 +1,128 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="include">
+      <UniqueIdentifier>{19f27418-5d2c-4715-b9f2-87c9e2c6f064}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\UI">
+      <UniqueIdentifier>{f71dc118-1004-4d79-b734-6281db8e5879}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Base">
+      <UniqueIdentifier>{18e1f7a0-b95b-455b-be5c-50c560660431}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Algorithm">
+      <UniqueIdentifier>{fca54f21-4cca-4b08-bc32-519a8d411c7c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dialog">
+      <UniqueIdentifier>{1d1854c3-a317-4b3c-a0ac-7315493ce7c0}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ReadMe.txt" />
+    <None Include="res\FilterSim.rc2">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\FilterSim.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="FilterSim.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FilterSimDlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\UI\ListCombo.h">
+      <Filter>include\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="include\UI\ListCtrlEx.h">
+      <Filter>include\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Base\FolderEx.h">
+      <Filter>include\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Base\FileDialogEx.h">
+      <Filter>include\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="EImgFilter.h">
+      <Filter>include\Algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="NewDlg.h">
+      <Filter>Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="NameDlg.h">
+      <Filter>Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="SelectDlg.h">
+      <Filter>Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="ImgInfo.h">
+      <Filter>include\Algorithm</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="FilterSim.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FilterSimDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="include\UI\ListCombo.cpp">
+      <Filter>include\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="include\UI\ListCtrlEx.cpp">
+      <Filter>include\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="include\Base\FolderEx.cpp">
+      <Filter>include\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="include\Base\FileDialogEx.cpp">
+      <Filter>include\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="EImgFilter.cpp">
+      <Filter>include\Algorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="NewDlg.cpp">
+      <Filter>Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="NameDlg.cpp">
+      <Filter>Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="SelectDlg.cpp">
+      <Filter>Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="ImgInfo.cpp">
+      <Filter>include\Algorithm</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="FilterSim.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>
