@@ -55,7 +55,11 @@ BOOL CNewDlg::OnInitDialog()
 
 	std::vector<CImgInfo>::iterator it;
 	for (it = m_vImgInfo.begin(); it != m_vImgInfo.end(); ++it)
-		pCB->AddString(it->GetFileName());
+	{
+		CString strName = _T("");
+		if (it->GetFileName(strName) == true)
+			pCB->AddString(strName);
+	}
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// EXCEPTION: OCX Property Pages should return FALSE
@@ -85,7 +89,9 @@ void CNewDlg::OnCbnSelchangeNewCbRef()
 	std::vector<CImgInfo>::iterator it;
 	for (it = m_vImgInfo.begin(); it != m_vImgInfo.end(); ++it)
 	{
-		if (strName == it->GetFileName())
+		CString fileName=_T("");
+		it->GetFileName(fileName);
+		if (strName == fileName)
 		{
 			int w=0, h=0;
 			it->GetWidth(w);

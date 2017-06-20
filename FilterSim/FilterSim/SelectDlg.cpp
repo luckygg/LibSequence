@@ -45,7 +45,11 @@ BOOL CSelectDlg::OnInitDialog()
 
 	std::vector<CImgInfo>::iterator it;
 	for (it = m_vImgInfo.begin(); it != m_vImgInfo.end(); ++it)
-		pCB->AddString(it->GetFileName());
+	{
+		CString strName = _T("");
+		if (it->GetFileName(strName) == true)
+			pCB->AddString(strName);
+	}
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// EXCEPTION: OCX Property Pages should return FALSE

@@ -298,9 +298,13 @@ void CFilterSimDlg::OnBnClickedBtnExecute()
 		EImageBW8 *pIn = NULL, *pOut = NULL;
 		for (vector<CImgInfo>::iterator it = m_vImgInfo.begin(); it != m_vImgInfo.end(); ++it)
 		{
-			if (it->GetFileName() == imgIn)
+			CString fileName=_T("");
+			it->GetFileName(fileName);
+
+			if (fileName == imgIn)
 				pIn = it->GetImage();
-			if (it->GetFileName() == imgOut)
+			
+			if (fileName == imgOut)
 				pOut = it->GetImage();
 		}
 
@@ -333,7 +337,10 @@ void CFilterSimDlg::OnBnClickedBtnExecute()
 
 		for (vector<CImgInfo>::iterator it = m_vImgInfo.begin(); it != m_vImgInfo.end(); ++it)
 		{
-			if (it->GetFileName() == imgOut)
+			CString fileName=_T("");
+			it->GetFileName(fileName);
+
+			if (fileName == imgOut)
 			{
 				it->SetImage(pOut);
 				break;
@@ -348,7 +355,12 @@ void CFilterSimDlg::OnBnClickedBtnExecute()
 
 		vector<CImgInfo>::iterator it;
 		for (it = m_vImgInfo.begin(); it != m_vImgInfo.end(); ++it)
-			if (name == it->GetFileName()) break;
+		{
+			CString fileName=_T("");
+			it->GetFileName(fileName);
+			if (name == fileName) 
+				break;
+		}
 
 		DrawImage(i, name);
 	}
@@ -373,7 +385,11 @@ void CFilterSimDlg::DrawImage(int nViewIdx, CString strFileName)
 	
 	vector<CImgInfo>::iterator it;
 	for (it = m_vImgInfo.begin(); it != m_vImgInfo.end(); ++it)
-		if (strFileName == it->GetFileName()) break;
+	{
+		CString fileName=_T("");
+		it->GetFileName(fileName);
+		if (strFileName == fileName) break;
+	}
 	
 	try
 	{
@@ -397,7 +413,11 @@ void CFilterSimDlg::OnCbnSelchangeCbView1()
 
 	vector<CImgInfo>::iterator it;
 	for (it = m_vImgInfo.begin(); it != m_vImgInfo.end(); ++it)
-		if (name == it->GetFileName()) break;
+	{
+		CString fileName=_T("");
+		it->GetFileName(fileName);
+		if (name == fileName) break;
+	}
 	
 	int w=0,h=0;
 	it->GetWidth(w);
@@ -417,7 +437,11 @@ void CFilterSimDlg::OnCbnSelchangeCbView2()
 
 	vector<CImgInfo>::iterator it;
 	for (it = m_vImgInfo.begin(); it != m_vImgInfo.end(); ++it)
-		if (name == it->GetFileName()) break;
+	{
+		CString fileName=_T("");
+		it->GetFileName(fileName);
+		if (name == fileName) break;
+	}
 
 	int w=0,h=0;
 	it->GetWidth(w);
@@ -437,7 +461,11 @@ void CFilterSimDlg::OnCbnSelchangeCbView3()
 
 	vector<CImgInfo>::iterator it;
 	for (it = m_vImgInfo.begin(); it != m_vImgInfo.end(); ++it)
-		if (name == it->GetFileName()) break;
+	{
+		CString fileName=_T("");
+		it->GetFileName(fileName);
+		if (name == fileName) break;
+	}
 
 	int w=0,h=0;
 	it->GetWidth(w);
@@ -457,7 +485,11 @@ void CFilterSimDlg::OnCbnSelchangeCbView4()
 
 	vector<CImgInfo>::iterator it;
 	for (it = m_vImgInfo.begin(); it != m_vImgInfo.end(); ++it)
-		if (name == it->GetFileName()) break;
+	{
+		CString fileName=_T("");
+		it->GetFileName(fileName);
+		if (name == fileName) break;
+	}
 
 	int w=0,h=0;
 	it->GetWidth(w);
@@ -539,7 +571,10 @@ void CFilterSimDlg::OnBnClickedMainBtnDelimg()
 		
 		for (std::vector<CImgInfo>::iterator it = m_vImgInfo.begin(); it != m_vImgInfo.end();)
 		{
-			if (fileName == it->GetFileName())
+			CString name=_T("");
+			it->GetFileName(name);
+
+			if (fileName == name)
 			{
 				it = m_vImgInfo.erase(it);
 			}
@@ -564,7 +599,9 @@ void CFilterSimDlg::UpdateCBList()
 
 		for (std::vector<CImgInfo>::iterator it = m_vImgInfo.begin(); it != m_vImgInfo.end(); ++it)
 		{
-			pCB->AddString(it->GetFileName());
+			CString name=_T("");
+			it->GetFileName(name);
+			pCB->AddString(name);
 		}
 	}
 }
@@ -583,8 +620,10 @@ void CFilterSimDlg::UpdateLCList()
 	{
 		for (int i=0; i<n; i++)
 		{
-			m_wndLc.AddString(i,3,it->GetFileName());
-			m_wndLc.AddString(i,4,it->GetFileName());
+			CString name=_T("");
+			it->GetFileName(name);
+			m_wndLc.AddString(i,3,name);
+			m_wndLc.AddString(i,4,name);
 		}
 	}
 }
@@ -614,7 +653,9 @@ void CFilterSimDlg::OnBnClickedMainBtnSaveimg()
 		std::vector<CImgInfo>::iterator it;
 		for (it = m_vImgInfo.begin(); it != m_vImgInfo.end(); ++it)
 		{
-			if (fileName == it->GetFileName())
+			CString name=_T("");
+			it->GetFileName(name);
+			if (fileName == name)
 				break;
 		}
 
