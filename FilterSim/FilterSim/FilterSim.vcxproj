@@ -180,6 +180,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FormTab1.h" />
+    <ClInclude Include="include\Base\StopWatch.h" />
     <ClInclude Include="include\UI\ListEx.h" />
     <ClInclude Include="SelectDlg.h" />
     <ClInclude Include="NameDlg.h" />

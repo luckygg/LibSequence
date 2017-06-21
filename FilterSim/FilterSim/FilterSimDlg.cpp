@@ -310,32 +310,37 @@ void CFilterSimDlg::OnBnClickedBtnExecute()
 				pOut = it->GetImage();
 		}
 
-		if (filter == _T("Uniform"))			CEImgFilter::OnFilter_Uniform(pIn, pOut);
-		else if (filter == _T("Uniform3x3"))	CEImgFilter::OnFilter_Uniform3x3(pIn, pOut);
-		else if (filter == _T("Uniform5x5"))	CEImgFilter::OnFilter_Uniform5x5(pIn, pOut);
-		else if (filter == _T("Uniform7x7"))	CEImgFilter::OnFilter_Uniform7x7(pIn, pOut);
-		else if (filter == _T("Gaussian"))		CEImgFilter::OnFilter_Gaussian(pIn, pOut);
-		else if (filter == _T("Gaussian3x3"))	CEImgFilter::OnFilter_Gaussian3x3(pIn, pOut);
-		else if (filter == _T("Gaussian5x5"))	CEImgFilter::OnFilter_Gaussian5x5(pIn, pOut);
-		else if (filter == _T("Gaussian7x7"))	CEImgFilter::OnFilter_Gaussian7x7(pIn, pOut);
-		else if (filter == _T("Lowpass1"))		CEImgFilter::OnFilter_Lowpass1(pIn, pOut);
-		else if (filter == _T("Lowpass2"))		CEImgFilter::OnFilter_Lowpass2(pIn, pOut);
-		else if (filter == _T("Highpass1"))		CEImgFilter::OnFilter_Highpass1(pIn, pOut);
-		else if (filter == _T("Highpass2"))		CEImgFilter::OnFilter_Highpass2(pIn, pOut);
-		else if (filter == _T("Gradient"))		CEImgFilter::OnFilter_Gradient(pIn, pOut);
-		else if (filter == _T("GradientX"))		CEImgFilter::OnFilter_GradientX(pIn, pOut);
-		else if (filter == _T("GradientY"))		CEImgFilter::OnFilter_GradientY(pIn, pOut);
-		else if (filter == _T("Sobel"))			CEImgFilter::OnFilter_Sobel(pIn, pOut);
-		else if (filter == _T("SobelX"))		CEImgFilter::OnFilter_SobelX(pIn, pOut);
-		else if (filter == _T("SobelY"))		CEImgFilter::OnFilter_SobelY(pIn, pOut);
-		else if (filter == _T("Prewitt"))		CEImgFilter::OnFilter_Prewitt(pIn, pOut);
-		else if (filter == _T("PrewittX"))		CEImgFilter::OnFilter_PrewittX(pIn, pOut);
-		else if (filter == _T("PrewittY"))		CEImgFilter::OnFilter_PrewittY(pIn, pOut);
-		else if (filter == _T("Roberts"))		CEImgFilter::OnFilter_Roberts(pIn, pOut);
-		else if (filter == _T("LaplacianX"))	CEImgFilter::OnFilter_LaplacianX(pIn, pOut);
-		else if (filter == _T("LaplacianY"))	CEImgFilter::OnFilter_LaplacianY(pIn, pOut);
-		else if (filter == _T("Laplacian4"))	CEImgFilter::OnFilter_Laplacian4(pIn, pOut);
-		else if (filter == _T("Laplacian8"))	CEImgFilter::OnFilter_Laplacian8(pIn, pOut);
+		double time=0;
+		if (filter == _T("Uniform"))			CEImgFilter::OnFilter_Uniform		(pIn, pOut, time);
+		else if (filter == _T("Uniform3x3"))	CEImgFilter::OnFilter_Uniform3x3	(pIn, pOut, time);
+		else if (filter == _T("Uniform5x5"))	CEImgFilter::OnFilter_Uniform5x5	(pIn, pOut, time);
+		else if (filter == _T("Uniform7x7"))	CEImgFilter::OnFilter_Uniform7x7	(pIn, pOut, time);
+		else if (filter == _T("Gaussian"))		CEImgFilter::OnFilter_Gaussian		(pIn, pOut, time);
+		else if (filter == _T("Gaussian3x3"))	CEImgFilter::OnFilter_Gaussian3x3	(pIn, pOut, time);
+		else if (filter == _T("Gaussian5x5"))	CEImgFilter::OnFilter_Gaussian5x5	(pIn, pOut, time);
+		else if (filter == _T("Gaussian7x7"))	CEImgFilter::OnFilter_Gaussian7x7	(pIn, pOut, time);
+		else if (filter == _T("Lowpass1"))		CEImgFilter::OnFilter_Lowpass1		(pIn, pOut, time);
+		else if (filter == _T("Lowpass2"))		CEImgFilter::OnFilter_Lowpass2		(pIn, pOut, time);
+		else if (filter == _T("Highpass1"))		CEImgFilter::OnFilter_Highpass1		(pIn, pOut, time);
+		else if (filter == _T("Highpass2"))		CEImgFilter::OnFilter_Highpass2		(pIn, pOut, time);
+		else if (filter == _T("Gradient"))		CEImgFilter::OnFilter_Gradient		(pIn, pOut, time);
+		else if (filter == _T("GradientX"))		CEImgFilter::OnFilter_GradientX		(pIn, pOut, time);
+		else if (filter == _T("GradientY"))		CEImgFilter::OnFilter_GradientY		(pIn, pOut, time);
+		else if (filter == _T("Sobel"))			CEImgFilter::OnFilter_Sobel			(pIn, pOut, time);
+		else if (filter == _T("SobelX"))		CEImgFilter::OnFilter_SobelX		(pIn, pOut, time);
+		else if (filter == _T("SobelY"))		CEImgFilter::OnFilter_SobelY		(pIn, pOut, time);
+		else if (filter == _T("Prewitt"))		CEImgFilter::OnFilter_Prewitt		(pIn, pOut, time);
+		else if (filter == _T("PrewittX"))		CEImgFilter::OnFilter_PrewittX		(pIn, pOut, time);
+		else if (filter == _T("PrewittY"))		CEImgFilter::OnFilter_PrewittY		(pIn, pOut, time);
+		else if (filter == _T("Roberts"))		CEImgFilter::OnFilter_Roberts		(pIn, pOut, time);
+		else if (filter == _T("LaplacianX"))	CEImgFilter::OnFilter_LaplacianX	(pIn, pOut, time);
+		else if (filter == _T("LaplacianY"))	CEImgFilter::OnFilter_LaplacianY	(pIn, pOut, time);
+		else if (filter == _T("Laplacian4"))	CEImgFilter::OnFilter_Laplacian4	(pIn, pOut, time);
+		else if (filter == _T("Laplacian8"))	CEImgFilter::OnFilter_Laplacian8	(pIn, pOut, time);
+
+		CString strTime=_T("");
+		strTime.Format(_T("%.3f"),time);
+		m_wndLc.SetItemText(i,6,strTime);
 
 		for (vector<CImgInfo>::iterator it = m_vImgInfo.begin(); it != m_vImgInfo.end(); ++it)
 		{
