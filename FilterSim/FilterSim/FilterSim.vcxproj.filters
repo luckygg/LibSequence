@@ -54,12 +54,6 @@
     <ClInclude Include="Resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\UI\ListCombo.h">
-      <Filter>include\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="include\UI\ListCtrlEx.h">
-      <Filter>include\UI</Filter>
-    </ClInclude>
     <ClInclude Include="include\Base\FolderEx.h">
       <Filter>include\Base</Filter>
     </ClInclude>
@@ -81,6 +75,12 @@
     <ClInclude Include="ImgInfo.h">
       <Filter>include\Algorithm</Filter>
     </ClInclude>
+    <ClInclude Include="FormTab1.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\UI\ListEx.h">
+      <Filter>include\UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FilterSim.cpp">
@@ -91,12 +91,6 @@
     </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="include\UI\ListCombo.cpp">
-      <Filter>include\UI</Filter>
-    </ClCompile>
-    <ClCompile Include="include\UI\ListCtrlEx.cpp">
-      <Filter>include\UI</Filter>
     </ClCompile>
     <ClCompile Include="include\Base\FolderEx.cpp">
       <Filter>include\Base</Filter>
@@ -118,6 +112,12 @@
     </ClCompile>
     <ClCompile Include="ImgInfo.cpp">
       <Filter>include\Algorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="FormTab1.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="include\UI\ListEx.cpp">
+      <Filter>include\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

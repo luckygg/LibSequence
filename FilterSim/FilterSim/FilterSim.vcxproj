@@ -179,6 +179,8 @@
     <None Include="res\FilterSim.rc2" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="FormTab1.h" />
+    <ClInclude Include="include\UI\ListEx.h" />
     <ClInclude Include="SelectDlg.h" />
     <ClInclude Include="NameDlg.h" />
     <ClInclude Include="EImgFilter.h" />
@@ -187,14 +189,14 @@
     <ClInclude Include="ImgInfo.h" />
     <ClInclude Include="include\Base\FileDialogEx.h" />
     <ClInclude Include="include\Base\FolderEx.h" />
-    <ClInclude Include="include\UI\ListCombo.h" />
-    <ClInclude Include="include\UI\ListCtrlEx.h" />
     <ClInclude Include="NewDlg.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="FormTab1.cpp" />
+    <ClCompile Include="include\UI\ListEx.cpp" />
     <ClCompile Include="SelectDlg.cpp" />
     <ClCompile Include="NameDlg.cpp" />
     <ClCompile Include="EImgFilter.cpp" />
@@ -203,8 +205,6 @@
     <ClCompile Include="ImgInfo.cpp" />
     <ClCompile Include="include\Base\FileDialogEx.cpp" />
     <ClCompile Include="include\Base\FolderEx.cpp" />
-    <ClCompile Include="include\UI\ListCombo.cpp" />
-    <ClCompile Include="include\UI\ListCtrlEx.cpp" />
     <ClCompile Include="NewDlg.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

@@ -26,6 +26,8 @@ CFilterSimDlg::CFilterSimDlg(CWnd* pParent /*=NULL*/)
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 	m_nSelected = -1;
 	m_nImgCnt = 0;
+
+	m_pFormTab1 = NULL;
 }
 
 void CFilterSimDlg::DoDataExchange(CDataExchange* pDX)
@@ -38,9 +40,8 @@ void CFilterSimDlg::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CFilterSimDlg, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
-	ON_BN_CLICKED(IDC_MAIN_BTN_ADDITEM, &CFilterSimDlg::OnBnClickedBtnAdd)
-	ON_BN_CLICKED(IDC_MAIN_BTN_DELITEM, &CFilterSimDlg::OnBnClickedBtnDelete)
-	ON_NOTIFY(NM_CLICK, IDC_MAIN_LC_ITEM, &CFilterSimDlg::OnNMClickLcItem)
+	ON_BN_CLICKED(IDC_MAIN_BTN_ADDITEM, &CFilterSimDlg::OnBnClickedBtnAddList)
+	ON_BN_CLICKED(IDC_MAIN_BTN_DELITEM, &CFilterSimDlg::OnBnClickedBtnDelList)
 	ON_BN_CLICKED(IDC_MAIN_BTN_LOADIMG, &CFilterSimDlg::OnBnClickedBtnLoad)
 	
 	ON_CBN_SELCHANGE(IDC_MAIN_CB_VIEW1, &CFilterSimDlg::OnCbnSelchangeCbView1)
@@ -48,9 +49,11 @@ BEGIN_MESSAGE_MAP(CFilterSimDlg, CDialogEx)
 	ON_CBN_SELCHANGE(IDC_MAIN_CB_VIEW3, &CFilterSimDlg::OnCbnSelchangeCbView3)
 	ON_CBN_SELCHANGE(IDC_MAIN_CB_VIEW4, &CFilterSimDlg::OnCbnSelchangeCbView4)
 	ON_BN_CLICKED(IDC_MAIN_BTN_EXECUTE, &CFilterSimDlg::OnBnClickedBtnExecute)
-	ON_BN_CLICKED(IDC_MAIN_BTN_NEWIMG, &CFilterSimDlg::OnBnClickedBtnNew)
-	ON_BN_CLICKED(IDC_MAIN_BTN_DELIMG, &CFilterSimDlg::OnBnClickedMainBtnDelimg)
-	ON_BN_CLICKED(IDC_MAIN_BTN_SAVEIMG, &CFilterSimDlg::OnBnClickedMainBtnSaveimg)
+	ON_BN_CLICKED(IDC_MAIN_BTN_NEWIMG, &CFilterSimDlg::OnBnClickedBtnNewImg)
+	ON_BN_CLICKED(IDC_MAIN_BTN_DELIMG, &CFilterSimDlg::OnBnClickedBtnDelimg)
+	ON_BN_CLICKED(IDC_MAIN_BTN_SAVEIMG, &CFilterSimDlg::OnBnClickedBtnSaveimg)
+	ON_NOTIFY(NM_CLICK, IDC_MAIN_LC_ITEM, &CFilterSimDlg::OnNMClickMainLcItem)
+	ON_CBN_SELCHANGE(IDC_MAIN_CB_LIB, &CFilterSimDlg::OnCbnSelchangeMainCbLib)
 END_MESSAGE_MAP()
 
 
@@ -128,9 +131,9 @@ void CFilterSimDlg::InitContorls()
 	GetDlgItem(IDC_MAIN_BTN_SAVEIMG)->MoveWindow(1050,  30, 100,  50);
 	GetDlgItem(IDC_MAIN_BTN_NEWIMG )->MoveWindow(1150,  30, 100,  50);
 	GetDlgItem(IDC_MAIN_BTN_DELIMG )->MoveWindow(1250,  30, 100,  50);
-	GetDlgItem(IDC_MAIN_BTN_ADDITEM)->MoveWindow( 950, 150, 100,  50);
-	GetDlgItem(IDC_MAIN_BTN_DELITEM)->MoveWindow(1050, 150, 100,  50);
-	GetDlgItem(IDC_MAIN_BTN_EXECUTE)->MoveWindow(1245, 150, 100,  50);
+	GetDlgItem(IDC_MAIN_BTN_ADDITEM)->MoveWindow( 950, 450, 100,  50);
+	GetDlgItem(IDC_MAIN_BTN_DELITEM)->MoveWindow(1050, 450, 100,  50);
+	GetDlgItem(IDC_MAIN_BTN_EXECUTE)->MoveWindow(1245, 450, 100,  50);
 											   	    	 
 	GetDlgItem(IDC_MAIN_PC_VIEW1)->MoveWindow(  25,  30, 450, 450);
 	GetDlgItem(IDC_MAIN_PC_VIEW2)->MoveWindow( 485,  30, 450, 450);
@@ -147,31 +150,47 @@ void CFilterSimDlg::InitContorls()
 	GetDlgItem(IDC_MAIN_CB_VIEW3)->MoveWindow( 325, 489, 150,  15);
 	GetDlgItem(IDC_MAIN_CB_VIEW4)->MoveWindow( 785, 489, 150,  15);
 
-	GetDlgItem(IDC_MAIN_LC_ITEM )->MoveWindow( 950, 200, 395, 760);
+	GetDlgItem(IDC_MAIN_LB_LIB  )->MoveWindow( 950,  93,  45,  15);
+	GetDlgItem(IDC_MAIN_CB_LIB  )->MoveWindow(1000,  90, 100,  20);
+	GetDlgItem(IDC_MAIN_PC_TAB1 )->MoveWindow( 950, 115, 395, 335);
+	GetDlgItem(IDC_MAIN_LC_ITEM )->MoveWindow( 950, 500, 395, 460);
 
-	m_wndLc.InsertColumn(0, _T("")		, LVCFMT_LEFT  ,   0);
-	m_wndLc.InsertColumn(1, _T("Index")	, LVCFMT_CENTER,  50);
-	m_wndLc.InsertColumn(2, _T("Filter"), LVCFMT_CENTER,  80);
-	m_wndLc.InsertColumn(3, _T("Input")	, LVCFMT_CENTER,  90);
-	m_wndLc.InsertColumn(4, _T("Output"), LVCFMT_CENTER,  90);
-	m_wndLc.InsertColumn(5, _T("ETC")	, LVCFMT_CENTER,  90);
-	m_wndLc.EnableVScroll();
+	
+	m_wndLc.AddColumn(1, _T("No.")		,  30);
+	m_wndLc.AddColumn(2, _T("Use")		,  30);
+	m_wndLc.AddColumn(3, _T("Algorithm"),  90);
+	m_wndLc.AddColumn(4, _T("Input")	,  90);
+	m_wndLc.AddColumn(5, _T("Output")	,  90);
+	m_wndLc.AddColumn(6, _T("Time")		,  60);
 	m_wndLc.SetExtendedStyle(LVS_EX_FULLROWSELECT);
+
+	CComboBox* pCB = (CComboBox*)GetDlgItem(IDC_MAIN_CB_LIB);
+	pCB->AddString(_T("EasyImage"));
+	pCB->AddString(_T("EasyMatrixCode"));
+
+	CCreateContext context;
+	ZeroMemory(&context, sizeof(context));
+	CView* pView = NULL;
+	CRect rect=CRect(0,0,0,0);
+
+	//----- Create Form Window -----//
+	pView = (CView*)RUNTIME_CLASS(CFormTab1)->CreateObject();
+	GetDlgItem(IDC_MAIN_PC_TAB1)->GetWindowRect(&rect);
+	ScreenToClient(&rect);
+	pView->Create(NULL, NULL, WS_CHILD, rect, this, IDD_FORM_TAB1, &context);
+	pView->OnInitialUpdate();
+	m_pFormTab1 = pView;
+
+	m_pFormTab1->ShowWindow(SW_HIDE);
+	GetDlgItem(IDC_MAIN_PC_TAB1)->DestroyWindow();
 }
 
-void CFilterSimDlg::OnBnClickedBtnAdd()
+void CFilterSimDlg::OnBnClickedBtnAddList()
 {
 	int n = m_wndLc.GetItemCount();
-
-	m_wndLc.SetRowColumnType(n, 0, CListCtrlEx::eType_ReadOnly);
-	m_wndLc.SetRowColumnType(n, 1, CListCtrlEx::eType_ReadOnly);
-	m_wndLc.SetRowColumnType(n, 2, CListCtrlEx::eType_Combo);
-	m_wndLc.SetRowColumnType(n, 3, CListCtrlEx::eType_Combo);
-	m_wndLc.SetRowColumnType(n, 4, CListCtrlEx::eType_Combo);
-	m_wndLc.InsertItem(n,_T(""));
 	
-	// 각 row 의 두 번째 col (index) 설정 부분.
 	CString strIdx=_T("");
+	
 	if (n > 0)
 	{
 		CString strLast = m_wndLc.GetItemText(n-1,1);
@@ -182,56 +201,49 @@ void CFilterSimDlg::OnBnClickedBtnAdd()
 	{
 		strIdx.Format(_T("%d"),n);
 	}
-	m_wndLc.AddString(n,1,strIdx);
 
+	m_wndLc.SetItemText(n,1,strIdx);
+
+	StItemInfo info;
+	info.bUse = FALSE;
+	info.strType = _T("");
+	info.strInput = _T("");
+	info.strOutput = _T("");
+
+	m_vItmInfo.push_back(info);
+
+	UpdateItemColor();
+}
+
+void CFilterSimDlg::OnBnClickedBtnDelList()
+{
+	POSITION pos = NULL;
+	int nItemIdx = -1;
+
+	pos = m_wndLc.GetFirstSelectedItemPosition();
+
+	if( NULL != pos )
+		nItemIdx = m_wndLc.GetNextSelectedItem(pos);
+
+	if (nItemIdx >= 0)
+		m_wndLc.DeleteItem(nItemIdx);
+
+	int nCnt=0;
+	for (std::vector<StItemInfo>::iterator it = m_vItmInfo.begin(); it != m_vItmInfo.end(); )
 	{
-		m_wndLc.AddString(n,2,_T("Uniform"));
-		m_wndLc.AddString(n,2,_T("Uniform3x3"));
-		m_wndLc.AddString(n,2,_T("Uniform5x5"));
-		m_wndLc.AddString(n,2,_T("Uniform7x7"));
-		m_wndLc.AddString(n,2,_T("Gaussian"));
-		m_wndLc.AddString(n,2,_T("Gaussian3x3"));
-		m_wndLc.AddString(n,2,_T("Gaussian5x5"));
-		m_wndLc.AddString(n,2,_T("Gaussian7x7"));
-		m_wndLc.AddString(n,2,_T("Lowpass1"));
-		m_wndLc.AddString(n,2,_T("Lowpass2"));
-		m_wndLc.AddString(n,2,_T("Highpass1"));
-		m_wndLc.AddString(n,2,_T("Highpass2"));
-		m_wndLc.AddString(n,2,_T("Gradient"));
-		m_wndLc.AddString(n,2,_T("GradientX"));
-		m_wndLc.AddString(n,2,_T("GradientY"));
-		m_wndLc.AddString(n,2,_T("Sobel"));
-		m_wndLc.AddString(n,2,_T("SobelX"));
-		m_wndLc.AddString(n,2,_T("SobelY"));
-		m_wndLc.AddString(n,2,_T("Prewitt"));
-		m_wndLc.AddString(n,2,_T("PrewittX"));
-		m_wndLc.AddString(n,2,_T("PrewittY"));
-		m_wndLc.AddString(n,2,_T("Roberts"));
-		m_wndLc.AddString(n,2,_T("LaplacianX"));
-		m_wndLc.AddString(n,2,_T("LaplacianY"));
-		m_wndLc.AddString(n,2,_T("Laplacian4"));
-		m_wndLc.AddString(n,2,_T("Laplacian8"));
+		if (nCnt == nItemIdx)
+		{
+			it = m_vItmInfo.erase(it);
+		}
+		else
+		{
+			it++;
+		}
+		nCnt++;
 	}
 
-	UpdateLCList();
+	UpdateItemColor();
 }
-
-
-void CFilterSimDlg::OnBnClickedBtnDelete()
-{
-	m_wndLc.DeleteItem(m_nSelected);
-}
-
-void CFilterSimDlg::OnNMClickLcItem(NMHDR *pNMHDR, LRESULT *pResult)
-{
-	LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	NM_LISTVIEW* pNMListView = (NM_LISTVIEW*)pNMHDR;
-	m_nSelected = pNMListView -> iItem;//
-
-	*pResult = 0;
-}
-
 
 void CFilterSimDlg::OnBnClickedBtnLoad()
 {
@@ -264,22 +276,8 @@ void CFilterSimDlg::OnBnClickedBtnLoad()
 
 			m_vImgInfo.push_back(info);
 
-			CComboBox* pCB = (CComboBox*)GetDlgItem(IDC_MAIN_CB_VIEW1);
-			pCB->AddString(fileName);
-			pCB = (CComboBox*)GetDlgItem(IDC_MAIN_CB_VIEW2);
-			pCB->AddString(fileName);
-			pCB = (CComboBox*)GetDlgItem(IDC_MAIN_CB_VIEW3);
-			pCB->AddString(fileName);
-			pCB = (CComboBox*)GetDlgItem(IDC_MAIN_CB_VIEW4);
-			pCB->AddString(fileName);
-
-			int n = m_wndLc.GetItemCount();
-			for (int i=0; i<n; i++)
-			{
-				m_wndLc.AddString(i,3,fileName);
-				m_wndLc.AddString(i,4,fileName);
-			}
-
+			UpdateCBList();
+			
 			m_nImgCnt++;
 		}
 	}
@@ -291,9 +289,13 @@ void CFilterSimDlg::OnBnClickedBtnExecute()
 
 	for (int i=0; i<n; i++)
 	{
-		CString filter	= m_wndLc.GetItemText(i,2);
-		CString imgIn	= m_wndLc.GetItemText(i,3);
-		CString imgOut	= m_wndLc.GetItemText(i,4);
+		CString use		= m_wndLc.GetItemText(i,2);
+		if (use == _T("F"))
+			continue;
+
+		CString filter	= m_wndLc.GetItemText(i,3);
+		CString imgIn	= m_wndLc.GetItemText(i,4);
+		CString imgOut	= m_wndLc.GetItemText(i,5);
 
 		EImageBW8 *pIn = NULL, *pOut = NULL;
 		for (vector<CImgInfo>::iterator it = m_vImgInfo.begin(); it != m_vImgInfo.end(); ++it)
@@ -430,7 +432,6 @@ void CFilterSimDlg::OnCbnSelchangeCbView1()
 	DrawImage(0, name);
 }
 
-
 void CFilterSimDlg::OnCbnSelchangeCbView2()
 {
 	CString name = GetTextCBSelected(IDC_MAIN_CB_VIEW2);
@@ -454,12 +455,11 @@ void CFilterSimDlg::OnCbnSelchangeCbView2()
 	DrawImage(1, name);
 }
 
-
 void CFilterSimDlg::OnCbnSelchangeCbView3()
 {
 	CString name = GetTextCBSelected(IDC_MAIN_CB_VIEW3);
 
-	vector<CImgInfo>::iterator it;
+	std::vector<CImgInfo>::iterator it;
 	for (it = m_vImgInfo.begin(); it != m_vImgInfo.end(); ++it)
 	{
 		CString fileName=_T("");
@@ -477,7 +477,6 @@ void CFilterSimDlg::OnCbnSelchangeCbView3()
 
 	DrawImage(2, name);
 }
-
 
 void CFilterSimDlg::OnCbnSelchangeCbView4()
 {
@@ -502,8 +501,7 @@ void CFilterSimDlg::OnCbnSelchangeCbView4()
 	DrawImage(3, name);
 }
 
-
-void CFilterSimDlg::OnBnClickedBtnNew()
+void CFilterSimDlg::OnBnClickedBtnNewImg()
 {
 	CNewDlg dlg(m_nImgCnt, m_vImgInfo);
 	if (dlg.DoModal() == IDOK)
@@ -529,21 +527,7 @@ void CFilterSimDlg::OnBnClickedBtnNew()
 
 		m_vImgInfo.push_back(info);
 
-		CComboBox* pCB = (CComboBox*)GetDlgItem(IDC_MAIN_CB_VIEW1);
-		pCB->AddString(fileName);
-		pCB = (CComboBox*)GetDlgItem(IDC_MAIN_CB_VIEW2);
-		pCB->AddString(fileName);
-		pCB = (CComboBox*)GetDlgItem(IDC_MAIN_CB_VIEW3);
-		pCB->AddString(fileName);
-		pCB = (CComboBox*)GetDlgItem(IDC_MAIN_CB_VIEW4);
-		pCB->AddString(fileName);
-
-		int n = m_wndLc.GetItemCount();
-		for (int i=0; i<n; i++)
-		{
-			m_wndLc.AddString(i,3,fileName);
-			m_wndLc.AddString(i,4,fileName);
-		}
+		UpdateCBList();
 
 		m_nImgCnt++;
 	}
@@ -562,7 +546,7 @@ CString CFilterSimDlg::GetTextCBSelected(UINT ID)
 	return strName;
 }
 
-void CFilterSimDlg::OnBnClickedMainBtnDelimg()
+void CFilterSimDlg::OnBnClickedBtnDelimg()
 {
 	CSelectDlg dlg(m_vImgInfo);
 	if (dlg.DoModal() == IDOK)
@@ -586,8 +570,6 @@ void CFilterSimDlg::OnBnClickedMainBtnDelimg()
 
 		UpdateCBList();
 	}
-
-	UpdateLCList();
 }
 
 void CFilterSimDlg::UpdateCBList()
@@ -604,27 +586,59 @@ void CFilterSimDlg::UpdateCBList()
 			pCB->AddString(name);
 		}
 	}
+
+	CFormTab1* pTab1 = (CFormTab1*)m_pFormTab1;
+	pTab1->UpdateCBList(m_vImgInfo);
 }
 
-void CFilterSimDlg::UpdateLCList()
+void CFilterSimDlg::UpdateItemColor()
 {
-	int n = m_wndLc.GetItemCount();
-	for (int i=0; i<n; i++)
+	int nRow=0;
+	for (std::vector<StItemInfo>::iterator it = m_vItmInfo.begin(); it != m_vItmInfo.end(); it++)
 	{
-		m_wndLc.ClearString(i,3);
-		m_wndLc.ClearString(i,4);
+		if (it->bUse == TRUE)
+		{
+			m_wndLc.SetItemText(nRow, 2, _T("T"));
+			m_wndLc.SetItemColor(nRow, 2, RGB(0,255,0));
+		}
+		else
+		{
+			m_wndLc.SetItemText(nRow, 2, _T("F"));
+			m_wndLc.SetItemColor(nRow, 2, RGB(255,0,0));
+		}
+		nRow++;
+	}
+}
+
+void CFilterSimDlg::UpdateItem(int nRow, BOOL bUse, CString strAlgorithm, CString strIn, CString strOut)
+{
+	if (bUse == TRUE)
+	{
+		m_wndLc.SetItemText(nRow, 2, _T("T"));
+		m_wndLc.SetItemColor(nRow, 2, RGB(0,255,0));
+	}
+	else
+	{
+		m_wndLc.SetItemText(nRow, 2, _T("F"));
+		m_wndLc.SetItemColor(nRow, 2, RGB(255,0,0));
 	}
 
-	vector<CImgInfo>::iterator it;
-	for (it = m_vImgInfo.begin(); it != m_vImgInfo.end(); ++it)
+	m_wndLc.SetItemText(nRow, 3, strAlgorithm);
+	m_wndLc.SetItemText(nRow, 4, strIn);
+	m_wndLc.SetItemText(nRow, 5, strOut);
+
+	int nCnt=0;
+	for (std::vector<StItemInfo>::iterator it = m_vItmInfo.begin(); it != m_vItmInfo.end(); it++)
 	{
-		for (int i=0; i<n; i++)
+		if (nCnt == nRow)
 		{
-			CString name=_T("");
-			it->GetFileName(name);
-			m_wndLc.AddString(i,3,name);
-			m_wndLc.AddString(i,4,name);
+			it->bUse = bUse;
+			it->strType = strAlgorithm;
+			it->strInput = strIn;
+			it->strOutput = strOut;
 		}
+		
+		nCnt++;
 	}
 }
 
@@ -642,8 +656,7 @@ BOOL CFilterSimDlg::PreTranslateMessage(MSG* pMsg)
 	return CDialogEx::PreTranslateMessage(pMsg);
 }
 
-
-void CFilterSimDlg::OnBnClickedMainBtnSaveimg()
+void CFilterSimDlg::OnBnClickedBtnSaveimg()
 {
 	CSelectDlg dlg(m_vImgInfo);
 	if (dlg.DoModal() == IDOK)
@@ -675,5 +688,74 @@ void CFilterSimDlg::OnBnClickedMainBtnSaveimg()
 			CString strErr = (CString)e.What().c_str();
 			AfxMessageBox(strErr);
 		}
+	}
+}
+
+void CFilterSimDlg::OnNMClickMainLcItem(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
+	
+	POSITION pos = NULL;
+	int nRow = -1;
+
+	pos = m_wndLc.GetFirstSelectedItemPosition();
+
+	if( NULL != pos )
+		nRow = m_wndLc.GetNextSelectedItem(pos);
+
+	CString strLib = m_wndLc.GetItemText(nRow, 3);
+	CComboBox* pCB = (CComboBox*)GetDlgItem(IDC_MAIN_CB_LIB);
+	if (strLib == _T("EasyMatrixCode"))
+	{
+		int sel = pCB->FindString(0,strLib);
+		pCB->SetCurSel(sel);
+	}
+	else if (strLib == _T(""))
+	{
+		m_pFormTab1->ShowWindow(SW_HIDE);
+		pCB->SetCurSel(-1);
+	}
+	else
+	{
+		pCB->SetCurSel(0);
+		
+		m_pFormTab1->ShowWindow(SW_SHOW);
+		CFormTab1* pTab1 = (CFormTab1*)m_pFormTab1;
+		pTab1->SetSelectedRow(nRow);
+
+		pTab1->UpdateControls(m_vItmInfo.at(nRow));
+	}
+
+	*pResult = 0;
+}
+
+
+void CFilterSimDlg::OnCbnSelchangeMainCbLib()
+{
+	CComboBox* pCB = (CComboBox*)GetDlgItem(IDC_MAIN_CB_LIB);
+	int sel = pCB->GetCurSel();
+
+	POSITION pos = NULL;
+	int nRow = -1;
+
+	pos = m_wndLc.GetFirstSelectedItemPosition();
+
+	if( NULL != pos )
+		nRow = m_wndLc.GetNextSelectedItem(pos);
+
+	switch (sel)
+	{
+	case 0 :
+		{
+			m_pFormTab1->ShowWindow(SW_SHOW);
+			CFormTab1* pTab1 = (CFormTab1*)m_pFormTab1;
+			pTab1->SetSelectedRow(nRow);
+			pTab1->ResetControls();
+		}
+		
+		break;
+	case 1 :
+		m_pFormTab1->ShowWindow(SW_HIDE);
+		break;
 	}
 }
