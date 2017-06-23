@@ -7,9 +7,9 @@
 #include "include/UI/ListEx.h"
 #include "include/Base/FileDialogEx.h"
 #include <vector>
-#include "ImgInfo.h"
+#include "EImage.h"
 #include "EImgFilter.h"
-
+#include "EMatrix.h"
 
 
 using namespace Euresys::Open_eVision_2_0;
@@ -23,12 +23,13 @@ struct StItemInfo
 	CString strOutput;
 };
 
-#include "FormTab1.h"
+#include "FormImage.h"
+#include "FormMatrix.h"
 
 // CFilterSimDlg dialog
 class CFilterSimDlg : public CDialogEx
 {
-	
+	enum eAlgorithm {ENone=-1, EEasyImage=0, EEasyMatrix};
 // Construction
 public:
 	CFilterSimDlg(CWnd* pParent = NULL);	// standard constructor
@@ -40,21 +41,28 @@ public:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
 
 public :
+	void UpdateCBList();
+	void UpdateItemList();
 	void UpdateItem(int nRow, BOOL bUse, CString strAlgorithm, CString strIn, CString strOut);
 	void UpdateItemColor();
-	void OnSwitchForm();
+	void UpdateAllView();
 private :
-	CView* m_pFormTab1;
-	int m_nImgCnt;
-	std::vector<CImgInfo> m_vImgInfo;
-	std::vector<StItemInfo> m_vItmInfo;
+	CView* m_pFormImg;
+	CView* m_pFormMtx;
+	
 	CListEx m_wndLc;
-	int m_nSelected;
+	
+	std::vector<CEImage> m_vImgInfo;
+	std::vector<StItemInfo> m_vItmInfo;
+
+	int m_nImgCnt;
+	
 	void InitContorls();
 	void DrawImage(int nViewIdx, CString strFileName);
 	CString GetTextCBSelected(UINT ID);
-
-	void UpdateCBList();
+	void SetCBItembyText(UINT ID, CString strText);
+	void FormSwitching(eAlgorithm eType);
+	void OnExecute();
 	
 // Implementation
 protected:
@@ -66,7 +74,7 @@ protected:
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
 public:
-	afx_msg void OnBnClickedBtnAddList();
+	afx_msg void OnBnClickedBtnAddItem();
 	afx_msg void OnBnClickedBtnDelList();
 	afx_msg void OnBnClickedBtnLoad();
 	afx_msg void OnCbnSelchangeCbView1();
@@ -80,4 +88,7 @@ public:
 	afx_msg void OnBnClickedBtnSaveimg();
 	afx_msg void OnNMClickMainLcItem(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnCbnSelchangeMainCbLib();
+	afx_msg void OnBnClickedMainBtnApply();
+	afx_msg void OnBnClickedMainBtnAddroi();
+	afx_msg void OnBnClickedMainBtnDelroi();
 };

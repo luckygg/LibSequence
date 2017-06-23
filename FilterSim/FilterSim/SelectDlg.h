@@ -1,5 +1,5 @@
 #pragma once
-#include "ImgInfo.h"
+#include "EImage.h"
 
 // CSelectDlg dialog
 
@@ -8,13 +8,13 @@ class CSelectDlg : public CDialogEx
 	DECLARE_DYNAMIC(CSelectDlg)
 
 public:
-	CSelectDlg(std::vector<CImgInfo> vImgInfo, CWnd* pParent = NULL);   // standard constructor
+	CSelectDlg(std::vector<CEImage> vImgInfo, CWnd* pParent = NULL);   // standard constructor
 	virtual ~CSelectDlg();
 
 public :
 	CString GetName() {return m_strName; }
 private :
-	std::vector<CImgInfo> m_vImgInfo;
+	std::vector<CEImage> m_vImgInfo;
 	CString m_strName;
 
 // Dialog Data

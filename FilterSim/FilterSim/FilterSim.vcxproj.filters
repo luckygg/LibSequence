@@ -25,7 +25,13 @@
     <Filter Include="include\Algorithm">
       <UniqueIdentifier>{fca54f21-4cca-4b08-bc32-519a8d411c7c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Dialog">
+    <Filter Include="PGM UI">
+      <UniqueIdentifier>{0a4143f1-f823-42f5-b7ab-32426428e990}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PGM UI\Form">
+      <UniqueIdentifier>{f58f6374-5790-482a-ae7d-0ba66dce3543}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PGM UI\Dialog">
       <UniqueIdentifier>{1d1854c3-a317-4b3c-a0ac-7315493ce7c0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -40,9 +46,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FilterSim.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FilterSimDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="stdafx.h">
@@ -64,19 +67,13 @@
       <Filter>include\Algorithm</Filter>
     </ClInclude>
     <ClInclude Include="NewDlg.h">
-      <Filter>Dialog</Filter>
+      <Filter>PGM UI\Dialog</Filter>
     </ClInclude>
     <ClInclude Include="NameDlg.h">
-      <Filter>Dialog</Filter>
+      <Filter>PGM UI\Dialog</Filter>
     </ClInclude>
     <ClInclude Include="SelectDlg.h">
-      <Filter>Dialog</Filter>
-    </ClInclude>
-    <ClInclude Include="ImgInfo.h">
-      <Filter>include\Algorithm</Filter>
-    </ClInclude>
-    <ClInclude Include="FormTab1.h">
-      <Filter>Header Files</Filter>
+      <Filter>PGM UI\Dialog</Filter>
     </ClInclude>
     <ClInclude Include="include\UI\ListEx.h">
       <Filter>include\UI</Filter>
@@ -84,12 +81,24 @@
     <ClInclude Include="include\Base\StopWatch.h">
       <Filter>include\Base</Filter>
     </ClInclude>
+    <ClInclude Include="FormMatrix.h">
+      <Filter>PGM UI\Form</Filter>
+    </ClInclude>
+    <ClInclude Include="FilterSimDlg.h">
+      <Filter>PGM UI\Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="FormImage.h">
+      <Filter>PGM UI\Form</Filter>
+    </ClInclude>
+    <ClInclude Include="EMatrix.h">
+      <Filter>include\Algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="EImage.h">
+      <Filter>include\Algorithm</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FilterSim.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="FilterSimDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="stdafx.cpp">
@@ -105,22 +114,31 @@
       <Filter>include\Algorithm</Filter>
     </ClCompile>
     <ClCompile Include="NewDlg.cpp">
-      <Filter>Dialog</Filter>
+      <Filter>PGM UI\Dialog</Filter>
     </ClCompile>
     <ClCompile Include="NameDlg.cpp">
-      <Filter>Dialog</Filter>
+      <Filter>PGM UI\Dialog</Filter>
     </ClCompile>
     <ClCompile Include="SelectDlg.cpp">
-      <Filter>Dialog</Filter>
-    </ClCompile>
-    <ClCompile Include="ImgInfo.cpp">
-      <Filter>include\Algorithm</Filter>
-    </ClCompile>
-    <ClCompile Include="FormTab1.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>PGM UI\Dialog</Filter>
     </ClCompile>
     <ClCompile Include="include\UI\ListEx.cpp">
       <Filter>include\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="FormMatrix.cpp">
+      <Filter>PGM UI\Form</Filter>
+    </ClCompile>
+    <ClCompile Include="FilterSimDlg.cpp">
+      <Filter>PGM UI\Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="FormImage.cpp">
+      <Filter>PGM UI\Form</Filter>
+    </ClCompile>
+    <ClCompile Include="EMatrix.cpp">
+      <Filter>include\Algorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="EImage.cpp">
+      <Filter>include\Algorithm</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

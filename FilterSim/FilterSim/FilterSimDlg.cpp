@@ -24,10 +24,10 @@ CFilterSimDlg::CFilterSimDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(CFilterSimDlg::IDD, pParent)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
-	m_nSelected = -1;
 	m_nImgCnt = 0;
 
-	m_pFormTab1 = NULL;
+	m_pFormImg = NULL;
+	m_pFormMtx  = NULL;
 }
 
 void CFilterSimDlg::DoDataExchange(CDataExchange* pDX)
@@ -40,7 +40,7 @@ void CFilterSimDlg::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CFilterSimDlg, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
-	ON_BN_CLICKED(IDC_MAIN_BTN_ADDITEM, &CFilterSimDlg::OnBnClickedBtnAddList)
+	ON_BN_CLICKED(IDC_MAIN_BTN_ADDITEM, &CFilterSimDlg::OnBnClickedBtnAddItem)
 	ON_BN_CLICKED(IDC_MAIN_BTN_DELITEM, &CFilterSimDlg::OnBnClickedBtnDelList)
 	ON_BN_CLICKED(IDC_MAIN_BTN_LOADIMG, &CFilterSimDlg::OnBnClickedBtnLoad)
 	
@@ -54,6 +54,9 @@ BEGIN_MESSAGE_MAP(CFilterSimDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_MAIN_BTN_SAVEIMG, &CFilterSimDlg::OnBnClickedBtnSaveimg)
 	ON_NOTIFY(NM_CLICK, IDC_MAIN_LC_ITEM, &CFilterSimDlg::OnNMClickMainLcItem)
 	ON_CBN_SELCHANGE(IDC_MAIN_CB_LIB, &CFilterSimDlg::OnCbnSelchangeMainCbLib)
+	ON_BN_CLICKED(IDC_MAIN_BTN_APPLY, &CFilterSimDlg::OnBnClickedMainBtnApply)
+	ON_BN_CLICKED(IDC_MAIN_BTN_ADDROI, &CFilterSimDlg::OnBnClickedMainBtnAddroi)
+	ON_BN_CLICKED(IDC_MAIN_BTN_DELROI, &CFilterSimDlg::OnBnClickedMainBtnDelroi)
 END_MESSAGE_MAP()
 
 
@@ -69,17 +72,6 @@ BOOL CFilterSimDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
 	InitContorls();
-
-	try
-	{
-		EImageBW8 init;
-		init.SetSize(100,100);
-	}
-	catch (EException& e)
-	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
-	}
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -125,7 +117,7 @@ void CFilterSimDlg::InitContorls()
 	int w = GetSystemMetrics(SM_CXSCREEN);
 	int h = GetSystemMetrics(SM_CYSCREEN);
 
-	this->MoveWindow( (w-1375)/2, (h-1000)/2, 1375, 1000);
+	/*this->MoveWindow( (w-1375)/2, (h-1000)/2, 1375, 1000);
 
 	GetDlgItem(IDC_MAIN_BTN_LOADIMG)->MoveWindow( 950,  30, 100,  50);
 	GetDlgItem(IDC_MAIN_BTN_SAVEIMG)->MoveWindow(1050,  30, 100,  50);
@@ -134,7 +126,7 @@ void CFilterSimDlg::InitContorls()
 	GetDlgItem(IDC_MAIN_BTN_ADDITEM)->MoveWindow( 950, 450, 100,  50);
 	GetDlgItem(IDC_MAIN_BTN_DELITEM)->MoveWindow(1050, 450, 100,  50);
 	GetDlgItem(IDC_MAIN_BTN_EXECUTE)->MoveWindow(1245, 450, 100,  50);
-											   	    	 
+
 	GetDlgItem(IDC_MAIN_PC_VIEW1)->MoveWindow(  25,  30, 450, 450);
 	GetDlgItem(IDC_MAIN_PC_VIEW2)->MoveWindow( 485,  30, 450, 450);
 	GetDlgItem(IDC_MAIN_PC_VIEW3)->MoveWindow(  25, 510, 450, 450);
@@ -144,7 +136,7 @@ void CFilterSimDlg::InitContorls()
 	GetDlgItem(IDC_MAIN_LB_INFO2)->MoveWindow( 485,   9, 200,  15);
 	GetDlgItem(IDC_MAIN_LB_INFO3)->MoveWindow(  25, 489, 200,  15);
 	GetDlgItem(IDC_MAIN_LB_INFO4)->MoveWindow( 485, 489, 200,  15);
-												    	 
+
 	GetDlgItem(IDC_MAIN_CB_VIEW1)->MoveWindow( 325,   9, 150,  15);
 	GetDlgItem(IDC_MAIN_CB_VIEW2)->MoveWindow( 785,   9, 150,  15);
 	GetDlgItem(IDC_MAIN_CB_VIEW3)->MoveWindow( 325, 489, 150,  15);
@@ -153,7 +145,7 @@ void CFilterSimDlg::InitContorls()
 	GetDlgItem(IDC_MAIN_LB_LIB  )->MoveWindow( 950,  93,  45,  15);
 	GetDlgItem(IDC_MAIN_CB_LIB  )->MoveWindow(1000,  90, 100,  20);
 	GetDlgItem(IDC_MAIN_PC_TAB1 )->MoveWindow( 950, 115, 395, 335);
-	GetDlgItem(IDC_MAIN_LC_ITEM )->MoveWindow( 950, 500, 395, 460);
+	GetDlgItem(IDC_MAIN_LC_ITEM )->MoveWindow( 950, 500, 395, 460);*/
 
 	
 	m_wndLc.AddColumn(1, _T("No.")		,  30);
@@ -164,9 +156,15 @@ void CFilterSimDlg::InitContorls()
 	m_wndLc.AddColumn(6, _T("Time")		,  60);
 	m_wndLc.SetExtendedStyle(LVS_EX_FULLROWSELECT);
 
-	CComboBox* pCB = (CComboBox*)GetDlgItem(IDC_MAIN_CB_LIB);
+	CComboBox* pCB = NULL;
+	pCB = (CComboBox*)GetDlgItem(IDC_MAIN_CB_LIB);
 	pCB->AddString(_T("EasyImage"));
 	pCB->AddString(_T("EasyMatrixCode"));
+	pCB->EnableWindow(FALSE);
+
+	GetDlgItem(IDC_MAIN_CB_INPUT)->EnableWindow(FALSE);
+	GetDlgItem(IDC_MAIN_CB_OUTPUT)->EnableWindow(FALSE);
+	GetDlgItem(IDC_MAIN_CHK_USE)->EnableWindow(FALSE);
 
 	CCreateContext context;
 	ZeroMemory(&context, sizeof(context));
@@ -174,18 +172,29 @@ void CFilterSimDlg::InitContorls()
 	CRect rect=CRect(0,0,0,0);
 
 	//----- Create Form Window -----//
-	pView = (CView*)RUNTIME_CLASS(CFormTab1)->CreateObject();
+	// Form TAB1
+	pView = (CView*)RUNTIME_CLASS(CFormImg)->CreateObject();
 	GetDlgItem(IDC_MAIN_PC_TAB1)->GetWindowRect(&rect);
 	ScreenToClient(&rect);
-	pView->Create(NULL, NULL, WS_CHILD, rect, this, IDD_FORM_TAB1, &context);
+	pView->Create(NULL, NULL, WS_CHILD, rect, this, IDD_FORM_IMAGE, &context);
 	pView->OnInitialUpdate();
-	m_pFormTab1 = pView;
+	m_pFormImg = pView;
 
-	m_pFormTab1->ShowWindow(SW_HIDE);
+	m_pFormImg->ShowWindow(SW_HIDE);
+	
+	// Form Matrix
+	pView = (CView*)RUNTIME_CLASS(CFormMtx)->CreateObject();
+	GetDlgItem(IDC_MAIN_PC_TAB1)->GetWindowRect(&rect);
+	ScreenToClient(&rect);
+	pView->Create(NULL, NULL, WS_CHILD, rect, this, IDD_FORM_MATRIX, &context);
+	pView->OnInitialUpdate();
+	m_pFormMtx = pView;
+
+	m_pFormMtx->ShowWindow(SW_HIDE);
 	GetDlgItem(IDC_MAIN_PC_TAB1)->DestroyWindow();
 }
 
-void CFilterSimDlg::OnBnClickedBtnAddList()
+void CFilterSimDlg::OnBnClickedBtnAddItem()
 {
 	int n = m_wndLc.GetItemCount();
 	
@@ -256,22 +265,9 @@ void CFilterSimDlg::OnBnClickedBtnLoad()
 		{
 			fileName = dlg.GetName();
 
-			CImgInfo info;
-
-			try
-			{
-				CT2CA String (strPath);
-				std::string str(String);  
-				EImageBW8* pImg = info.GetImage();
-				pImg->Load(str);
-			}
-			catch (EException& e)
-			{
-				CString strErr = (CString)e.What().c_str();
-				AfxMessageBox(strErr);
-				return;
-			}
-
+			CEImage info;
+			info.OnLoadImage(strPath);
+			
 			info.SetFileName(fileName);
 
 			m_vImgInfo.push_back(info);
@@ -285,92 +281,7 @@ void CFilterSimDlg::OnBnClickedBtnLoad()
 
 void CFilterSimDlg::OnBnClickedBtnExecute()
 {
-	int n = m_wndLc.GetItemCount();
-
-	for (int i=0; i<n; i++)
-	{
-		CString use		= m_wndLc.GetItemText(i,2);
-		if (use == _T("F"))
-			continue;
-
-		CString filter	= m_wndLc.GetItemText(i,3);
-		CString imgIn	= m_wndLc.GetItemText(i,4);
-		CString imgOut	= m_wndLc.GetItemText(i,5);
-
-		EImageBW8 *pIn = NULL, *pOut = NULL;
-		for (vector<CImgInfo>::iterator it = m_vImgInfo.begin(); it != m_vImgInfo.end(); ++it)
-		{
-			CString fileName=_T("");
-			it->GetFileName(fileName);
-
-			if (fileName == imgIn)
-				pIn = it->GetImage();
-			
-			if (fileName == imgOut)
-				pOut = it->GetImage();
-		}
-
-		double time=0;
-		if (filter == _T("Uniform"))			CEImgFilter::OnFilter_Uniform		(pIn, pOut, time);
-		else if (filter == _T("Uniform3x3"))	CEImgFilter::OnFilter_Uniform3x3	(pIn, pOut, time);
-		else if (filter == _T("Uniform5x5"))	CEImgFilter::OnFilter_Uniform5x5	(pIn, pOut, time);
-		else if (filter == _T("Uniform7x7"))	CEImgFilter::OnFilter_Uniform7x7	(pIn, pOut, time);
-		else if (filter == _T("Gaussian"))		CEImgFilter::OnFilter_Gaussian		(pIn, pOut, time);
-		else if (filter == _T("Gaussian3x3"))	CEImgFilter::OnFilter_Gaussian3x3	(pIn, pOut, time);
-		else if (filter == _T("Gaussian5x5"))	CEImgFilter::OnFilter_Gaussian5x5	(pIn, pOut, time);
-		else if (filter == _T("Gaussian7x7"))	CEImgFilter::OnFilter_Gaussian7x7	(pIn, pOut, time);
-		else if (filter == _T("Lowpass1"))		CEImgFilter::OnFilter_Lowpass1		(pIn, pOut, time);
-		else if (filter == _T("Lowpass2"))		CEImgFilter::OnFilter_Lowpass2		(pIn, pOut, time);
-		else if (filter == _T("Highpass1"))		CEImgFilter::OnFilter_Highpass1		(pIn, pOut, time);
-		else if (filter == _T("Highpass2"))		CEImgFilter::OnFilter_Highpass2		(pIn, pOut, time);
-		else if (filter == _T("Gradient"))		CEImgFilter::OnFilter_Gradient		(pIn, pOut, time);
-		else if (filter == _T("GradientX"))		CEImgFilter::OnFilter_GradientX		(pIn, pOut, time);
-		else if (filter == _T("GradientY"))		CEImgFilter::OnFilter_GradientY		(pIn, pOut, time);
-		else if (filter == _T("Sobel"))			CEImgFilter::OnFilter_Sobel			(pIn, pOut, time);
-		else if (filter == _T("SobelX"))		CEImgFilter::OnFilter_SobelX		(pIn, pOut, time);
-		else if (filter == _T("SobelY"))		CEImgFilter::OnFilter_SobelY		(pIn, pOut, time);
-		else if (filter == _T("Prewitt"))		CEImgFilter::OnFilter_Prewitt		(pIn, pOut, time);
-		else if (filter == _T("PrewittX"))		CEImgFilter::OnFilter_PrewittX		(pIn, pOut, time);
-		else if (filter == _T("PrewittY"))		CEImgFilter::OnFilter_PrewittY		(pIn, pOut, time);
-		else if (filter == _T("Roberts"))		CEImgFilter::OnFilter_Roberts		(pIn, pOut, time);
-		else if (filter == _T("LaplacianX"))	CEImgFilter::OnFilter_LaplacianX	(pIn, pOut, time);
-		else if (filter == _T("LaplacianY"))	CEImgFilter::OnFilter_LaplacianY	(pIn, pOut, time);
-		else if (filter == _T("Laplacian4"))	CEImgFilter::OnFilter_Laplacian4	(pIn, pOut, time);
-		else if (filter == _T("Laplacian8"))	CEImgFilter::OnFilter_Laplacian8	(pIn, pOut, time);
-
-		CString strTime=_T("");
-		strTime.Format(_T("%.3f"),time);
-		m_wndLc.SetItemText(i,6,strTime);
-
-		for (vector<CImgInfo>::iterator it = m_vImgInfo.begin(); it != m_vImgInfo.end(); ++it)
-		{
-			CString fileName=_T("");
-			it->GetFileName(fileName);
-
-			if (fileName == imgOut)
-			{
-				it->SetImage(pOut);
-				break;
-			}
-		}
-	}
-
-	for (int i=0; i<4; i++)
-	{
-		CString name = GetTextCBSelected(IDC_MAIN_CB_VIEW1+i);
-		if (name == _T("")) continue;
-
-		vector<CImgInfo>::iterator it;
-		for (it = m_vImgInfo.begin(); it != m_vImgInfo.end(); ++it)
-		{
-			CString fileName=_T("");
-			it->GetFileName(fileName);
-			if (name == fileName) 
-				break;
-		}
-
-		DrawImage(i, name);
-	}
+	OnExecute();
 }
 
 
@@ -390,7 +301,7 @@ void CFilterSimDlg::DrawImage(int nViewIdx, CString strFileName)
 	CRect rect;
 	pWnd->GetClientRect(&rect);
 	
-	vector<CImgInfo>::iterator it;
+	vector<CEImage>::iterator it;
 	for (it = m_vImgInfo.begin(); it != m_vImgInfo.end(); ++it)
 	{
 		CString fileName=_T("");
@@ -398,27 +309,20 @@ void CFilterSimDlg::DrawImage(int nViewIdx, CString strFileName)
 		if (strFileName == fileName) break;
 	}
 	
-	try
-	{
-		EImageBW8* pImg = it->GetImage();
-
-		float fH = (float)rect.Width()/pImg->GetWidth();
-		float fV = (float)rect.Height()/pImg->GetHeight();
-		pImg->Draw(pWnd->GetDC()->GetSafeHdc(), fH, fV);
-	}
-	catch (EException& e)
-	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
-		return;
-	}
+	int w=0, h=0;
+	it->GetWidth(w);
+	it->GetHeight(h);
+	float fH = (float)rect.Width()/w;
+	float fV = (float)rect.Height()/h;
+	it->OnDrawImage(pWnd, fH, fV);
+	it->OnDrawROIFrame(pWnd, fH, fV);
 }
 
 void CFilterSimDlg::OnCbnSelchangeCbView1()
 {
 	CString name = GetTextCBSelected(IDC_MAIN_CB_VIEW1);
 
-	vector<CImgInfo>::iterator it;
+	vector<CEImage>::iterator it;
 	for (it = m_vImgInfo.begin(); it != m_vImgInfo.end(); ++it)
 	{
 		CString fileName=_T("");
@@ -441,7 +345,7 @@ void CFilterSimDlg::OnCbnSelchangeCbView2()
 {
 	CString name = GetTextCBSelected(IDC_MAIN_CB_VIEW2);
 
-	vector<CImgInfo>::iterator it;
+	vector<CEImage>::iterator it;
 	for (it = m_vImgInfo.begin(); it != m_vImgInfo.end(); ++it)
 	{
 		CString fileName=_T("");
@@ -464,7 +368,7 @@ void CFilterSimDlg::OnCbnSelchangeCbView3()
 {
 	CString name = GetTextCBSelected(IDC_MAIN_CB_VIEW3);
 
-	std::vector<CImgInfo>::iterator it;
+	std::vector<CEImage>::iterator it;
 	for (it = m_vImgInfo.begin(); it != m_vImgInfo.end(); ++it)
 	{
 		CString fileName=_T("");
@@ -487,7 +391,7 @@ void CFilterSimDlg::OnCbnSelchangeCbView4()
 {
 	CString name = GetTextCBSelected(IDC_MAIN_CB_VIEW4);
 
-	vector<CImgInfo>::iterator it;
+	vector<CEImage>::iterator it;
 	for (it = m_vImgInfo.begin(); it != m_vImgInfo.end(); ++it)
 	{
 		CString fileName=_T("");
@@ -515,7 +419,7 @@ void CFilterSimDlg::OnBnClickedBtnNewImg()
 		int w = dlg.GetWidth();
 		int h = dlg.GetHeight();
 
-		CImgInfo info;
+		CEImage info;
 
 		try
 		{
@@ -558,7 +462,7 @@ void CFilterSimDlg::OnBnClickedBtnDelimg()
 	{
 		CString fileName = dlg.GetName();
 		
-		for (std::vector<CImgInfo>::iterator it = m_vImgInfo.begin(); it != m_vImgInfo.end();)
+		for (std::vector<CEImage>::iterator it = m_vImgInfo.begin(); it != m_vImgInfo.end();)
 		{
 			CString name=_T("");
 			it->GetFileName(name);
@@ -573,27 +477,68 @@ void CFilterSimDlg::OnBnClickedBtnDelimg()
 			}
 		}
 
+		for (std::vector<StItemInfo>::iterator it = m_vItmInfo.begin(); it != m_vItmInfo.end(); ++it)
+		{
+			if (it->strInput == fileName)
+				it->strInput = _T("");
+			if (it->strOutput == fileName)
+				it->strOutput = _T("");
+		}
+
 		UpdateCBList();
+		UpdateItemList();
 	}
+
+	
 }
 
 void CFilterSimDlg::UpdateCBList()
 {
-	for (int i=0; i<4; i++)
+	// Picture Control Combo Box 4 + Intput + Output
+	for (int i=0; i<7; i++)
 	{
 		CComboBox* pCB = (CComboBox*)GetDlgItem(IDC_MAIN_CB_VIEW1+i);
-		pCB->ResetContent();
+		CString strLastText=_T("");
+		int sel = pCB->GetCurSel();
 
-		for (std::vector<CImgInfo>::iterator it = m_vImgInfo.begin(); it != m_vImgInfo.end(); ++it)
+		if (sel != -1)
+		{
+			pCB->GetLBText(sel, strLastText);
+		}
+
+		pCB->ResetContent();
+		for (std::vector<CEImage>::iterator it = m_vImgInfo.begin(); it != m_vImgInfo.end(); ++it)
 		{
 			CString name=_T("");
 			it->GetFileName(name);
 			pCB->AddString(name);
-		}
-	}
 
-	CFormTab1* pTab1 = (CFormTab1*)m_pFormTab1;
-	pTab1->UpdateCBList(m_vImgInfo);
+			if (i > 3)
+			{
+				for (int j=0; j<it->GetRoiCount(); j++)
+				{
+					it->GetRoiName(j,name);
+					pCB->AddString(name);
+				}
+			}
+		}
+		
+		if (sel != -1)
+			pCB->SetCurSel(pCB->FindString(0, strLastText));
+	}
+}
+
+void CFilterSimDlg::UpdateItemList()
+{
+	int n = m_wndLc.GetItemCount();
+
+	for (int i=0; i<n; i++)
+	{
+		StItemInfo info = m_vItmInfo.at(i);
+
+		m_wndLc.SetItemText(i,4,info.strInput);
+		m_wndLc.SetItemText(i,5,info.strOutput);
+	}
 }
 
 void CFilterSimDlg::UpdateItemColor()
@@ -668,7 +613,7 @@ void CFilterSimDlg::OnBnClickedBtnSaveimg()
 	{
 		CString fileName = dlg.GetName();
 
-		std::vector<CImgInfo>::iterator it;
+		std::vector<CEImage>::iterator it;
 		for (it = m_vImgInfo.begin(); it != m_vImgInfo.end(); ++it)
 		{
 			CString name=_T("");
@@ -709,27 +654,58 @@ void CFilterSimDlg::OnNMClickMainLcItem(NMHDR *pNMHDR, LRESULT *pResult)
 		nRow = m_wndLc.GetNextSelectedItem(pos);
 
 	CString strLib = m_wndLc.GetItemText(nRow, 3);
-	CComboBox* pCB = (CComboBox*)GetDlgItem(IDC_MAIN_CB_LIB);
-	if (strLib == _T("EasyMatrixCode"))
+	CComboBox* pCB_Lib = (CComboBox*)GetDlgItem(IDC_MAIN_CB_LIB);
+
+	if (nRow == -1)
 	{
-		int sel = pCB->FindString(0,strLib);
-		pCB->SetCurSel(sel);
-	}
-	else if (strLib == _T(""))
-	{
-		m_pFormTab1->ShowWindow(SW_HIDE);
-		pCB->SetCurSel(-1);
+		pCB_Lib->EnableWindow(FALSE);
+		GetDlgItem(IDC_MAIN_CB_INPUT)->EnableWindow(FALSE);
+		GetDlgItem(IDC_MAIN_CB_OUTPUT)->EnableWindow(FALSE);
+		GetDlgItem(IDC_MAIN_CHK_USE)->EnableWindow(FALSE);
 	}
 	else
 	{
-		pCB->SetCurSel(0);
-		
-		m_pFormTab1->ShowWindow(SW_SHOW);
-		CFormTab1* pTab1 = (CFormTab1*)m_pFormTab1;
-		pTab1->SetSelectedRow(nRow);
+		pCB_Lib->EnableWindow(TRUE);
+		GetDlgItem(IDC_MAIN_CB_INPUT)->EnableWindow(TRUE);
+		GetDlgItem(IDC_MAIN_CB_OUTPUT)->EnableWindow(TRUE);
+		GetDlgItem(IDC_MAIN_CHK_USE)->EnableWindow(TRUE);
 
-		pTab1->UpdateControls(m_vItmInfo.at(nRow));
+		SetDlgItemInt(IDC_MAIN_LB_ROW, nRow);
 	}
+
+	if (strLib == _T("EasyMatrixCode"))
+	{
+		SetCBItembyText(IDC_MAIN_CB_LIB,strLib);
+
+		FormSwitching(EEasyMatrix);
+
+		GetDlgItem(IDC_MAIN_CB_INPUT)->EnableWindow(FALSE);
+	}
+	else if (strLib == _T(""))
+	{
+		FormSwitching(ENone);
+		pCB_Lib->SetCurSel(-1);
+	}
+	else
+	{
+		pCB_Lib->SetCurSel(0);
+		
+		FormSwitching(EEasyImage);
+
+		SetDlgItemInt(IDC_MAIN_LB_ROW, nRow);
+
+		CFormImg* pImg = (CFormImg*)m_pFormImg;
+		pImg->UpdateControls(m_vItmInfo.at(nRow));
+
+		GetDlgItem(IDC_MAIN_CB_INPUT)->EnableWindow(TRUE);
+	}
+
+	SetCBItembyText(IDC_MAIN_CB_INPUT,m_vItmInfo.at(nRow).strInput);
+	SetCBItembyText(IDC_MAIN_CB_OUTPUT,m_vItmInfo.at(nRow).strOutput);
+	
+	int state=0;
+	m_vItmInfo.at(nRow).bUse ? state=1 : state=0;
+	CheckDlgButton(IDC_MAIN_CHK_USE, state);
 
 	*pResult = 0;
 }
@@ -740,27 +716,258 @@ void CFilterSimDlg::OnCbnSelchangeMainCbLib()
 	CComboBox* pCB = (CComboBox*)GetDlgItem(IDC_MAIN_CB_LIB);
 	int sel = pCB->GetCurSel();
 
-	POSITION pos = NULL;
-	int nRow = -1;
-
-	pos = m_wndLc.GetFirstSelectedItemPosition();
-
-	if( NULL != pos )
-		nRow = m_wndLc.GetNextSelectedItem(pos);
-
 	switch (sel)
 	{
 	case 0 :
 		{
-			m_pFormTab1->ShowWindow(SW_SHOW);
-			CFormTab1* pTab1 = (CFormTab1*)m_pFormTab1;
-			pTab1->SetSelectedRow(nRow);
-			pTab1->ResetControls();
+			int nRow = GetDlgItemInt(IDC_MAIN_LB_ROW);
+			FormSwitching(EEasyImage);
+			CFormImg* pImg = (CFormImg*)m_pFormImg;
+			pImg->UpdateControls(m_vItmInfo.at(nRow));
+
+			GetDlgItem(IDC_MAIN_CB_INPUT)->EnableWindow(TRUE);
 		}
 		
 		break;
 	case 1 :
-		m_pFormTab1->ShowWindow(SW_HIDE);
+		FormSwitching(EEasyMatrix);
+		{
+			GetDlgItem(IDC_MAIN_CB_INPUT)->EnableWindow(FALSE);
+		}
 		break;
+	}
+}
+
+void CFilterSimDlg::SetCBItembyText(UINT ID, CString strText)
+{
+	CComboBox* pCB = (CComboBox*)GetDlgItem(ID);
+	int sel = pCB->FindString(0,strText);
+	pCB->SetCurSel(sel);
+}
+
+void CFilterSimDlg::FormSwitching(eAlgorithm eType)
+{
+	switch (eType)
+	{
+	case EEasyImage :
+		m_pFormImg->ShowWindow(SW_SHOW);
+		m_pFormMtx->ShowWindow(SW_HIDE);
+		break;
+	case EEasyMatrix : 
+		m_pFormImg->ShowWindow(SW_HIDE);
+		m_pFormMtx->ShowWindow(SW_SHOW);
+		break;
+	case ENone : 
+		m_pFormImg->ShowWindow(SW_HIDE);
+		m_pFormMtx->ShowWindow(SW_HIDE);
+	}
+}
+
+void CFilterSimDlg::OnBnClickedMainBtnApply()
+{
+	
+	int nRow = GetDlgItemInt(IDC_MAIN_LB_ROW);
+	CString strLib = GetTextCBSelected(IDC_MAIN_CB_LIB);
+	if (strLib == _T("EasyImage"))
+	{
+		CFormImg* pImg = (CFormImg*)m_pFormImg;
+		strLib = pImg->GetTextCBSelectedType();
+	}
+
+	CString strIn  = GetTextCBSelected(IDC_MAIN_CB_INPUT);
+	CString strOut = GetTextCBSelected(IDC_MAIN_CB_OUTPUT);
+	BOOL bChk = IsDlgButtonChecked(IDC_MAIN_CHK_USE);
+
+	UpdateItem(nRow, bChk, strLib, strIn, strOut);
+}
+
+void CFilterSimDlg::OnExecute()
+{
+	int n = m_wndLc.GetItemCount();
+
+	for (int i=0; i<n; i++)
+	{
+		double time=0;
+		bool bRet=false;
+
+		CString use	= m_wndLc.GetItemText(i,2);
+		if (use == _T("F"))
+			continue;
+
+		CString strLib = m_wndLc.GetItemText(i,3);
+		CString strIn  = m_wndLc.GetItemText(i,4);
+		CString strOut = m_wndLc.GetItemText(i,5);
+
+
+		EImageBW8 *pIn = NULL, *pOut = NULL;
+		for (vector<CEImage>::iterator it = m_vImgInfo.begin(); it != m_vImgInfo.end(); ++it)
+		{
+			CString fileName=_T("");
+			it->GetFileName(fileName);
+
+			if (fileName == strIn)
+				pIn = it->GetImage();
+
+			if (fileName == strOut)
+				pOut = it->GetImage();
+		}
+
+		if (strLib == _T("EasyMatrixCode"))
+		{
+			CEMatrix Mtx;
+			CString strResult = _T("");
+			
+			bRet = Mtx.OnExecute(pOut,strResult,time);
+			if (bRet == false) continue;
+
+			for (int k=0; k<4; k++)
+			{
+				CString strText = GetTextCBSelected(IDC_MAIN_CB_VIEW1+k);
+				if (strOut == strText)
+				{
+					CClientDC dc(GetDlgItem(IDC_MAIN_PC_VIEW1+k));
+					CRect rect;
+					GetDlgItem(IDC_MAIN_PC_VIEW1+k)->GetClientRect(&rect);
+
+					int w=0, h=0;
+					w = pOut->GetWidth();
+					h = pOut->GetHeight();
+					float fH = (float)rect.Width()/w;
+					float fV = (float)rect.Height()/h;
+
+					Mtx.OnDrawResult(GetDlgItem(IDC_MAIN_PC_VIEW1+k),true,fH,fV);
+				}
+			}
+		}
+		else
+		{
+			if (strLib == _T("Uniform"))			bRet = CEImgFilter::OnFilter_Uniform	(pIn, pOut, time);
+			else if (strLib == _T("Uniform3x3"))	bRet = CEImgFilter::OnFilter_Uniform3x3	(pIn, pOut, time);
+			else if (strLib == _T("Uniform5x5"))	bRet = CEImgFilter::OnFilter_Uniform5x5	(pIn, pOut, time);
+			else if (strLib == _T("Uniform7x7"))	bRet = CEImgFilter::OnFilter_Uniform7x7	(pIn, pOut, time);
+			else if (strLib == _T("Gaussian"))		bRet = CEImgFilter::OnFilter_Gaussian	(pIn, pOut, time);
+			else if (strLib == _T("Gaussian3x3"))	bRet = CEImgFilter::OnFilter_Gaussian3x3(pIn, pOut, time);
+			else if (strLib == _T("Gaussian5x5"))	bRet = CEImgFilter::OnFilter_Gaussian5x5(pIn, pOut, time);
+			else if (strLib == _T("Gaussian7x7"))	bRet = CEImgFilter::OnFilter_Gaussian7x7(pIn, pOut, time);
+			else if (strLib == _T("Lowpass1"))		bRet = CEImgFilter::OnFilter_Lowpass1	(pIn, pOut, time);
+			else if (strLib == _T("Lowpass2"))		bRet = CEImgFilter::OnFilter_Lowpass2	(pIn, pOut, time);
+			else if (strLib == _T("Highpass1"))		bRet = CEImgFilter::OnFilter_Highpass1	(pIn, pOut, time);
+			else if (strLib == _T("Highpass2"))		bRet = CEImgFilter::OnFilter_Highpass2	(pIn, pOut, time);
+			else if (strLib == _T("Gradient"))		bRet = CEImgFilter::OnFilter_Gradient	(pIn, pOut, time);
+			else if (strLib == _T("GradientX"))		bRet = CEImgFilter::OnFilter_GradientX	(pIn, pOut, time);
+			else if (strLib == _T("GradientY"))		bRet = CEImgFilter::OnFilter_GradientY	(pIn, pOut, time);
+			else if (strLib == _T("Sobel"))			bRet = CEImgFilter::OnFilter_Sobel		(pIn, pOut, time);
+			else if (strLib == _T("SobelX"))		bRet = CEImgFilter::OnFilter_SobelX		(pIn, pOut, time);
+			else if (strLib == _T("SobelY"))		bRet = CEImgFilter::OnFilter_SobelY		(pIn, pOut, time);
+			else if (strLib == _T("Prewitt"))		bRet = CEImgFilter::OnFilter_Prewitt	(pIn, pOut, time);
+			else if (strLib == _T("PrewittX"))		bRet = CEImgFilter::OnFilter_PrewittX	(pIn, pOut, time);
+			else if (strLib == _T("PrewittY"))		bRet = CEImgFilter::OnFilter_PrewittY	(pIn, pOut, time);
+			else if (strLib == _T("Roberts"))		bRet = CEImgFilter::OnFilter_Roberts	(pIn, pOut, time);
+			else if (strLib == _T("LaplacianX"))	bRet = CEImgFilter::OnFilter_LaplacianX	(pIn, pOut, time);
+			else if (strLib == _T("LaplacianY"))	bRet = CEImgFilter::OnFilter_LaplacianY	(pIn, pOut, time);
+			else if (strLib == _T("Laplacian4"))	bRet = CEImgFilter::OnFilter_Laplacian4	(pIn, pOut, time);
+			else if (strLib == _T("Laplacian8"))	bRet = CEImgFilter::OnFilter_Laplacian8	(pIn, pOut, time);
+
+			if (bRet == false) continue;
+			for (vector<CEImage>::iterator it = m_vImgInfo.begin(); it != m_vImgInfo.end(); ++it)
+			{
+				CString fileName=_T("");
+				it->GetFileName(fileName);
+
+				if (fileName == strOut)
+				{
+					it->SetImage(pOut);
+					break;
+				}
+			}
+
+			UpdateAllView();
+		}
+
+		CString strTime=_T("");
+		strTime.Format(_T("%.3f"),time);
+		m_wndLc.SetItemText(i,6,strTime);
+
+	}
+}
+
+void CFilterSimDlg::OnBnClickedMainBtnAddroi()
+{
+	CString strSelImg = GetTextCBSelected(IDC_MAIN_CB_IMGLIST);
+	bool bContinue=false;
+	std::vector<CEImage>::iterator it;
+	for (it = m_vImgInfo.begin(); it != m_vImgInfo.end(); it++)
+	{
+		CString name=_T("");
+		it->GetFileName(name);
+		if (strSelImg == name)
+		{
+			bContinue = true;
+			break;
+		}
+	}
+
+	if (bContinue == false)
+	{
+		CString msg = _T("ROI는 이미지에만 생성할 수 있습니다.");
+		MessageBox(msg,_T("Information"),MB_ICONINFORMATION);
+		return;
+	}
+
+	int nOrgX=0,nOrgY=0,nWidth=0,nHeight=0;
+	CString strName=_T("");
+	nOrgX	= GetDlgItemInt(IDC_MAIN_EDIT_ORGX);
+	nOrgY	= GetDlgItemInt(IDC_MAIN_EDIT_ORGY);
+	nWidth	= GetDlgItemInt(IDC_MAIN_EDIT_WIDTH);
+	nHeight = GetDlgItemInt(IDC_MAIN_EDIT_HEIGHT);
+	GetDlgItemText(IDC_MAIN_EDIT_ROINAME, strName);
+	
+	it->CreateRoi(nOrgX,nOrgY,nWidth,nHeight,strName);
+
+	UpdateCBList();
+	
+	UpdateAllView();
+}
+
+void CFilterSimDlg::OnBnClickedMainBtnDelroi()
+{
+	CString strSelRoi = GetTextCBSelected(IDC_MAIN_CB_IMGLIST);
+
+	std::vector<CEImage>::iterator it;
+	for (it = m_vImgInfo.begin(); it != m_vImgInfo.end(); it++)
+	{
+		for (int i=0; i<it->GetRoiCount(); i++)
+		{
+			CString strName=_T("");
+			it->GetRoiName(i, strName);
+
+			if (strName == strSelRoi)
+				it->DeleteRoi(strSelRoi);
+		}
+	}
+
+	UpdateCBList();
+
+	UpdateAllView();
+}
+	
+
+void CFilterSimDlg::UpdateAllView()
+{
+	for (int i=0; i<4; i++)
+	{
+		CString name = GetTextCBSelected(IDC_MAIN_CB_VIEW1+i);
+		if (name == _T("")) continue;
+
+		vector<CEImage>::iterator it;
+		for (it = m_vImgInfo.begin(); it != m_vImgInfo.end(); ++it)
+		{
+			CString fileName=_T("");
+			it->GetFileName(fileName);
+			if (name == fileName) 
+				break;
+		}
+
+		DrawImage(i, name);
 	}
 }

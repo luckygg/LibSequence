@@ -6,7 +6,9 @@
 #include "NameDlg.h"
 #include "afxdialogex.h"
 
-
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#endif
 // CNameDlgdialog
 
 IMPLEMENT_DYNAMIC(CNameDlg, CDialogEx)

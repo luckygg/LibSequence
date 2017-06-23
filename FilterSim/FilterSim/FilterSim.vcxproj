@@ -156,6 +156,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Program Files %28x86%29\Euresys\Open eVision 2.0\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -179,7 +180,9 @@
     <None Include="res\FilterSim.rc2" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="FormTab1.h" />
+    <ClInclude Include="EMatrix.h" />
+    <ClInclude Include="FormMatrix.h" />
+    <ClInclude Include="FormImage.h" />
     <ClInclude Include="include\Base\StopWatch.h" />
     <ClInclude Include="include\UI\ListEx.h" />
     <ClInclude Include="SelectDlg.h" />
@@ -187,7 +190,7 @@
     <ClInclude Include="EImgFilter.h" />
     <ClInclude Include="FilterSim.h" />
     <ClInclude Include="FilterSimDlg.h" />
-    <ClInclude Include="ImgInfo.h" />
+    <ClInclude Include="EImage.h" />
     <ClInclude Include="include\Base\FileDialogEx.h" />
     <ClInclude Include="include\Base\FolderEx.h" />
     <ClInclude Include="NewDlg.h" />
@@ -196,14 +199,16 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="FormTab1.cpp" />
+    <ClCompile Include="EMatrix.cpp" />
+    <ClCompile Include="FormMatrix.cpp" />
+    <ClCompile Include="FormImage.cpp" />
     <ClCompile Include="include\UI\ListEx.cpp" />
     <ClCompile Include="SelectDlg.cpp" />
     <ClCompile Include="NameDlg.cpp" />
     <ClCompile Include="EImgFilter.cpp" />
     <ClCompile Include="FilterSim.cpp" />
     <ClCompile Include="FilterSimDlg.cpp" />
-    <ClCompile Include="ImgInfo.cpp" />
+    <ClCompile Include="EImage.cpp" />
     <ClCompile Include="include\Base\FileDialogEx.cpp" />
     <ClCompile Include="include\Base\FolderEx.cpp" />
     <ClCompile Include="NewDlg.cpp" />

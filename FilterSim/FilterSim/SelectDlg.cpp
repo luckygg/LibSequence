@@ -6,12 +6,14 @@
 #include "SelectDlg.h"
 #include "afxdialogex.h"
 
-
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#endif
 // CSelectDlg dialog
 
 IMPLEMENT_DYNAMIC(CSelectDlg, CDialogEx)
 
-CSelectDlg::CSelectDlg(std::vector<CImgInfo> vImgInfo, CWnd* pParent /*=NULL*/)
+CSelectDlg::CSelectDlg(std::vector<CEImage> vImgInfo, CWnd* pParent /*=NULL*/)
 	: CDialogEx(CSelectDlg::IDD, pParent)
 {
 	m_strName = _T("");
@@ -43,7 +45,7 @@ BOOL CSelectDlg::OnInitDialog()
 
 	CComboBox* pCB = (CComboBox*)GetDlgItem(IDC_SEL_CB_IMAGE);
 
-	std::vector<CImgInfo>::iterator it;
+	std::vector<CEImage>::iterator it;
 	for (it = m_vImgInfo.begin(); it != m_vImgInfo.end(); ++it)
 	{
 		CString strName = _T("");

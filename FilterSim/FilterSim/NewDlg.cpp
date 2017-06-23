@@ -6,12 +6,14 @@
 #include "NewDlg.h"
 #include "afxdialogex.h"
 
-
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#endif
 // CNewDlg dialog
 
 IMPLEMENT_DYNAMIC(CNewDlg, CDialogEx)
 
-CNewDlg::CNewDlg(int nCnt, std::vector<CImgInfo> vImgInfo, CWnd* pParent /*=NULL*/)
+CNewDlg::CNewDlg(int nCnt, std::vector<CEImage> vImgInfo, CWnd* pParent /*=NULL*/)
 	: CDialogEx(CNewDlg::IDD, pParent)
 
 {
@@ -53,7 +55,7 @@ BOOL CNewDlg::OnInitDialog()
 
 	CComboBox* pCB = (CComboBox*)GetDlgItem(IDC_NEW_CB_REF);
 
-	std::vector<CImgInfo>::iterator it;
+	std::vector<CEImage>::iterator it;
 	for (it = m_vImgInfo.begin(); it != m_vImgInfo.end(); ++it)
 	{
 		CString strName = _T("");
@@ -86,7 +88,7 @@ void CNewDlg::OnCbnSelchangeNewCbRef()
 
 	pCB->GetLBText(sel,strName);
 
-	std::vector<CImgInfo>::iterator it;
+	std::vector<CEImage>::iterator it;
 	for (it = m_vImgInfo.begin(); it != m_vImgInfo.end(); ++it)
 	{
 		CString fileName=_T("");

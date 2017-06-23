@@ -1,5 +1,5 @@
 #pragma once
-#include "ImgInfo.h"
+#include "EImage.h"
 
 // CNewDlg dialog
 
@@ -8,7 +8,7 @@ class CNewDlg : public CDialogEx
 	DECLARE_DYNAMIC(CNewDlg)
 
 public:
-	CNewDlg(int nCnt, std::vector<CImgInfo> vImgInfo, CWnd* pParent = NULL);   // standard constructor
+	CNewDlg(int nCnt, std::vector<CEImage> vImgInfo, CWnd* pParent = NULL);   // standard constructor
 	virtual ~CNewDlg();
 
 public :
@@ -16,7 +16,7 @@ public :
 	int GetWidth() { return m_nWidth; }
 	int GetHeight() { return m_nHeight; }
 private :
-	std::vector<CImgInfo> m_vImgInfo;
+	std::vector<CEImage> m_vImgInfo;
 	CString m_strName;
 	int m_nCnt;
 	int m_nWidth;
