@@ -10,6 +10,10 @@ private :
 	std::vector<EROIBW8> Roi;
 public :
 	EImageBW8* GetImage() { return &Img; }
+	EROIBW8* GetROI(CString strName);
+	bool HasROI(CString strName);
+	CEImage* GetEImage() { return this; }
+
 	bool GetRoiPlacement(CString strName, int &nOrgX, int &nOrgY, int &nWidth, int &nHeight);
 	bool OnLoadImage(CString strPath);
 	bool OnDrawImage(CWnd* pCWnd, float fH=1.0, float fV=1.0);

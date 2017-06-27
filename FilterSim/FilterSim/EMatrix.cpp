@@ -33,6 +33,32 @@ bool CEMatrix::SetTimeoutMicroSec(int nTime)
 
 bool CEMatrix::OnExecute(EImageBW8 *pSrc, CString &strResult, double &dTime)
 {
+	if (pSrc == NULL) return false;
+	try
+	{
+		CStopWatch time;
+		time.Start();
+		m_MtxResult = m_MtxReader.Read(*pSrc);
+		time.Stop();
+		dTime = time.GetTimeMs();
+
+		std::string result = m_MtxResult.GetDecodedString();
+		strResult = (CString)result.c_str();
+
+		return true;
+	}
+	catch (EException& e)
+	{
+		CString strErr = (CString)e.What().c_str();
+		AfxMessageBox(strErr);
+		strResult = _T("None");
+		return false;
+	}
+}
+
+bool CEMatrix::OnExecute(EROIBW8 *pSrc, CString &strResult, double &dTime)
+{
+	if (pSrc == NULL) return false;
 	try
 	{
 		CStopWatch time;

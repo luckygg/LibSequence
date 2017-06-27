@@ -240,3 +240,60 @@ bool CEImage::GetFileName(CString &strValue)
 	}
 }
 
+bool CEImage::HasROI(CString strName)
+{
+	try
+	{
+		bool bHasRoi = false;
+		std::vector<EROIBW8>::iterator it;
+		for (it = Roi.begin(); it != Roi.end(); it++)
+		{
+			if (strName == (CString)it->GetTitle().c_str())
+			{
+				bHasRoi = true;
+				break;
+			}
+		}
+
+		return bHasRoi;
+	}
+	catch (EException& e)
+	{
+		CString strErr = (CString)e.What().c_str();
+		AfxMessageBox(strErr);
+		return false;
+	}
+}
+
+EROIBW8* CEImage::GetROI(CString strName)
+{
+	try
+	{
+		//std::vector<EBaseROI*> rois = Img.GetSubBaseROIs();
+		//for (int i=0; i<rois.size(); i++)
+		//{
+		//	EBaseROI* pBase = rois.at(i);
+		//	std::string title = pBase->GetTitle();
+		//	if ((CString)title.c_str() == strName)
+		//		pRoi = (EROIBW8*)pBase; 
+		//}
+
+		int nCnt=0;
+		std::vector<EROIBW8>::iterator it;
+		for (it = Roi.begin(); it != Roi.end(); it++)
+		{
+			if (strName == (CString)it->GetTitle().c_str())
+				break;
+			else
+				nCnt++;
+		}
+
+		return &Roi.at(nCnt);
+	}
+	catch (EException& e)
+	{
+		CString strErr = (CString)e.What().c_str();
+		AfxMessageBox(strErr);
+		return NULL;
+	}
+}

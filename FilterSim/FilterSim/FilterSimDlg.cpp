@@ -518,6 +518,7 @@ void CFilterSimDlg::UpdateCBList()
 				for (int j=0; j<it->GetRoiCount(); j++)
 				{
 					it->GetRoiName(j,name);
+					name = _T(" - ") + name;
 					pCB->AddString(name);
 				}
 			}
@@ -784,11 +785,15 @@ void CFilterSimDlg::OnBnClickedMainBtnApply()
 void CFilterSimDlg::OnExecute()
 {
 	int n = m_wndLc.GetItemCount();
-
+	CEImage *pIn = NULL, *pOut = NULL;
+	CEMatrix Mtx;
 	for (int i=0; i<n; i++)
 	{
 		double time=0;
 		bool bRet=false;
+		bool bInRoi=false, bOutRoi=false;
+		
+		//CEMatrix Mtx;
 
 		CString use	= m_wndLc.GetItemText(i,2);
 		if (use == _T("F"))
@@ -798,75 +803,85 @@ void CFilterSimDlg::OnExecute()
 		CString strIn  = m_wndLc.GetItemText(i,4);
 		CString strOut = m_wndLc.GetItemText(i,5);
 
+		if (strIn.Find(_T(" - ")) == 0)
+		{
+			int len = strIn.GetLength();
+			strIn = strIn.Right(len-3);
+			bInRoi = true;
+		}
 
-		EImageBW8 *pIn = NULL, *pOut = NULL;
+		if (strOut.Find(_T(" - ")) == 0)
+		{
+			int len = strOut.GetLength();
+			strOut = strOut.Right(len-3);
+			bOutRoi = true;
+		}
+
+		//CEImage *pIn = NULL, *pOut = NULL;
 		for (vector<CEImage>::iterator it = m_vImgInfo.begin(); it != m_vImgInfo.end(); ++it)
 		{
-			CString fileName=_T("");
-			it->GetFileName(fileName);
+			if (bInRoi == true || bOutRoi == true)
+			{
+				if (it->HasROI(strIn) == true)
+					pIn = it->GetEImage();
 
-			if (fileName == strIn)
-				pIn = it->GetImage();
+				if (it->HasROI(strOut) == true)
+				{
+					pOut = it->GetEImage();
+				}
+			}
+			else
+			{
+				CString fileName=_T("");
+				it->GetFileName(fileName);
 
-			if (fileName == strOut)
-				pOut = it->GetImage();
+				if (fileName == strIn)
+					pIn = it->GetEImage();
+
+				if (fileName == strOut)
+					pOut = it->GetEImage();
+			}
 		}
 
 		if (strLib == _T("EasyMatrixCode"))
 		{
-			CEMatrix Mtx;
+			//CEMatrix Mtx;
 			CString strResult = _T("");
-			
-			bRet = Mtx.OnExecute(pOut,strResult,time);
+			if (bOutRoi == true)
+				bRet = Mtx.OnExecute(pOut->GetROI(strOut),strResult,time);
+			else
+				bRet = Mtx.OnExecute(pOut->GetImage(),strResult,time);
+
 			if (bRet == false) continue;
-
-			for (int k=0; k<4; k++)
-			{
-				CString strText = GetTextCBSelected(IDC_MAIN_CB_VIEW1+k);
-				if (strOut == strText)
-				{
-					CClientDC dc(GetDlgItem(IDC_MAIN_PC_VIEW1+k));
-					CRect rect;
-					GetDlgItem(IDC_MAIN_PC_VIEW1+k)->GetClientRect(&rect);
-
-					int w=0, h=0;
-					w = pOut->GetWidth();
-					h = pOut->GetHeight();
-					float fH = (float)rect.Width()/w;
-					float fV = (float)rect.Height()/h;
-
-					Mtx.OnDrawResult(GetDlgItem(IDC_MAIN_PC_VIEW1+k),true,fH,fV);
-				}
-			}
 		}
 		else
 		{
-			if (strLib == _T("Uniform"))			bRet = CEImgFilter::OnFilter_Uniform	(pIn, pOut, time);
-			else if (strLib == _T("Uniform3x3"))	bRet = CEImgFilter::OnFilter_Uniform3x3	(pIn, pOut, time);
-			else if (strLib == _T("Uniform5x5"))	bRet = CEImgFilter::OnFilter_Uniform5x5	(pIn, pOut, time);
-			else if (strLib == _T("Uniform7x7"))	bRet = CEImgFilter::OnFilter_Uniform7x7	(pIn, pOut, time);
-			else if (strLib == _T("Gaussian"))		bRet = CEImgFilter::OnFilter_Gaussian	(pIn, pOut, time);
-			else if (strLib == _T("Gaussian3x3"))	bRet = CEImgFilter::OnFilter_Gaussian3x3(pIn, pOut, time);
-			else if (strLib == _T("Gaussian5x5"))	bRet = CEImgFilter::OnFilter_Gaussian5x5(pIn, pOut, time);
-			else if (strLib == _T("Gaussian7x7"))	bRet = CEImgFilter::OnFilter_Gaussian7x7(pIn, pOut, time);
-			else if (strLib == _T("Lowpass1"))		bRet = CEImgFilter::OnFilter_Lowpass1	(pIn, pOut, time);
-			else if (strLib == _T("Lowpass2"))		bRet = CEImgFilter::OnFilter_Lowpass2	(pIn, pOut, time);
-			else if (strLib == _T("Highpass1"))		bRet = CEImgFilter::OnFilter_Highpass1	(pIn, pOut, time);
-			else if (strLib == _T("Highpass2"))		bRet = CEImgFilter::OnFilter_Highpass2	(pIn, pOut, time);
-			else if (strLib == _T("Gradient"))		bRet = CEImgFilter::OnFilter_Gradient	(pIn, pOut, time);
-			else if (strLib == _T("GradientX"))		bRet = CEImgFilter::OnFilter_GradientX	(pIn, pOut, time);
-			else if (strLib == _T("GradientY"))		bRet = CEImgFilter::OnFilter_GradientY	(pIn, pOut, time);
-			else if (strLib == _T("Sobel"))			bRet = CEImgFilter::OnFilter_Sobel		(pIn, pOut, time);
-			else if (strLib == _T("SobelX"))		bRet = CEImgFilter::OnFilter_SobelX		(pIn, pOut, time);
-			else if (strLib == _T("SobelY"))		bRet = CEImgFilter::OnFilter_SobelY		(pIn, pOut, time);
-			else if (strLib == _T("Prewitt"))		bRet = CEImgFilter::OnFilter_Prewitt	(pIn, pOut, time);
-			else if (strLib == _T("PrewittX"))		bRet = CEImgFilter::OnFilter_PrewittX	(pIn, pOut, time);
-			else if (strLib == _T("PrewittY"))		bRet = CEImgFilter::OnFilter_PrewittY	(pIn, pOut, time);
-			else if (strLib == _T("Roberts"))		bRet = CEImgFilter::OnFilter_Roberts	(pIn, pOut, time);
-			else if (strLib == _T("LaplacianX"))	bRet = CEImgFilter::OnFilter_LaplacianX	(pIn, pOut, time);
-			else if (strLib == _T("LaplacianY"))	bRet = CEImgFilter::OnFilter_LaplacianY	(pIn, pOut, time);
-			else if (strLib == _T("Laplacian4"))	bRet = CEImgFilter::OnFilter_Laplacian4	(pIn, pOut, time);
-			else if (strLib == _T("Laplacian8"))	bRet = CEImgFilter::OnFilter_Laplacian8	(pIn, pOut, time);
+			if (strLib == _T("Uniform"))			bRet = CEImgFilter::OnFilter_Uniform	(pIn->GetImage(), pOut->GetImage(), time);
+			else if (strLib == _T("Uniform3x3"))	bRet = CEImgFilter::OnFilter_Uniform3x3	(pIn->GetImage(), pOut->GetImage(), time);
+			else if (strLib == _T("Uniform5x5"))	bRet = CEImgFilter::OnFilter_Uniform5x5	(pIn->GetImage(), pOut->GetImage(), time);
+			else if (strLib == _T("Uniform7x7"))	bRet = CEImgFilter::OnFilter_Uniform7x7	(pIn->GetImage(), pOut->GetImage(), time);
+			else if (strLib == _T("Gaussian"))		bRet = CEImgFilter::OnFilter_Gaussian	(pIn->GetImage(), pOut->GetImage(), time);
+			else if (strLib == _T("Gaussian3x3"))	bRet = CEImgFilter::OnFilter_Gaussian3x3(pIn->GetImage(), pOut->GetImage(), time);
+			else if (strLib == _T("Gaussian5x5"))	bRet = CEImgFilter::OnFilter_Gaussian5x5(pIn->GetImage(), pOut->GetImage(), time);
+			else if (strLib == _T("Gaussian7x7"))	bRet = CEImgFilter::OnFilter_Gaussian7x7(pIn->GetImage(), pOut->GetImage(), time);
+			else if (strLib == _T("Lowpass1"))		bRet = CEImgFilter::OnFilter_Lowpass1	(pIn->GetImage(), pOut->GetImage(), time);
+			else if (strLib == _T("Lowpass2"))		bRet = CEImgFilter::OnFilter_Lowpass2	(pIn->GetImage(), pOut->GetImage(), time);
+			else if (strLib == _T("Highpass1"))		bRet = CEImgFilter::OnFilter_Highpass1	(pIn->GetImage(), pOut->GetImage(), time);
+			else if (strLib == _T("Highpass2"))		bRet = CEImgFilter::OnFilter_Highpass2	(pIn->GetImage(), pOut->GetImage(), time);
+			else if (strLib == _T("Gradient"))		bRet = CEImgFilter::OnFilter_Gradient	(pIn->GetImage(), pOut->GetImage(), time);
+			else if (strLib == _T("GradientX"))		bRet = CEImgFilter::OnFilter_GradientX	(pIn->GetImage(), pOut->GetImage(), time);
+			else if (strLib == _T("GradientY"))		bRet = CEImgFilter::OnFilter_GradientY	(pIn->GetImage(), pOut->GetImage(), time);
+			else if (strLib == _T("Sobel"))			bRet = CEImgFilter::OnFilter_Sobel		(pIn->GetImage(), pOut->GetImage(), time);
+			else if (strLib == _T("SobelX"))		bRet = CEImgFilter::OnFilter_SobelX		(pIn->GetImage(), pOut->GetImage(), time);
+			else if (strLib == _T("SobelY"))		bRet = CEImgFilter::OnFilter_SobelY		(pIn->GetImage(), pOut->GetImage(), time);
+			else if (strLib == _T("Prewitt"))		bRet = CEImgFilter::OnFilter_Prewitt	(pIn->GetImage(), pOut->GetImage(), time);
+			else if (strLib == _T("PrewittX"))		bRet = CEImgFilter::OnFilter_PrewittX	(pIn->GetImage(), pOut->GetImage(), time);
+			else if (strLib == _T("PrewittY"))		bRet = CEImgFilter::OnFilter_PrewittY	(pIn->GetImage(), pOut->GetImage(), time);
+			else if (strLib == _T("Roberts"))		bRet = CEImgFilter::OnFilter_Roberts	(pIn->GetImage(), pOut->GetImage(), time);
+			else if (strLib == _T("LaplacianX"))	bRet = CEImgFilter::OnFilter_LaplacianX	(pIn->GetImage(), pOut->GetImage(), time);
+			else if (strLib == _T("LaplacianY"))	bRet = CEImgFilter::OnFilter_LaplacianY	(pIn->GetImage(), pOut->GetImage(), time);
+			else if (strLib == _T("Laplacian4"))	bRet = CEImgFilter::OnFilter_Laplacian4	(pIn->GetImage(), pOut->GetImage(), time);
+			else if (strLib == _T("Laplacian8"))	bRet = CEImgFilter::OnFilter_Laplacian8	(pIn->GetImage(), pOut->GetImage(), time);
 
 			if (bRet == false) continue;
 			for (vector<CEImage>::iterator it = m_vImgInfo.begin(); it != m_vImgInfo.end(); ++it)
@@ -876,18 +891,43 @@ void CFilterSimDlg::OnExecute()
 
 				if (fileName == strOut)
 				{
-					it->SetImage(pOut);
+					it->SetImage(pOut->GetImage());
 					break;
 				}
 			}
 
-			UpdateAllView();
+			//UpdateAllView();
 		}
 
 		CString strTime=_T("");
 		strTime.Format(_T("%.3f"),time);
 		m_wndLc.SetItemText(i,6,strTime);
 
+	}
+
+	//2017-06-27 그리는 순서가 명확치 않음. 이미지를 어떻게 그릴지 명확히 정해야 함.
+	UpdateAllView();
+
+	for (int k=0; k<4; k++)
+	{
+		CString strSelFile = GetTextCBSelected(IDC_MAIN_CB_VIEW1+k);
+
+		CString strImg=_T("");
+		pOut->GetFileName(strImg);
+		if (strSelFile == strImg)
+		{
+			CClientDC dc(GetDlgItem(IDC_MAIN_PC_VIEW1+k));
+			CRect rect;
+			GetDlgItem(IDC_MAIN_PC_VIEW1+k)->GetClientRect(&rect);
+
+			int w=0, h=0;
+			pOut->GetWidth(w);
+			pOut->GetHeight(h);
+			float fH = (float)rect.Width()/w;
+			float fV = (float)rect.Height()/h;
+
+			Mtx.OnDrawResult(GetDlgItem(IDC_MAIN_PC_VIEW1+k),true,fH,fV);
+		}
 	}
 }
 
@@ -932,6 +972,8 @@ void CFilterSimDlg::OnBnClickedMainBtnAddroi()
 void CFilterSimDlg::OnBnClickedMainBtnDelroi()
 {
 	CString strSelRoi = GetTextCBSelected(IDC_MAIN_CB_IMGLIST);
+	int len = strSelRoi.GetLength();
+	strSelRoi = strSelRoi.Right(len-3);
 
 	std::vector<CEImage>::iterator it;
 	for (it = m_vImgInfo.begin(); it != m_vImgInfo.end(); it++)
@@ -940,7 +982,7 @@ void CFilterSimDlg::OnBnClickedMainBtnDelroi()
 		{
 			CString strName=_T("");
 			it->GetRoiName(i, strName);
-
+			
 			if (strName == strSelRoi)
 				it->DeleteRoi(strSelRoi);
 		}
