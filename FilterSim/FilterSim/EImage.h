@@ -6,27 +6,32 @@ using namespace Euresys::Open_eVision_2_0;
 class CEImage
 {
 private :
-	EImageBW8 Img;
-	std::vector<EROIBW8> Roi;
+	EImageBW8 m_EImgBW8;
+	std::vector<EROIBW8> m_vERoiBW8;
+	
 public :
-	EImageBW8* GetImage() { return &Img; }
-	EROIBW8* GetROI(CString strName);
-	bool HasROI(CString strName);
 	CEImage* GetEImage() { return this; }
-
-	bool GetRoiPlacement(CString strName, int &nOrgX, int &nOrgY, int &nWidth, int &nHeight);
-	bool OnLoadImage(CString strPath);
+	EImageBW8* GetImage() { return &m_EImgBW8; }
+	EROIBW8* GetROI(CString strName);
+	
+	//----- Drawing -----//
 	bool OnDrawImage(CWnd* pCWnd, float fH=1.0, float fV=1.0);
 	bool OnDrawROIFrame(CWnd* pCWnd, float fH=1.0, float fV=1.0);
+	
+	//----- Image -----//
+	bool CreatImage(int nWidth, int nHeight, int nBpp);
+	bool SetImage (EImageBW8 *pImg);
+	bool OnLoadImage(CString strPath);
+	bool SetImageName(CString strName);
+	bool GetImageName(CString &strValue);
+	bool GetWidth(int &nValue);
+	bool GetHeight(int &nValue);
+
+	//----- ROI -----//
 	bool CreateRoi(int nOrgX, int nOrgY, int nWidth, int nHeight, CString strName=_T(""));
 	void DeleteRoi(CString strName=_T(""));
 	bool GetRoiName(int nIdx, CString &strValue);
-	bool GetWidth(int &nValue);
-	bool GetHeight(int &nValue);
-	bool CreatImage(int nWidth, int nHeight, int nBpp);
-	bool SetImage (EImageBW8 *pImg);
-	bool SetFileName(CString strName);
-	bool GetFileName(CString &strValue);
 	int GetRoiCount();
-	void clear();
+	bool GetRoiPlacement(CString strName, int &nOrgX, int &nOrgY, int &nWidth, int &nHeight);
+	bool HasROI(CString strName);
 };

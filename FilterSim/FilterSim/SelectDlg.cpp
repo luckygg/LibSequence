@@ -49,7 +49,7 @@ BOOL CSelectDlg::OnInitDialog()
 	for (it = m_vImgInfo.begin(); it != m_vImgInfo.end(); ++it)
 	{
 		CString strName = _T("");
-		if (it->GetFileName(strName) == true)
+		if (it->GetImageName(strName) == true)
 			pCB->AddString(strName);
 	}
 
@@ -69,13 +69,17 @@ void CSelectDlg::OnBnClickedDelBtnOk()
 	pCB->GetLBText(sel,strName);
 
 	m_strName = strName;
-
+	
+	m_vImgInfo.clear();
+	
 	OnOK();
 }
 
 
 void CSelectDlg::OnBnClickedSelBtnCancel()
 {
+	m_vImgInfo.clear();
+	
 	OnCancel();
 }
 

@@ -59,10 +59,10 @@ BOOL CNewDlg::OnInitDialog()
 	for (it = m_vImgInfo.begin(); it != m_vImgInfo.end(); ++it)
 	{
 		CString strName = _T("");
-		if (it->GetFileName(strName) == true)
+		if (it->GetImageName(strName) == true)
 			pCB->AddString(strName);
 	}
-
+	
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// EXCEPTION: OCX Property Pages should return FALSE
 }
@@ -73,6 +73,8 @@ void CNewDlg::OnBnClickedNewBtnOk()
 	GetDlgItemText(IDC_NEW_EDIT_NAME, m_strName);
 	m_nWidth = GetDlgItemInt(IDC_NEW_EDIT_WIDTH);
 	m_nHeight = GetDlgItemInt(IDC_NEW_EDIT_HEIGHT);
+	
+	m_vImgInfo.clear();
 	OnOK();
 }
 
@@ -92,7 +94,7 @@ void CNewDlg::OnCbnSelchangeNewCbRef()
 	for (it = m_vImgInfo.begin(); it != m_vImgInfo.end(); ++it)
 	{
 		CString fileName=_T("");
-		it->GetFileName(fileName);
+		it->GetImageName(fileName);
 		if (strName == fileName)
 		{
 			int w=0, h=0;

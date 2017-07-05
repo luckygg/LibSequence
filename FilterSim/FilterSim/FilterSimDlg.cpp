@@ -10,6 +10,7 @@
 #include "NameDlg.h"
 #include "NewDlg.h"
 #include "SelectDlg.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -57,6 +58,7 @@ BEGIN_MESSAGE_MAP(CFilterSimDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_MAIN_BTN_APPLY, &CFilterSimDlg::OnBnClickedMainBtnApply)
 	ON_BN_CLICKED(IDC_MAIN_BTN_ADDROI, &CFilterSimDlg::OnBnClickedMainBtnAddroi)
 	ON_BN_CLICKED(IDC_MAIN_BTN_DELROI, &CFilterSimDlg::OnBnClickedMainBtnDelroi)
+	ON_CBN_SELCHANGE(IDC_MAIN_CB_IMGLIST, &CFilterSimDlg::OnCbnSelchangeMainCbImglist)
 END_MESSAGE_MAP()
 
 
@@ -102,6 +104,8 @@ void CFilterSimDlg::OnPaint()
 	else
 	{
 		CDialogEx::OnPaint();
+
+		UpdateAllView();
 	}
 }
 
@@ -154,6 +158,7 @@ void CFilterSimDlg::InitContorls()
 	m_wndLc.AddColumn(4, _T("Input")	,  90);
 	m_wndLc.AddColumn(5, _T("Output")	,  90);
 	m_wndLc.AddColumn(6, _T("Time")		,  60);
+	m_wndLc.AddColumn(7, _T("Result")	,  50);
 	m_wndLc.SetExtendedStyle(LVS_EX_FULLROWSELECT);
 
 	CComboBox* pCB = NULL;
@@ -266,9 +271,16 @@ void CFilterSimDlg::OnBnClickedBtnLoad()
 			fileName = dlg.GetName();
 
 			CEImage info;
+
 			info.OnLoadImage(strPath);
 			
-			info.SetFileName(fileName);
+			info.SetImageName(fileName);
+
+			if (IsExistName(fileName) == true)
+			{
+				AfxMessageBox(_T("중복되는 이름이 존재합니다."));
+				return;
+			}
 
 			m_vImgInfo.push_back(info);
 
@@ -284,7 +296,6 @@ void CFilterSimDlg::OnBnClickedBtnExecute()
 	OnExecute();
 }
 
-
 void CFilterSimDlg::DrawImage(int nViewIdx, CString strFileName)
 {
 	CWnd* pWnd = NULL;
@@ -296,7 +307,6 @@ void CFilterSimDlg::DrawImage(int nViewIdx, CString strFileName)
 		case 3 : pWnd = GetDlgItem(IDC_MAIN_PC_VIEW4); break;
 	}
 
-
 	CClientDC dc(pWnd);
 	CRect rect;
 	pWnd->GetClientRect(&rect);
@@ -305,7 +315,7 @@ void CFilterSimDlg::DrawImage(int nViewIdx, CString strFileName)
 	for (it = m_vImgInfo.begin(); it != m_vImgInfo.end(); ++it)
 	{
 		CString fileName=_T("");
-		it->GetFileName(fileName);
+		it->GetImageName(fileName);
 		if (strFileName == fileName) break;
 	}
 	
@@ -326,7 +336,7 @@ void CFilterSimDlg::OnCbnSelchangeCbView1()
 	for (it = m_vImgInfo.begin(); it != m_vImgInfo.end(); ++it)
 	{
 		CString fileName=_T("");
-		it->GetFileName(fileName);
+		it->GetImageName(fileName);
 		if (name == fileName) break;
 	}
 	
@@ -349,7 +359,7 @@ void CFilterSimDlg::OnCbnSelchangeCbView2()
 	for (it = m_vImgInfo.begin(); it != m_vImgInfo.end(); ++it)
 	{
 		CString fileName=_T("");
-		it->GetFileName(fileName);
+		it->GetImageName(fileName);
 		if (name == fileName) break;
 	}
 
@@ -372,7 +382,7 @@ void CFilterSimDlg::OnCbnSelchangeCbView3()
 	for (it = m_vImgInfo.begin(); it != m_vImgInfo.end(); ++it)
 	{
 		CString fileName=_T("");
-		it->GetFileName(fileName);
+		it->GetImageName(fileName);
 		if (name == fileName) break;
 	}
 
@@ -395,7 +405,7 @@ void CFilterSimDlg::OnCbnSelchangeCbView4()
 	for (it = m_vImgInfo.begin(); it != m_vImgInfo.end(); ++it)
 	{
 		CString fileName=_T("");
-		it->GetFileName(fileName);
+		it->GetImageName(fileName);
 		if (name == fileName) break;
 	}
 
@@ -418,24 +428,19 @@ void CFilterSimDlg::OnBnClickedBtnNewImg()
 		CString fileName = dlg.GetName();
 		int w = dlg.GetWidth();
 		int h = dlg.GetHeight();
-
+		
 		CEImage info;
-
-		try
+		info.CreatImage(w,h,8);
+		info.SetImageName(fileName);
+		
+		if (IsExistName(fileName) == true)
 		{
-			info.CreatImage(w,h,8);
-		}
-		catch (EException& e)
-		{
-			CString strErr = (CString)e.What().c_str();
-			AfxMessageBox(strErr);
+			AfxMessageBox(_T("중복되는 이름이 존재합니다."));
 			return;
 		}
 
-		info.SetFileName(fileName);
-
 		m_vImgInfo.push_back(info);
-
+		
 		UpdateCBList();
 
 		m_nImgCnt++;
@@ -465,7 +470,7 @@ void CFilterSimDlg::OnBnClickedBtnDelimg()
 		for (std::vector<CEImage>::iterator it = m_vImgInfo.begin(); it != m_vImgInfo.end();)
 		{
 			CString name=_T("");
-			it->GetFileName(name);
+			it->GetImageName(name);
 
 			if (fileName == name)
 			{
@@ -488,8 +493,6 @@ void CFilterSimDlg::OnBnClickedBtnDelimg()
 		UpdateCBList();
 		UpdateItemList();
 	}
-
-	
 }
 
 void CFilterSimDlg::UpdateCBList()
@@ -510,11 +513,12 @@ void CFilterSimDlg::UpdateCBList()
 		for (std::vector<CEImage>::iterator it = m_vImgInfo.begin(); it != m_vImgInfo.end(); ++it)
 		{
 			CString name=_T("");
-			it->GetFileName(name);
+			it->GetImageName(name);
 			pCB->AddString(name);
 
 			if (i > 3)
 			{
+				int cnt = it->GetRoiCount();
 				for (int j=0; j<it->GetRoiCount(); j++)
 				{
 					it->GetRoiName(j,name);
@@ -557,6 +561,8 @@ void CFilterSimDlg::UpdateItemColor()
 			m_wndLc.SetItemText(nRow, 2, _T("F"));
 			m_wndLc.SetItemColor(nRow, 2, RGB(255,0,0));
 		}
+		m_wndLc.SetItemColor(nRow, 7, RGB(128,128,128));
+
 		nRow++;
 	}
 }
@@ -618,7 +624,7 @@ void CFilterSimDlg::OnBnClickedBtnSaveimg()
 		for (it = m_vImgInfo.begin(); it != m_vImgInfo.end(); ++it)
 		{
 			CString name=_T("");
-			it->GetFileName(name);
+			it->GetImageName(name);
 			if (fileName == name)
 				break;
 		}
@@ -776,7 +782,9 @@ void CFilterSimDlg::OnBnClickedMainBtnApply()
 	}
 
 	CString strIn  = GetTextCBSelected(IDC_MAIN_CB_INPUT);
+	
 	CString strOut = GetTextCBSelected(IDC_MAIN_CB_OUTPUT);
+	
 	BOOL bChk = IsDlgButtonChecked(IDC_MAIN_CHK_USE);
 
 	UpdateItem(nRow, bChk, strLib, strIn, strOut);
@@ -786,15 +794,13 @@ void CFilterSimDlg::OnExecute()
 {
 	int n = m_wndLc.GetItemCount();
 	CEImage *pIn = NULL, *pOut = NULL;
-	CEMatrix Mtx;
+	
 	for (int i=0; i<n; i++)
 	{
 		double time=0;
 		bool bRet=false;
 		bool bInRoi=false, bOutRoi=false;
 		
-		//CEMatrix Mtx;
-
 		CString use	= m_wndLc.GetItemText(i,2);
 		if (use == _T("F"))
 			continue;
@@ -817,77 +823,107 @@ void CFilterSimDlg::OnExecute()
 			bOutRoi = true;
 		}
 
-		//CEImage *pIn = NULL, *pOut = NULL;
 		for (vector<CEImage>::iterator it = m_vImgInfo.begin(); it != m_vImgInfo.end(); ++it)
 		{
-			if (bInRoi == true || bOutRoi == true)
-			{
-				if (it->HasROI(strIn) == true)
-					pIn = it->GetEImage();
+			CString fileName=_T("");
+			it->GetImageName(fileName);
 
-				if (it->HasROI(strOut) == true)
-				{
-					pOut = it->GetEImage();
-				}
-			}
-			else
-			{
-				CString fileName=_T("");
-				it->GetFileName(fileName);
+			if (it->HasROI(strIn) == true)
+				pIn = it->GetEImage();
+			
+			if (fileName == strIn)
+				pIn = it->GetEImage();
 
-				if (fileName == strIn)
-					pIn = it->GetEImage();
+			if (it->HasROI(strOut) == true)
+				pOut = it->GetEImage();
 
-				if (fileName == strOut)
-					pOut = it->GetEImage();
-			}
+			if (fileName == strOut)
+				pOut = it->GetEImage();
 		}
 
 		if (strLib == _T("EasyMatrixCode"))
 		{
-			//CEMatrix Mtx;
+			CEMatrix Mtx;
 			CString strResult = _T("");
 			if (bOutRoi == true)
-				bRet = Mtx.OnExecute(pOut->GetROI(strOut),strResult,time);
+			{
+				EROIBW8* pRoi = pOut->GetROI(strOut);
+				bRet = Mtx.OnExecute(pRoi,strResult,time);
+			}
 			else
 				bRet = Mtx.OnExecute(pOut->GetImage(),strResult,time);
 
-			if (bRet == false) continue;
+			if (bRet == false)
+			{
+				m_wndLc.SetItemColor(i, 7, RGB(255,0,0));
+				continue;
+			}
+
+			m_wndLc.SetItemColor(i, 7, RGB(0,255,0));
+
+			for (int k=0; k<4; k++)
+			{
+				CString strSelFile = GetTextCBSelected(IDC_MAIN_CB_VIEW1+k);
+
+				CString strImg=_T("");
+				pOut->GetImageName(strImg);
+				if (strSelFile == strImg)
+				{
+					CClientDC dc(GetDlgItem(IDC_MAIN_PC_VIEW1+k));
+					CRect rect;
+					GetDlgItem(IDC_MAIN_PC_VIEW1+k)->GetClientRect(&rect);
+
+					int w=0, h=0;
+					pOut->GetWidth(w);
+					pOut->GetHeight(h);
+					float fH = (float)rect.Width()/w;
+					float fV = (float)rect.Height()/h;
+
+					Mtx.OnDrawResult(GetDlgItem(IDC_MAIN_PC_VIEW1+k),true,fH,fV);
+				}
+			}
 		}
 		else
 		{
-			if (strLib == _T("Uniform"))			bRet = CEImgFilter::OnFilter_Uniform	(pIn->GetImage(), pOut->GetImage(), time);
-			else if (strLib == _T("Uniform3x3"))	bRet = CEImgFilter::OnFilter_Uniform3x3	(pIn->GetImage(), pOut->GetImage(), time);
-			else if (strLib == _T("Uniform5x5"))	bRet = CEImgFilter::OnFilter_Uniform5x5	(pIn->GetImage(), pOut->GetImage(), time);
-			else if (strLib == _T("Uniform7x7"))	bRet = CEImgFilter::OnFilter_Uniform7x7	(pIn->GetImage(), pOut->GetImage(), time);
-			else if (strLib == _T("Gaussian"))		bRet = CEImgFilter::OnFilter_Gaussian	(pIn->GetImage(), pOut->GetImage(), time);
-			else if (strLib == _T("Gaussian3x3"))	bRet = CEImgFilter::OnFilter_Gaussian3x3(pIn->GetImage(), pOut->GetImage(), time);
-			else if (strLib == _T("Gaussian5x5"))	bRet = CEImgFilter::OnFilter_Gaussian5x5(pIn->GetImage(), pOut->GetImage(), time);
-			else if (strLib == _T("Gaussian7x7"))	bRet = CEImgFilter::OnFilter_Gaussian7x7(pIn->GetImage(), pOut->GetImage(), time);
-			else if (strLib == _T("Lowpass1"))		bRet = CEImgFilter::OnFilter_Lowpass1	(pIn->GetImage(), pOut->GetImage(), time);
-			else if (strLib == _T("Lowpass2"))		bRet = CEImgFilter::OnFilter_Lowpass2	(pIn->GetImage(), pOut->GetImage(), time);
-			else if (strLib == _T("Highpass1"))		bRet = CEImgFilter::OnFilter_Highpass1	(pIn->GetImage(), pOut->GetImage(), time);
-			else if (strLib == _T("Highpass2"))		bRet = CEImgFilter::OnFilter_Highpass2	(pIn->GetImage(), pOut->GetImage(), time);
-			else if (strLib == _T("Gradient"))		bRet = CEImgFilter::OnFilter_Gradient	(pIn->GetImage(), pOut->GetImage(), time);
-			else if (strLib == _T("GradientX"))		bRet = CEImgFilter::OnFilter_GradientX	(pIn->GetImage(), pOut->GetImage(), time);
-			else if (strLib == _T("GradientY"))		bRet = CEImgFilter::OnFilter_GradientY	(pIn->GetImage(), pOut->GetImage(), time);
-			else if (strLib == _T("Sobel"))			bRet = CEImgFilter::OnFilter_Sobel		(pIn->GetImage(), pOut->GetImage(), time);
-			else if (strLib == _T("SobelX"))		bRet = CEImgFilter::OnFilter_SobelX		(pIn->GetImage(), pOut->GetImage(), time);
-			else if (strLib == _T("SobelY"))		bRet = CEImgFilter::OnFilter_SobelY		(pIn->GetImage(), pOut->GetImage(), time);
-			else if (strLib == _T("Prewitt"))		bRet = CEImgFilter::OnFilter_Prewitt	(pIn->GetImage(), pOut->GetImage(), time);
-			else if (strLib == _T("PrewittX"))		bRet = CEImgFilter::OnFilter_PrewittX	(pIn->GetImage(), pOut->GetImage(), time);
-			else if (strLib == _T("PrewittY"))		bRet = CEImgFilter::OnFilter_PrewittY	(pIn->GetImage(), pOut->GetImage(), time);
-			else if (strLib == _T("Roberts"))		bRet = CEImgFilter::OnFilter_Roberts	(pIn->GetImage(), pOut->GetImage(), time);
-			else if (strLib == _T("LaplacianX"))	bRet = CEImgFilter::OnFilter_LaplacianX	(pIn->GetImage(), pOut->GetImage(), time);
-			else if (strLib == _T("LaplacianY"))	bRet = CEImgFilter::OnFilter_LaplacianY	(pIn->GetImage(), pOut->GetImage(), time);
-			else if (strLib == _T("Laplacian4"))	bRet = CEImgFilter::OnFilter_Laplacian4	(pIn->GetImage(), pOut->GetImage(), time);
-			else if (strLib == _T("Laplacian8"))	bRet = CEImgFilter::OnFilter_Laplacian8	(pIn->GetImage(), pOut->GetImage(), time);
+			if (strLib == _T("Uniform"))			bRet = CEImgFilter::OnFilter_Uniform	(pIn, strIn, pOut, strOut, time);
+			else if (strLib == _T("Uniform3x3"))	bRet = CEImgFilter::OnFilter_Uniform3x3	(pIn, strIn, pOut, strOut, time);
+			else if (strLib == _T("Uniform5x5"))	bRet = CEImgFilter::OnFilter_Uniform5x5	(pIn, strIn, pOut, strOut, time);
+			else if (strLib == _T("Uniform7x7"))	bRet = CEImgFilter::OnFilter_Uniform7x7	(pIn, strIn, pOut, strOut, time);
+			else if (strLib == _T("Gaussian"))		bRet = CEImgFilter::OnFilter_Gaussian	(pIn, strIn, pOut, strOut, time);
+			else if (strLib == _T("Gaussian3x3"))	bRet = CEImgFilter::OnFilter_Gaussian3x3(pIn, strIn, pOut, strOut, time);
+			else if (strLib == _T("Gaussian5x5"))	bRet = CEImgFilter::OnFilter_Gaussian5x5(pIn, strIn, pOut, strOut, time);
+			else if (strLib == _T("Gaussian7x7"))	bRet = CEImgFilter::OnFilter_Gaussian7x7(pIn, strIn, pOut, strOut, time);
+			else if (strLib == _T("Lowpass1"))		bRet = CEImgFilter::OnFilter_Lowpass1	(pIn, strIn, pOut, strOut, time);
+			else if (strLib == _T("Lowpass2"))		bRet = CEImgFilter::OnFilter_Lowpass2	(pIn, strIn, pOut, strOut, time);
+			else if (strLib == _T("Highpass1"))		bRet = CEImgFilter::OnFilter_Highpass1	(pIn, strIn, pOut, strOut, time);
+			else if (strLib == _T("Highpass2"))		bRet = CEImgFilter::OnFilter_Highpass2	(pIn, strIn, pOut, strOut, time);
+			else if (strLib == _T("Gradient"))		bRet = CEImgFilter::OnFilter_Gradient	(pIn, strIn, pOut, strOut, time);
+			else if (strLib == _T("GradientX"))		bRet = CEImgFilter::OnFilter_GradientX	(pIn, strIn, pOut, strOut, time);
+			else if (strLib == _T("GradientY"))		bRet = CEImgFilter::OnFilter_GradientY	(pIn, strIn, pOut, strOut, time);
+			else if (strLib == _T("Sobel"))			bRet = CEImgFilter::OnFilter_Sobel		(pIn, strIn, pOut, strOut, time);
+			else if (strLib == _T("SobelX"))		bRet = CEImgFilter::OnFilter_SobelX		(pIn, strIn, pOut, strOut, time);
+			else if (strLib == _T("SobelY"))		bRet = CEImgFilter::OnFilter_SobelY		(pIn, strIn, pOut, strOut, time);
+			else if (strLib == _T("Prewitt"))		bRet = CEImgFilter::OnFilter_Prewitt	(pIn, strIn, pOut, strOut, time);
+			else if (strLib == _T("PrewittX"))		bRet = CEImgFilter::OnFilter_PrewittX	(pIn, strIn, pOut, strOut, time);
+			else if (strLib == _T("PrewittY"))		bRet = CEImgFilter::OnFilter_PrewittY	(pIn, strIn, pOut, strOut, time);
+			else if (strLib == _T("Roberts"))		bRet = CEImgFilter::OnFilter_Roberts	(pIn, strIn, pOut, strOut, time);
+			else if (strLib == _T("LaplacianX"))	bRet = CEImgFilter::OnFilter_LaplacianX	(pIn, strIn, pOut, strOut, time);
+			else if (strLib == _T("LaplacianY"))	bRet = CEImgFilter::OnFilter_LaplacianY	(pIn, strIn, pOut, strOut, time);
+			else if (strLib == _T("Laplacian4"))	bRet = CEImgFilter::OnFilter_Laplacian4	(pIn, strIn, pOut, strOut, time);
+			else if (strLib == _T("Laplacian8"))	bRet = CEImgFilter::OnFilter_Laplacian8	(pIn, strIn, pOut, strOut, time);
 
-			if (bRet == false) continue;
+			if (bRet == false)
+			{
+				m_wndLc.SetItemColor(i, 7, RGB(255,0,0));
+				continue;
+			}
+
+			m_wndLc.SetItemColor(i, 7, RGB(0,255,0));
+
 			for (vector<CEImage>::iterator it = m_vImgInfo.begin(); it != m_vImgInfo.end(); ++it)
 			{
 				CString fileName=_T("");
-				it->GetFileName(fileName);
+				it->GetImageName(fileName);
 
 				if (fileName == strOut)
 				{
@@ -896,38 +932,16 @@ void CFilterSimDlg::OnExecute()
 				}
 			}
 
-			//UpdateAllView();
+			CString fileName = _T("");
+			pOut->GetImageName(fileName);
+			UpdateFileNameView(fileName);
+			//UpdateFileNameView(strOut);
 		}
 
 		CString strTime=_T("");
 		strTime.Format(_T("%.3f"),time);
 		m_wndLc.SetItemText(i,6,strTime);
 
-	}
-
-	//2017-06-27 그리는 순서가 명확치 않음. 이미지를 어떻게 그릴지 명확히 정해야 함.
-	UpdateAllView();
-
-	for (int k=0; k<4; k++)
-	{
-		CString strSelFile = GetTextCBSelected(IDC_MAIN_CB_VIEW1+k);
-
-		CString strImg=_T("");
-		pOut->GetFileName(strImg);
-		if (strSelFile == strImg)
-		{
-			CClientDC dc(GetDlgItem(IDC_MAIN_PC_VIEW1+k));
-			CRect rect;
-			GetDlgItem(IDC_MAIN_PC_VIEW1+k)->GetClientRect(&rect);
-
-			int w=0, h=0;
-			pOut->GetWidth(w);
-			pOut->GetHeight(h);
-			float fH = (float)rect.Width()/w;
-			float fV = (float)rect.Height()/h;
-
-			Mtx.OnDrawResult(GetDlgItem(IDC_MAIN_PC_VIEW1+k),true,fH,fV);
-		}
 	}
 }
 
@@ -936,10 +950,12 @@ void CFilterSimDlg::OnBnClickedMainBtnAddroi()
 	CString strSelImg = GetTextCBSelected(IDC_MAIN_CB_IMGLIST);
 	bool bContinue=false;
 	std::vector<CEImage>::iterator it;
+
 	for (it = m_vImgInfo.begin(); it != m_vImgInfo.end(); it++)
 	{
 		CString name=_T("");
-		it->GetFileName(name);
+		it->GetImageName(name);
+
 		if (strSelImg == name)
 		{
 			bContinue = true;
@@ -949,7 +965,7 @@ void CFilterSimDlg::OnBnClickedMainBtnAddroi()
 
 	if (bContinue == false)
 	{
-		CString msg = _T("ROI는 이미지에만 생성할 수 있습니다.");
+		CString msg = _T("ROI는 이미지에 생성할 수 있습니다.");
 		MessageBox(msg,_T("Information"),MB_ICONINFORMATION);
 		return;
 	}
@@ -962,11 +978,23 @@ void CFilterSimDlg::OnBnClickedMainBtnAddroi()
 	nHeight = GetDlgItemInt(IDC_MAIN_EDIT_HEIGHT);
 	GetDlgItemText(IDC_MAIN_EDIT_ROINAME, strName);
 	
+	if (IsExistName(strName) == true)
+	{
+		AfxMessageBox(_T("중복되는 이름이 존재합니다."));
+		return;
+	}
+
 	it->CreateRoi(nOrgX,nOrgY,nWidth,nHeight,strName);
 
 	UpdateCBList();
 	
 	UpdateAllView();
+
+	SetDlgItemText(IDC_MAIN_EDIT_ORGX, _T(""));
+	SetDlgItemText(IDC_MAIN_EDIT_ORGY, _T(""));
+	SetDlgItemText(IDC_MAIN_EDIT_WIDTH, _T(""));
+	SetDlgItemText(IDC_MAIN_EDIT_HEIGHT, _T(""));
+	SetDlgItemText(IDC_MAIN_EDIT_ROINAME, _T(""));
 }
 
 void CFilterSimDlg::OnBnClickedMainBtnDelroi()
@@ -975,22 +1003,35 @@ void CFilterSimDlg::OnBnClickedMainBtnDelroi()
 	int len = strSelRoi.GetLength();
 	strSelRoi = strSelRoi.Right(len-3);
 
-	std::vector<CEImage>::iterator it;
-	for (it = m_vImgInfo.begin(); it != m_vImgInfo.end(); it++)
+	std::vector<CEImage>::iterator it1;
+	for (it1 = m_vImgInfo.begin(); it1 != m_vImgInfo.end(); it1++)
 	{
-		for (int i=0; i<it->GetRoiCount(); i++)
+		for (int i=0; i<it1->GetRoiCount(); i++)
 		{
 			CString strName=_T("");
-			it->GetRoiName(i, strName);
+			it1->GetRoiName(i, strName);
 			
 			if (strName == strSelRoi)
-				it->DeleteRoi(strSelRoi);
+			{
+				it1->DeleteRoi(strSelRoi);
+			}
 		}
+	}
+
+	std::vector<StItemInfo>::iterator it2;
+	for (it2 = m_vItmInfo.begin(); it2 != m_vItmInfo.end(); it2++)
+	{
+		if (it2->strInput == strSelRoi)
+			it2->strInput = _T("");
+		if (it2->strOutput == strSelRoi)
+			it2->strOutput = _T("");
 	}
 
 	UpdateCBList();
 
 	UpdateAllView();
+
+	UpdateItemList();
 }
 	
 
@@ -1005,11 +1046,107 @@ void CFilterSimDlg::UpdateAllView()
 		for (it = m_vImgInfo.begin(); it != m_vImgInfo.end(); ++it)
 		{
 			CString fileName=_T("");
-			it->GetFileName(fileName);
+			it->GetImageName(fileName);
 			if (name == fileName) 
 				break;
 		}
 
 		DrawImage(i, name);
+	}
+}
+
+void CFilterSimDlg::UpdateFileNameView(CString strFile)
+{
+	for (int i=0; i<4; i++)
+	{
+		CString name = GetTextCBSelected(IDC_MAIN_CB_VIEW1+i);
+		if (name == _T("")) continue;
+		if (name != strFile) continue;
+
+		vector<CEImage>::iterator it;
+		for (it = m_vImgInfo.begin(); it != m_vImgInfo.end(); ++it)
+		{
+			CString fileName=_T("");
+			it->GetImageName(fileName);
+			if (name == fileName) 
+				break;
+		}
+
+		DrawImage(i, name);
+	}
+}
+
+bool CFilterSimDlg::IsExistName(CString strName)
+{
+	bool bExist = false;
+	vector<CEImage>::iterator it;
+	for (it = m_vImgInfo.begin(); it != m_vImgInfo.end(); ++it)
+	{
+		CString fileName=_T("");
+		for (int i=0; i<it->GetRoiCount(); i++)
+		{
+			it->GetRoiName(i, fileName);
+			if (strName == fileName)
+			{
+				bExist = true;
+				break;
+			}
+		}
+		
+		it->GetImageName(fileName);
+		if (strName == fileName) 
+		{
+			bExist = true;
+			break;
+		}
+	}
+
+	return bExist;
+}
+
+void CFilterSimDlg::OnCbnSelchangeMainCbImglist()
+{
+	CComboBox* pCB = (CComboBox*)GetDlgItem(IDC_MAIN_CB_IMGLIST);
+	int sel = pCB->GetCurSel();
+	CString strSel=_T("");
+	pCB->GetLBText(sel, strSel);
+
+	if (strSel.Find(_T(" - ")) == 0)
+	{
+		int len = strSel.GetLength();
+		strSel = strSel.Right(len-3);
+	}
+
+	bool bSelRoi = false;
+	vector<CEImage>::iterator it;
+	for (it = m_vImgInfo.begin(); it != m_vImgInfo.end(); ++it)
+	{
+		CString fileName=_T("");
+		it->GetImageName(fileName);
+		if (it->HasROI(strSel) == true)
+		{
+			bSelRoi = true;
+			break;
+		}
+	}
+
+	if (bSelRoi == true)
+	{
+		int orgx=0,orgy=0,w=0,h=0;
+		it->GetRoiPlacement(strSel, orgx, orgy, w, h);
+
+		SetDlgItemInt(IDC_MAIN_EDIT_ORGX, orgx);
+		SetDlgItemInt(IDC_MAIN_EDIT_ORGY, orgy);
+		SetDlgItemInt(IDC_MAIN_EDIT_WIDTH, w);
+		SetDlgItemInt(IDC_MAIN_EDIT_HEIGHT, h);
+		SetDlgItemText(IDC_MAIN_EDIT_ROINAME, strSel);
+	}
+	else
+	{
+		SetDlgItemText(IDC_MAIN_EDIT_ORGX, _T(""));
+		SetDlgItemText(IDC_MAIN_EDIT_ORGY, _T(""));
+		SetDlgItemText(IDC_MAIN_EDIT_WIDTH, _T(""));
+		SetDlgItemText(IDC_MAIN_EDIT_HEIGHT, _T(""));
+		SetDlgItemText(IDC_MAIN_EDIT_ROINAME, _T(""));
 	}
 }

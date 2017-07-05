@@ -12,7 +12,7 @@ bool CEImage::OnLoadImage(CString strPath)
 		CT2CA String (strPath);
 		std::string str(String);  
 
-		Img.Load(str);
+		m_EImgBW8.Load(str);
 
 		return true;
 	}
@@ -34,7 +34,7 @@ bool CEImage::OnDrawImage(CWnd* pCWnd, float fH, float fV)
 		CRect rect;
 		pCWnd->GetClientRect(&rect);
 
-		Img.Draw(hDC,fH,fV);
+		m_EImgBW8.Draw(hDC,fH,fV);
 
 		return true;
 	}
@@ -56,11 +56,15 @@ bool CEImage::OnDrawROIFrame(CWnd* pCWnd, float fH, float fV)
 		CRect rect;
 		pCWnd->GetClientRect(&rect);
 
-		std::vector<EBaseROI*> rois = Img.GetSubBaseROIs();
-
-		for (int i=0; i<(int)rois.size(); i++)
+		std::vector<EBaseROI*> pRois = m_EImgBW8.GetSubBaseROIs(TRUE);
+		EROIBW8* pRoi = NULL;
+		
+		for (int i=0; i<(int)pRois.size(); i++)
 		{
-			EROIBW8* pRoi = (EROIBW8*)rois.at(i);
+			pRoi = (EROIBW8*)pRois.at(i);
+			if (pRoi == NULL)
+				return false;
+
 			pRoi->DrawFrame(hDC,false,fH,fV);
 		}
 
@@ -82,11 +86,11 @@ bool CEImage::CreateRoi(int nOrgX, int nOrgY, int nWidth, int nHeight, CString s
 		std::string str(String);  
 
 		EROIBW8 roi;
-		roi.Attach(&Img);
+		roi.Attach(&m_EImgBW8);
 		roi.SetPlacement(nOrgX, nOrgY, nWidth, nHeight);
 		roi.SetTitle(str);
 		
-		Roi.push_back(roi);
+		m_vERoiBW8.push_back(roi);
 
 		return true;
 	}
@@ -100,33 +104,50 @@ bool CEImage::CreateRoi(int nOrgX, int nOrgY, int nWidth, int nHeight, CString s
 
 void CEImage::DeleteRoi(CString strName)
 {
-	std::vector<EBaseROI*> rois = Img.GetSubBaseROIs();
-	
-	for (int i=0; i<(int)rois.size(); i++)
+	try
 	{
-		EROIBW8* pRoi = (EROIBW8*)rois.at(i);
-		if (strName == pRoi->GetTitle().c_str())
-			pRoi->Detach();
+		std::vector<EBaseROI*> pRois = m_EImgBW8.GetSubBaseROIs(TRUE);
+
+		for (int i=0; i<(int)pRois.size(); i++)
+		{
+			EROIBW8* pRoi = NULL;
+			pRoi = (EROIBW8*)pRois.at(i);
+			CString name = (CString)pRoi->GetTitle().c_str();
+			if (strName == name)
+				pRoi->Detach();
+		}
+	}
+	catch (EException& e)
+	{
+		CString strErr = (CString)e.What().c_str();
+		AfxMessageBox(strErr);
+		return;
 	}
 }
 
 int CEImage::GetRoiCount()
 {
-	std::vector<EBaseROI*> rois = Img.GetSubBaseROIs();
-	return (int)rois.size();
+	std::vector<EBaseROI*> pRois = m_EImgBW8.GetSubBaseROIs(TRUE);
+	return (int)pRois.size();
 }
 
 bool CEImage::GetRoiName(int nIdx, CString &strValue)
 {
 	try
 	{
-		std::vector<EBaseROI*> rois = Img.GetSubBaseROIs();
+		std::vector<EBaseROI*> pRois = m_EImgBW8.GetSubBaseROIs(TRUE);
 
-		if (nIdx >= (int)rois.size()) return false;
+		int nSize = (int)pRois.size();
+		if (nIdx >= nSize) return false;
 
-		EROIBW8* pRoi = (EROIBW8*)rois.at(nIdx);
+		CString name = _T("");
+		EROIBW8* pRoi = NULL;
 		
-		strValue = pRoi->GetTitle().c_str();
+		pRoi = (EROIBW8*)pRois.at(nIdx);
+		if (pRoi == NULL) return false;
+	
+		name = (CString)pRoi->GetTitle().c_str();
+		strValue = name;
 
 		return true;
 	}
@@ -137,12 +158,13 @@ bool CEImage::GetRoiName(int nIdx, CString &strValue)
 		return false;
 	}
 }
+
 bool CEImage::GetWidth(int &nValue)
 {
 	try
 	{
 		int value=0;
-		value = Img.GetWidth();
+		value = m_EImgBW8.GetWidth();
 		nValue = value;
 
 		return true;
@@ -160,7 +182,7 @@ bool CEImage::GetHeight(int &nValue)
 	try
 	{
 		int value=0;
-		value = Img.GetHeight();
+		value = m_EImgBW8.GetHeight();
 		nValue = value;
 
 		return true;
@@ -177,8 +199,8 @@ bool CEImage::CreatImage(int nWidth, int nHeight, int nBpp)
 {
 	try
 	{
-		Img.SetSize(nWidth,nHeight);
-		EasyImage::Oper(EArithmeticLogicOperation_Copy, EBW8(0), &Img);
+		m_EImgBW8.SetSize(nWidth,nHeight);
+		EasyImage::Oper(EArithmeticLogicOperation_Copy, EBW8(0), &m_EImgBW8);
 		return true;
 	}
 	catch (EException& e)
@@ -193,7 +215,7 @@ bool CEImage::SetImage (EImageBW8 *pImg)
 {
 	try
 	{
-		EasyImage::Oper(EArithmeticLogicOperation_Copy, pImg, &Img);
+		EasyImage::Oper(EArithmeticLogicOperation_Copy, pImg, &m_EImgBW8);
 		return true;
 	}
 	catch (EException& e)
@@ -204,13 +226,13 @@ bool CEImage::SetImage (EImageBW8 *pImg)
 	}
 }
 
-bool CEImage::SetFileName(CString strName) 
+bool CEImage::SetImageName(CString strName) 
 { 
 	try
 	{
 		CT2CA String (strName);
 		std::string str(String);  
-		Img.SetTitle(str);
+		m_EImgBW8.SetTitle(str);
 
 		return true;
 	}
@@ -222,12 +244,12 @@ bool CEImage::SetFileName(CString strName)
 	}
 }
 
-bool CEImage::GetFileName(CString &strValue)
+bool CEImage::GetImageName(CString &strValue)
 { 
 	try
 	{
 		CString strName=_T("");
-		std::string str = Img.GetTitle();
+		std::string str = m_EImgBW8.GetTitle();
 		strValue = (CString)str.c_str();
 
 		return true;
@@ -245,16 +267,26 @@ bool CEImage::HasROI(CString strName)
 	try
 	{
 		bool bHasRoi = false;
-		std::vector<EROIBW8>::iterator it;
-		for (it = Roi.begin(); it != Roi.end(); it++)
+
+		std::vector<EBaseROI*> pRois = m_EImgBW8.GetSubBaseROIs(TRUE);
+
+		for (int i=0; i<(int)pRois.size(); i++)
 		{
-			if (strName == (CString)it->GetTitle().c_str())
+			CString name = _T("");
+			EROIBW8* pRoi = NULL;
+
+			pRoi = (EROIBW8*)pRois.at(i);
+			if (pRoi == NULL) return false;
+
+			name = (CString)pRoi->GetTitle().c_str();
+
+			if (strName == name)
 			{
 				bHasRoi = true;
 				break;
 			}
 		}
-
+		
 		return bHasRoi;
 	}
 	catch (EException& e)
@@ -269,31 +301,59 @@ EROIBW8* CEImage::GetROI(CString strName)
 {
 	try
 	{
-		//std::vector<EBaseROI*> rois = Img.GetSubBaseROIs();
-		//for (int i=0; i<rois.size(); i++)
-		//{
-		//	EBaseROI* pBase = rois.at(i);
-		//	std::string title = pBase->GetTitle();
-		//	if ((CString)title.c_str() == strName)
-		//		pRoi = (EROIBW8*)pBase; 
-		//}
-
-		int nCnt=0;
-		std::vector<EROIBW8>::iterator it;
-		for (it = Roi.begin(); it != Roi.end(); it++)
+		std::vector<EBaseROI*> pRois = m_EImgBW8.GetSubBaseROIs(TRUE);
+		EROIBW8* pRoi = NULL;
+		int size = (int)pRois.size();
+		for (int i=0; i<(int)pRois.size(); i++)
 		{
-			if (strName == (CString)it->GetTitle().c_str())
+			pRoi = (EROIBW8*)pRois.at(i);
+			if (pRoi->GetTitle().c_str() == strName)
 				break;
-			else
-				nCnt++;
 		}
-
-		return &Roi.at(nCnt);
+		
+		return pRoi;
 	}
 	catch (EException& e)
 	{
 		CString strErr = (CString)e.What().c_str();
 		AfxMessageBox(strErr);
 		return NULL;
+	}
+}
+
+bool CEImage::GetRoiPlacement(CString strName, int &nOrgX, int &nOrgY, int &nWidth, int &nHeight)
+{
+	try
+	{
+		std::vector<EBaseROI*> pRois = m_EImgBW8.GetSubBaseROIs(TRUE);
+
+		for (int i=0; i<(int)pRois.size(); i++)
+		{
+			CString name = _T("");
+			EROIBW8* pRoi = NULL;
+
+			pRoi = (EROIBW8*)pRois.at(i);
+			if (pRoi == NULL) return false;
+
+			name = (CString)pRoi->GetTitle().c_str();
+
+			if (strName == name)
+			{
+				nOrgX = pRoi->GetOrgX();
+				nOrgY = pRoi->GetOrgY();
+				nWidth = pRoi->GetWidth();
+				nHeight = pRoi->GetHeight();
+
+				break;
+			}
+		}
+
+		return true;
+	}
+	catch (EException& e)
+	{
+		CString strErr = (CString)e.What().c_str();
+		AfxMessageBox(strErr);
+		return false;
 	}
 }

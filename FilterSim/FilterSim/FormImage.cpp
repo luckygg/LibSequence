@@ -113,6 +113,7 @@ CString CFormImg::GetTextCBSelectedType()
 
 	pCB = (CComboBox*)GetDlgItem(IDC_TAB1_CB_TYPE);
 	sel = pCB->GetCurSel();
+	if (sel == -1) return _T("");
 	
 	pCB->GetLBText(sel,strText);
 
