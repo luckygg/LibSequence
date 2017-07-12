@@ -61,6 +61,13 @@ BOOL CNewDlg::OnInitDialog()
 		CString strName = _T("");
 		if (it->GetImageName(strName) == true)
 			pCB->AddString(strName);
+
+		for (int i=0; i<it->GetRoiCount(); i++)
+		{
+			it->GetRoiName(i,strName);
+			strName = _T(" - ") + strName;
+			pCB->AddString(strName);
+		}
 	}
 	
 	return TRUE;  // return TRUE unless you set the focus to a control
@@ -90,6 +97,12 @@ void CNewDlg::OnCbnSelchangeNewCbRef()
 
 	pCB->GetLBText(sel,strName);
 
+	if (strName.Find(_T(" - ")) == 0)
+	{
+		int len = strName.GetLength();
+		strName = strName.Right(len-3);
+	}
+
 	std::vector<CEImage>::iterator it;
 	for (it = m_vImgInfo.begin(); it != m_vImgInfo.end(); ++it)
 	{
@@ -103,6 +116,21 @@ void CNewDlg::OnCbnSelchangeNewCbRef()
 
 			SetDlgItemInt(IDC_NEW_EDIT_WIDTH,w);
 			SetDlgItemInt(IDC_NEW_EDIT_HEIGHT,h);
+		}
+		else
+		{
+			for (int i=0; i<it->GetRoiCount(); i++)
+			{
+				it->GetRoiName(i,fileName);
+				if (strName == fileName)
+				{
+					int x=0,y=0,w=0, h=0;
+					it->GetRoiPlacement(fileName, x,y,w,h);
+
+					SetDlgItemInt(IDC_NEW_EDIT_WIDTH,w);
+					SetDlgItemInt(IDC_NEW_EDIT_HEIGHT,h);
+				}
+			}
 		}
 	}
 }
