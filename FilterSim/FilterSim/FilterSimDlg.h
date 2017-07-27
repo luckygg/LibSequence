@@ -3,7 +3,8 @@
 //
 
 #pragma once
-#include "Open_eVision_2_0.h"
+#include "Base.h"
+#include "Open_eVision_2_1.h"
 #include "include/UI/ListEx.h"
 #include "include/Base/FileDialogEx.h"
 #include <vector>
@@ -12,7 +13,7 @@
 #include "EMatrix.h"
 
 
-using namespace Euresys::Open_eVision_2_0;
+using namespace Euresys::Open_eVision_2_1;
 using namespace std;
 
 struct StItemInfo
@@ -21,6 +22,7 @@ struct StItemInfo
 	CString strType;
 	CString strInput;
 	CString strOutput;
+	StLibrary stLibrary;
 };
 
 #include "FormImage.h"
@@ -74,7 +76,7 @@ private :
 	void DrawImage(int nViewIdx, CString strFileName);
 	void FormSwitching(eAlgorithm eType);
 	void OnExecute();
-
+	CString CheckLibrary(CString strLib);
 	
 	
 // Implementation
@@ -103,6 +105,12 @@ public:
 	afx_msg void OnCbnSelchangeMainCbLib();
 	afx_msg void OnBnClickedMainBtnApply();
 	afx_msg void OnBnClickedMainBtnAddroi();
+	afx_msg void OnBnClickedMainBtnModify();
 	afx_msg void OnBnClickedMainBtnDelroi();
 	afx_msg void OnCbnSelchangeMainCbImglist();
+	afx_msg void OnDestroy();
+	afx_msg void OnBnClickedMainRBtnImgCst1(UINT ID);
+	afx_msg void OnBnClickedMainRBtnImgCst2(UINT ID);
+	afx_msg void OnBnClickedMainRBtnGrayClr1(UINT ID);
+	afx_msg void OnBnClickedMainRBtnGrayClr2(UINT ID);
 };

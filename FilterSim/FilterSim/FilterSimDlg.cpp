@@ -59,6 +59,12 @@ BEGIN_MESSAGE_MAP(CFilterSimDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_MAIN_BTN_ADDROI, &CFilterSimDlg::OnBnClickedMainBtnAddroi)
 	ON_BN_CLICKED(IDC_MAIN_BTN_DELROI, &CFilterSimDlg::OnBnClickedMainBtnDelroi)
 	ON_CBN_SELCHANGE(IDC_MAIN_CB_IMGLIST, &CFilterSimDlg::OnCbnSelchangeMainCbImglist)
+	ON_BN_CLICKED(IDC_MAIN_BTN_MODIFY, &CFilterSimDlg::OnBnClickedMainBtnModify)
+	ON_CONTROL_RANGE(BN_CLICKED, IDC_MAIN_RBTN_INIMG1, IDC_MAIN_RBTN_INCST1, CFilterSimDlg::OnBnClickedMainRBtnImgCst1)
+	ON_CONTROL_RANGE(BN_CLICKED, IDC_MAIN_RBTN_INIMG2, IDC_MAIN_RBTN_INCST2, CFilterSimDlg::OnBnClickedMainRBtnImgCst2)
+	ON_CONTROL_RANGE(BN_CLICKED, IDC_MAIN_RBTN_CSTGRAY1, IDC_MAIN_RBTN_CSTCLR1, CFilterSimDlg::OnBnClickedMainRBtnGrayClr1)
+	ON_CONTROL_RANGE(BN_CLICKED, IDC_MAIN_RBTN_CSTGRAY2, IDC_MAIN_RBTN_CSTCLR2, CFilterSimDlg::OnBnClickedMainRBtnGrayClr2)
+	ON_WM_DESTROY()
 END_MESSAGE_MAP()
 
 
@@ -167,9 +173,42 @@ void CFilterSimDlg::InitContorls()
 	pCB->AddString(_T("EasyMatrixCode"));
 	pCB->EnableWindow(FALSE);
 
-	GetDlgItem(IDC_MAIN_CB_INPUT)->EnableWindow(FALSE);
+	CheckDlgButton(IDC_MAIN_RBTN_INIMG1, 1);
+	CheckDlgButton(IDC_MAIN_RBTN_INIMG2, 1);
+	CheckDlgButton(IDC_MAIN_RBTN_CSTGRAY1, 1);
+	CheckDlgButton(IDC_MAIN_RBTN_CSTGRAY2, 1);
+
+	GetDlgItem(IDC_MAIN_CB_INPUT1)->EnableWindow(FALSE);
+	GetDlgItem(IDC_MAIN_CB_INPUT2)->EnableWindow(FALSE);
 	GetDlgItem(IDC_MAIN_CB_OUTPUT)->EnableWindow(FALSE);
 	GetDlgItem(IDC_MAIN_CHK_USE)->EnableWindow(FALSE);
+
+	GetDlgItem(IDC_MAIN_RBTN_INIMG1)->EnableWindow(FALSE);
+	GetDlgItem(IDC_MAIN_RBTN_INIMG2)->EnableWindow(FALSE);
+	GetDlgItem(IDC_MAIN_RBTN_INCST1)->EnableWindow(FALSE);
+	GetDlgItem(IDC_MAIN_RBTN_INCST2)->EnableWindow(FALSE);
+	GetDlgItem(IDC_MAIN_RBTN_CSTGRAY1)->EnableWindow(FALSE);
+	GetDlgItem(IDC_MAIN_RBTN_CSTGRAY2)->EnableWindow(FALSE);
+	GetDlgItem(IDC_MAIN_RBTN_CSTCLR1)->EnableWindow(FALSE);
+	GetDlgItem(IDC_MAIN_RBTN_CSTCLR2)->EnableWindow(FALSE);
+
+	GetDlgItem(IDC_MAIN_EDIT_GRAY1)->EnableWindow(FALSE);
+	GetDlgItem(IDC_MAIN_EDIT_GRAY2)->EnableWindow(FALSE);
+	GetDlgItem(IDC_MAIN_EDIT_R1)->EnableWindow(FALSE);
+	GetDlgItem(IDC_MAIN_EDIT_G1)->EnableWindow(FALSE);
+	GetDlgItem(IDC_MAIN_EDIT_B1)->EnableWindow(FALSE);
+	GetDlgItem(IDC_MAIN_EDIT_R2)->EnableWindow(FALSE);
+	GetDlgItem(IDC_MAIN_EDIT_G2)->EnableWindow(FALSE);
+	GetDlgItem(IDC_MAIN_EDIT_B2)->EnableWindow(FALSE);
+
+	SetDlgItemInt(IDC_MAIN_EDIT_GRAY1, 128);
+	SetDlgItemInt(IDC_MAIN_EDIT_GRAY2, 128);
+	SetDlgItemInt(IDC_MAIN_EDIT_R1, 128);
+	SetDlgItemInt(IDC_MAIN_EDIT_G1, 128);
+	SetDlgItemInt(IDC_MAIN_EDIT_B1, 128);
+	SetDlgItemInt(IDC_MAIN_EDIT_R2, 128);
+	SetDlgItemInt(IDC_MAIN_EDIT_G2, 128);
+	SetDlgItemInt(IDC_MAIN_EDIT_B2, 128);
 
 	CCreateContext context;
 	ZeroMemory(&context, sizeof(context));
@@ -593,9 +632,10 @@ void CFilterSimDlg::UpdateItem(int nRow, BOOL bUse, CString strAlgorithm, CStrin
 			it->strType = strAlgorithm;
 			it->strInput = strIn;
 			it->strOutput = strOut;
+			break;
 		}
-		
-		nCnt++;
+		else
+			nCnt++;
 	}
 }
 
@@ -666,16 +706,32 @@ void CFilterSimDlg::OnNMClickMainLcItem(NMHDR *pNMHDR, LRESULT *pResult)
 	if (nRow == -1)
 	{
 		pCB_Lib->EnableWindow(FALSE);
-		GetDlgItem(IDC_MAIN_CB_INPUT)->EnableWindow(FALSE);
+		GetDlgItem(IDC_MAIN_CB_INPUT1)->EnableWindow(FALSE);
+		GetDlgItem(IDC_MAIN_CB_INPUT2)->EnableWindow(FALSE);
 		GetDlgItem(IDC_MAIN_CB_OUTPUT)->EnableWindow(FALSE);
 		GetDlgItem(IDC_MAIN_CHK_USE)->EnableWindow(FALSE);
+
+		GetDlgItem(IDC_MAIN_RBTN_INIMG1)->EnableWindow(FALSE);
+		GetDlgItem(IDC_MAIN_RBTN_INIMG2)->EnableWindow(FALSE);
+		GetDlgItem(IDC_MAIN_RBTN_INCST1)->EnableWindow(FALSE);
+		GetDlgItem(IDC_MAIN_RBTN_INCST2)->EnableWindow(FALSE);
+		GetDlgItem(IDC_MAIN_RBTN_CSTGRAY1)->EnableWindow(FALSE);
+		GetDlgItem(IDC_MAIN_RBTN_CSTGRAY2)->EnableWindow(FALSE);
+		GetDlgItem(IDC_MAIN_RBTN_CSTCLR1)->EnableWindow(FALSE);
+		GetDlgItem(IDC_MAIN_RBTN_CSTCLR2)->EnableWindow(FALSE);
+		return;
 	}
 	else
 	{
 		pCB_Lib->EnableWindow(TRUE);
-		GetDlgItem(IDC_MAIN_CB_INPUT)->EnableWindow(TRUE);
+		GetDlgItem(IDC_MAIN_CB_INPUT1)->EnableWindow(TRUE);
 		GetDlgItem(IDC_MAIN_CB_OUTPUT)->EnableWindow(TRUE);
 		GetDlgItem(IDC_MAIN_CHK_USE)->EnableWindow(TRUE);
+
+		GetDlgItem(IDC_MAIN_RBTN_INIMG1)->EnableWindow(TRUE);
+		GetDlgItem(IDC_MAIN_RBTN_INIMG2)->EnableWindow(TRUE);
+		GetDlgItem(IDC_MAIN_RBTN_INCST1)->EnableWindow(TRUE);
+		GetDlgItem(IDC_MAIN_RBTN_INCST2)->EnableWindow(TRUE);
 
 		SetDlgItemInt(IDC_MAIN_LB_ROW, nRow);
 	}
@@ -686,13 +742,14 @@ void CFilterSimDlg::OnNMClickMainLcItem(NMHDR *pNMHDR, LRESULT *pResult)
 
 		FormSwitching(EEasyMatrix);
 
-		GetDlgItem(IDC_MAIN_CB_INPUT)->EnableWindow(FALSE);
+		GetDlgItem(IDC_MAIN_CB_INPUT1)->EnableWindow(FALSE);
 	}
 	else if (strLib == _T(""))
 	{
 		FormSwitching(ENone);
 		pCB_Lib->SetCurSel(-1);
 	}
+	// EasyImage
 	else
 	{
 		pCB_Lib->SetCurSel(0);
@@ -704,10 +761,10 @@ void CFilterSimDlg::OnNMClickMainLcItem(NMHDR *pNMHDR, LRESULT *pResult)
 		CFormImg* pImg = (CFormImg*)m_pFormImg;
 		pImg->UpdateControls(m_vItmInfo.at(nRow));
 
-		GetDlgItem(IDC_MAIN_CB_INPUT)->EnableWindow(TRUE);
+		GetDlgItem(IDC_MAIN_CB_INPUT1)->EnableWindow(TRUE);
 	}
 
-	SetCBItembyText(IDC_MAIN_CB_INPUT,m_vItmInfo.at(nRow).strInput);
+	SetCBItembyText(IDC_MAIN_CB_INPUT1,m_vItmInfo.at(nRow).strInput);
 	SetCBItembyText(IDC_MAIN_CB_OUTPUT,m_vItmInfo.at(nRow).strOutput);
 	
 	int state=0;
@@ -732,14 +789,14 @@ void CFilterSimDlg::OnCbnSelchangeMainCbLib()
 			CFormImg* pImg = (CFormImg*)m_pFormImg;
 			pImg->UpdateControls(m_vItmInfo.at(nRow));
 
-			GetDlgItem(IDC_MAIN_CB_INPUT)->EnableWindow(TRUE);
+			GetDlgItem(IDC_MAIN_CB_INPUT1)->EnableWindow(TRUE);
 		}
 		
 		break;
 	case 1 :
 		FormSwitching(EEasyMatrix);
 		{
-			GetDlgItem(IDC_MAIN_CB_INPUT)->EnableWindow(FALSE);
+			GetDlgItem(IDC_MAIN_CB_INPUT1)->EnableWindow(FALSE);
 		}
 		break;
 	}
@@ -778,10 +835,14 @@ void CFilterSimDlg::OnBnClickedMainBtnApply()
 	if (strLib == _T("EasyImage"))
 	{
 		CFormImg* pImg = (CFormImg*)m_pFormImg;
-		strLib = pImg->GetTextCBSelectedType();
+		strLib = pImg->GetTextCBSelectedProcessing();
+		if (strLib == _T("Convolution"))
+		{
+			strLib = pImg->GetTextCBSelectedConvolution();
+		}
 	}
 
-	CString strIn  = GetTextCBSelected(IDC_MAIN_CB_INPUT);
+	CString strIn  = GetTextCBSelected(IDC_MAIN_CB_INPUT1);
 	
 	CString strOut = GetTextCBSelected(IDC_MAIN_CB_OUTPUT);
 	
@@ -997,6 +1058,38 @@ void CFilterSimDlg::OnBnClickedMainBtnAddroi()
 	SetDlgItemText(IDC_MAIN_EDIT_ROINAME, _T(""));
 }
 
+void CFilterSimDlg::OnBnClickedMainBtnModify()
+{
+	CString strSel = GetTextCBSelected(IDC_MAIN_CB_IMGLIST);
+	std::vector<CEImage>::iterator it;
+
+	if (strSel.Find(_T(" - ")) == 0)
+	{
+		int len = strSel.GetLength();
+		strSel = strSel.Right(len-3);
+	}
+
+	for (it = m_vImgInfo.begin(); it != m_vImgInfo.end(); it++)
+	{
+		CString name=_T("");
+		if (it->HasROI(strSel) == true)
+			break;
+	}
+
+	int nOrgX=0,nOrgY=0,nWidth=0,nHeight=0;
+	CString strName=_T("");
+	nOrgX	= GetDlgItemInt(IDC_MAIN_EDIT_ORGX);
+	nOrgY	= GetDlgItemInt(IDC_MAIN_EDIT_ORGY);
+	nWidth	= GetDlgItemInt(IDC_MAIN_EDIT_WIDTH);
+	nHeight = GetDlgItemInt(IDC_MAIN_EDIT_HEIGHT);
+	GetDlgItemText(IDC_MAIN_EDIT_ROINAME, strName);
+
+	it->ModifyRoi(strName,nOrgX,nOrgY,nWidth,nHeight);
+
+	UpdateAllView();
+}
+
+
 void CFilterSimDlg::OnBnClickedMainBtnDelroi()
 {
 	CString strSelRoi = GetTextCBSelected(IDC_MAIN_CB_IMGLIST);
@@ -1026,6 +1119,12 @@ void CFilterSimDlg::OnBnClickedMainBtnDelroi()
 		if (it2->strOutput == strSelRoi)
 			it2->strOutput = _T("");
 	}
+
+	SetDlgItemText(IDC_MAIN_EDIT_ORGX, _T(""));
+	SetDlgItemText(IDC_MAIN_EDIT_ORGY, _T(""));
+	SetDlgItemText(IDC_MAIN_EDIT_WIDTH, _T(""));
+	SetDlgItemText(IDC_MAIN_EDIT_HEIGHT, _T(""));
+	SetDlgItemText(IDC_MAIN_EDIT_ROINAME, _T(""));
 
 	UpdateCBList();
 
@@ -1148,5 +1247,126 @@ void CFilterSimDlg::OnCbnSelchangeMainCbImglist()
 		SetDlgItemText(IDC_MAIN_EDIT_WIDTH, _T(""));
 		SetDlgItemText(IDC_MAIN_EDIT_HEIGHT, _T(""));
 		SetDlgItemText(IDC_MAIN_EDIT_ROINAME, _T(""));
+	}
+}
+
+CString CFilterSimDlg::CheckLibrary(CString strLib)
+{
+	CString strLibrary=_T("");
+
+	if (strLib != _T("EasyMatrix"))
+	{
+		if ( !strLib.Find(_T("Uniform")) || !strLib.Find(_T("Gaussian")) || !strLib.Find(_T("Low"))
+			|| !strLib.Find(_T("High")) || !strLib.Find(_T("Gradient")) || !strLib.Find(_T("Sobel"))
+			|| !strLib.Find(_T("Prewitt")) || !strLib.Find(_T("Roberts")) || !strLib.Find(_T("Laplacian")))
+		{
+			strLib = _T("");;
+		}
+	}
+	else
+		strLibrary = strLib;
+
+	return strLibrary;
+}
+
+void CFilterSimDlg::OnDestroy()
+{
+	CDialogEx::OnDestroy();
+
+	m_vImgInfo.clear();
+	m_vItmInfo.clear();
+}
+
+void CFilterSimDlg::OnBnClickedMainRBtnImgCst1(UINT ID)
+{
+	UpdateData(TRUE);
+
+	GetDlgItem(IDC_MAIN_EDIT_GRAY1)->EnableWindow(FALSE);
+	GetDlgItem(IDC_MAIN_EDIT_R1)->EnableWindow(FALSE);
+	GetDlgItem(IDC_MAIN_EDIT_G1)->EnableWindow(FALSE);
+	GetDlgItem(IDC_MAIN_EDIT_B1)->EnableWindow(FALSE);
+
+	int state = IsDlgButtonChecked(IDC_MAIN_RBTN_INIMG1);
+
+	if (state == 1)
+	{
+		GetDlgItem(IDC_MAIN_CB_INPUT1)->EnableWindow(TRUE);
+		GetDlgItem(IDC_MAIN_RBTN_CSTGRAY1)->EnableWindow(FALSE);
+		GetDlgItem(IDC_MAIN_RBTN_CSTCLR1)->EnableWindow(FALSE);
+	}
+	else
+	{
+		GetDlgItem(IDC_MAIN_CB_INPUT1)->EnableWindow(FALSE);
+		GetDlgItem(IDC_MAIN_RBTN_CSTGRAY1)->EnableWindow(TRUE);
+		GetDlgItem(IDC_MAIN_RBTN_CSTCLR1)->EnableWindow(TRUE);
+	}
+}
+
+void CFilterSimDlg::OnBnClickedMainRBtnImgCst2(UINT ID)
+{
+	UpdateData(TRUE);
+
+	GetDlgItem(IDC_MAIN_EDIT_GRAY2)->EnableWindow(FALSE);
+	GetDlgItem(IDC_MAIN_EDIT_R2)->EnableWindow(FALSE);
+	GetDlgItem(IDC_MAIN_EDIT_G2)->EnableWindow(FALSE);
+	GetDlgItem(IDC_MAIN_EDIT_B2)->EnableWindow(FALSE);
+
+	int state = IsDlgButtonChecked(IDC_MAIN_RBTN_INIMG2);
+
+	if (state == 1)
+	{
+		GetDlgItem(IDC_MAIN_CB_INPUT2)->EnableWindow(TRUE);
+		GetDlgItem(IDC_MAIN_RBTN_CSTGRAY2)->EnableWindow(FALSE);
+		GetDlgItem(IDC_MAIN_RBTN_CSTCLR2)->EnableWindow(FALSE);
+	}
+	else
+	{
+		GetDlgItem(IDC_MAIN_CB_INPUT2)->EnableWindow(FALSE);
+		GetDlgItem(IDC_MAIN_RBTN_CSTGRAY2)->EnableWindow(TRUE);
+		GetDlgItem(IDC_MAIN_RBTN_CSTCLR2)->EnableWindow(TRUE);
+	}
+}
+
+void CFilterSimDlg::OnBnClickedMainRBtnGrayClr1(UINT ID)
+{
+	UpdateData(TRUE);
+
+	int state = IsDlgButtonChecked(IDC_MAIN_RBTN_CSTGRAY1);
+
+	if (state == 1)
+	{
+		GetDlgItem(IDC_MAIN_EDIT_GRAY1)->EnableWindow(TRUE);
+		GetDlgItem(IDC_MAIN_EDIT_R1)->EnableWindow(FALSE);
+		GetDlgItem(IDC_MAIN_EDIT_G1)->EnableWindow(FALSE);
+		GetDlgItem(IDC_MAIN_EDIT_B1)->EnableWindow(FALSE);
+	}
+	else
+	{
+		GetDlgItem(IDC_MAIN_EDIT_GRAY1)->EnableWindow(FALSE);
+		GetDlgItem(IDC_MAIN_EDIT_R1)->EnableWindow(TRUE);
+		GetDlgItem(IDC_MAIN_EDIT_G1)->EnableWindow(TRUE);
+		GetDlgItem(IDC_MAIN_EDIT_B1)->EnableWindow(TRUE);
+	}
+}
+
+void CFilterSimDlg::OnBnClickedMainRBtnGrayClr2(UINT ID)
+{
+	UpdateData(TRUE);
+
+	int state = IsDlgButtonChecked(IDC_MAIN_RBTN_CSTGRAY2);
+
+	if (state == 1)
+	{
+		GetDlgItem(IDC_MAIN_EDIT_GRAY2)->EnableWindow(TRUE);
+		GetDlgItem(IDC_MAIN_EDIT_R2)->EnableWindow(FALSE);
+		GetDlgItem(IDC_MAIN_EDIT_G2)->EnableWindow(FALSE);
+		GetDlgItem(IDC_MAIN_EDIT_B2)->EnableWindow(FALSE);
+	}
+	else
+	{
+		GetDlgItem(IDC_MAIN_EDIT_GRAY2)->EnableWindow(FALSE);
+		GetDlgItem(IDC_MAIN_EDIT_R2)->EnableWindow(TRUE);
+		GetDlgItem(IDC_MAIN_EDIT_G2)->EnableWindow(TRUE);
+		GetDlgItem(IDC_MAIN_EDIT_B2)->EnableWindow(TRUE);
 	}
 }

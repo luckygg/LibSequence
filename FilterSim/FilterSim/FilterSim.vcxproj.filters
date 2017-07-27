@@ -96,6 +96,12 @@
     <ClInclude Include="EImage.h">
       <Filter>include\Algorithm</Filter>
     </ClInclude>
+    <ClInclude Include="FormConvol.h">
+      <Filter>PGM UI\Form</Filter>
+    </ClInclude>
+    <ClInclude Include="Base.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FilterSim.cpp">
@@ -139,6 +145,9 @@
     </ClCompile>
     <ClCompile Include="EImage.cpp">
       <Filter>include\Algorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="FormConvol.cpp">
+      <Filter>PGM UI\Form</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

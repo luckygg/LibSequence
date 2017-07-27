@@ -102,6 +102,31 @@ bool CEImage::CreateRoi(int nOrgX, int nOrgY, int nWidth, int nHeight, CString s
 	}
 }
 
+bool CEImage::ModifyRoi(CString strName, int nOrgX, int nOrgY, int nWidth, int nHeight)
+{
+	try
+	{
+		std::vector<EBaseROI*> pRois = m_EImgBW8.GetSubBaseROIs(TRUE);
+
+		for (int i=0; i<(int)pRois.size(); i++)
+		{
+			EROIBW8* pRoi = NULL;
+			pRoi = (EROIBW8*)pRois.at(i);
+			CString name = (CString)pRoi->GetTitle().c_str();
+			if (strName == name)
+				pRoi->SetPlacement(nOrgX, nOrgY, nWidth, nHeight);
+		}
+
+		return true;
+	}
+	catch (EException& e)
+	{
+		CString strErr = (CString)e.What().c_str();
+		AfxMessageBox(strErr);
+		return false;
+	}
+}
+
 void CEImage::DeleteRoi(CString strName)
 {
 	try

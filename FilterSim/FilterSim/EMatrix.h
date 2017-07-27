@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Open_eVision_2_0.h"
-using namespace Euresys::Open_eVision_2_0;
+#include "Open_eVision_2_1.h"
+using namespace Euresys::Open_eVision_2_1;
 
 #include "include\Base\StopWatch.h"
 

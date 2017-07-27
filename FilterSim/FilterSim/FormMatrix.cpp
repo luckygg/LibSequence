@@ -28,6 +28,7 @@ void CFormMtx::DoDataExchange(CDataExchange* pDX)
 }
 
 BEGIN_MESSAGE_MAP(CFormMtx, CFormView)
+	ON_WM_SIZE()
 END_MESSAGE_MAP()
 
 
@@ -55,7 +56,7 @@ void CFormMtx::OnInitialUpdate()
 {
 	CFormView::OnInitialUpdate();
 
-	MoveWindow(m_wndRc.left,m_wndRc.top,m_wndRc.Width(),m_wndRc.Height());
+	
 }
 
 BOOL CFormMtx::Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext)
@@ -63,4 +64,12 @@ BOOL CFormMtx::Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwSty
 	m_wndRc = rect;
 
 	return CFormView::Create(lpszClassName, lpszWindowName, dwStyle, rect, pParentWnd, nID, pContext);
+}
+
+
+void CFormMtx::OnSize(UINT nType, int cx, int cy)
+{
+	CFormView::OnSize(nType, cx, cy);
+
+	MoveWindow(m_wndRc.left,m_wndRc.top,m_wndRc.Width(),m_wndRc.Height());
 }

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Open_eVision_2_0.h"
-using namespace Euresys::Open_eVision_2_0;
+#include "Open_eVision_2_1.h"
+using namespace Euresys::Open_eVision_2_1;
 
 class CEImage
 {
@@ -32,6 +32,7 @@ public :
 	void DeleteRoi(CString strName=_T(""));
 	bool GetRoiName(int nIdx, CString &strValue);
 	int GetRoiCount();
+	bool ModifyRoi(CString strName, int nOrgX, int nOrgY, int nWidth, int nHeight);
 	bool GetRoiPlacement(CString strName, int &nOrgX, int &nOrgY, int &nWidth, int &nHeight);
 	bool HasROI(CString strName);
 };
