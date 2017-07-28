@@ -63,9 +63,6 @@
     <ClInclude Include="include\Base\FileDialogEx.h">
       <Filter>include\Base</Filter>
     </ClInclude>
-    <ClInclude Include="EImgFilter.h">
-      <Filter>include\Algorithm</Filter>
-    </ClInclude>
     <ClInclude Include="NewDlg.h">
       <Filter>PGM UI\Dialog</Filter>
     </ClInclude>
@@ -102,6 +99,15 @@
     <ClInclude Include="Base.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="FormMorpho.h">
+      <Filter>PGM UI\Form</Filter>
+    </ClInclude>
+    <ClInclude Include="EImgMorphology.h">
+      <Filter>include\Algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="EImgConvolution.h">
+      <Filter>include\Algorithm</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FilterSim.cpp">
@@ -115,9 +121,6 @@
     </ClCompile>
     <ClCompile Include="include\Base\FileDialogEx.cpp">
       <Filter>include\Base</Filter>
-    </ClCompile>
-    <ClCompile Include="EImgFilter.cpp">
-      <Filter>include\Algorithm</Filter>
     </ClCompile>
     <ClCompile Include="NewDlg.cpp">
       <Filter>PGM UI\Dialog</Filter>
@@ -148,6 +151,15 @@
     </ClCompile>
     <ClCompile Include="FormConvol.cpp">
       <Filter>PGM UI\Form</Filter>
+    </ClCompile>
+    <ClCompile Include="FormMorpho.cpp">
+      <Filter>PGM UI\Form</Filter>
+    </ClCompile>
+    <ClCompile Include="EImgMorphology.cpp">
+      <Filter>include\Algorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="EImgConvolution.cpp">
+      <Filter>include\Algorithm</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

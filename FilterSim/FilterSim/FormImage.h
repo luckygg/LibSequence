@@ -3,6 +3,7 @@
 #include <vector>
 #include "EImage.h"
 #include "FormConvol.h"
+#include "FormMorpho.h"
 // CFormImg form view
 
 class CFormImg : public CFormView
@@ -17,6 +18,7 @@ protected:
 
 private :
 	CView* m_pFormConvol;
+	CView* m_pFormMorpho;
 	void FormSwitching(eProcessing eType);
 
 public :
@@ -25,6 +27,7 @@ public :
 	void ResetControls();
 	CString GetTextCBSelectedProcessing();
 	CString GetTextCBSelectedConvolution();
+	CString GetTextSelectedMorphology();
 	bool IsConvolution(CString strValue);
 	bool IsMorphology(CString strValue);
 	bool IsArtihemetic(CString strValue);

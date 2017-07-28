@@ -705,6 +705,9 @@ void CFilterSimDlg::OnNMClickMainLcItem(NMHDR *pNMHDR, LRESULT *pResult)
 
 	if (nRow == -1)
 	{
+		FormSwitching(ENone);
+		pCB_Lib->SetCurSel(-1);
+
 		pCB_Lib->EnableWindow(FALSE);
 		GetDlgItem(IDC_MAIN_CB_INPUT1)->EnableWindow(FALSE);
 		GetDlgItem(IDC_MAIN_CB_INPUT2)->EnableWindow(FALSE);
@@ -840,6 +843,10 @@ void CFilterSimDlg::OnBnClickedMainBtnApply()
 		{
 			strLib = pImg->GetTextCBSelectedConvolution();
 		}
+		else if (strLib == _T("Morphology"))
+		{
+			strLib = pImg->GetTextSelectedMorphology();
+		}
 	}
 
 	CString strIn  = GetTextCBSelected(IDC_MAIN_CB_INPUT1);
@@ -946,32 +953,48 @@ void CFilterSimDlg::OnExecute()
 		}
 		else
 		{
-			if (strLib == _T("Uniform"))			bRet = CEImgFilter::OnFilter_Uniform	(pIn, strIn, pOut, strOut, time);
-			else if (strLib == _T("Uniform3x3"))	bRet = CEImgFilter::OnFilter_Uniform3x3	(pIn, strIn, pOut, strOut, time);
-			else if (strLib == _T("Uniform5x5"))	bRet = CEImgFilter::OnFilter_Uniform5x5	(pIn, strIn, pOut, strOut, time);
-			else if (strLib == _T("Uniform7x7"))	bRet = CEImgFilter::OnFilter_Uniform7x7	(pIn, strIn, pOut, strOut, time);
-			else if (strLib == _T("Gaussian"))		bRet = CEImgFilter::OnFilter_Gaussian	(pIn, strIn, pOut, strOut, time);
-			else if (strLib == _T("Gaussian3x3"))	bRet = CEImgFilter::OnFilter_Gaussian3x3(pIn, strIn, pOut, strOut, time);
-			else if (strLib == _T("Gaussian5x5"))	bRet = CEImgFilter::OnFilter_Gaussian5x5(pIn, strIn, pOut, strOut, time);
-			else if (strLib == _T("Gaussian7x7"))	bRet = CEImgFilter::OnFilter_Gaussian7x7(pIn, strIn, pOut, strOut, time);
-			else if (strLib == _T("Lowpass1"))		bRet = CEImgFilter::OnFilter_Lowpass1	(pIn, strIn, pOut, strOut, time);
-			else if (strLib == _T("Lowpass2"))		bRet = CEImgFilter::OnFilter_Lowpass2	(pIn, strIn, pOut, strOut, time);
-			else if (strLib == _T("Highpass1"))		bRet = CEImgFilter::OnFilter_Highpass1	(pIn, strIn, pOut, strOut, time);
-			else if (strLib == _T("Highpass2"))		bRet = CEImgFilter::OnFilter_Highpass2	(pIn, strIn, pOut, strOut, time);
-			else if (strLib == _T("Gradient"))		bRet = CEImgFilter::OnFilter_Gradient	(pIn, strIn, pOut, strOut, time);
-			else if (strLib == _T("GradientX"))		bRet = CEImgFilter::OnFilter_GradientX	(pIn, strIn, pOut, strOut, time);
-			else if (strLib == _T("GradientY"))		bRet = CEImgFilter::OnFilter_GradientY	(pIn, strIn, pOut, strOut, time);
-			else if (strLib == _T("Sobel"))			bRet = CEImgFilter::OnFilter_Sobel		(pIn, strIn, pOut, strOut, time);
-			else if (strLib == _T("SobelX"))		bRet = CEImgFilter::OnFilter_SobelX		(pIn, strIn, pOut, strOut, time);
-			else if (strLib == _T("SobelY"))		bRet = CEImgFilter::OnFilter_SobelY		(pIn, strIn, pOut, strOut, time);
-			else if (strLib == _T("Prewitt"))		bRet = CEImgFilter::OnFilter_Prewitt	(pIn, strIn, pOut, strOut, time);
-			else if (strLib == _T("PrewittX"))		bRet = CEImgFilter::OnFilter_PrewittX	(pIn, strIn, pOut, strOut, time);
-			else if (strLib == _T("PrewittY"))		bRet = CEImgFilter::OnFilter_PrewittY	(pIn, strIn, pOut, strOut, time);
-			else if (strLib == _T("Roberts"))		bRet = CEImgFilter::OnFilter_Roberts	(pIn, strIn, pOut, strOut, time);
-			else if (strLib == _T("LaplacianX"))	bRet = CEImgFilter::OnFilter_LaplacianX	(pIn, strIn, pOut, strOut, time);
-			else if (strLib == _T("LaplacianY"))	bRet = CEImgFilter::OnFilter_LaplacianY	(pIn, strIn, pOut, strOut, time);
-			else if (strLib == _T("Laplacian4"))	bRet = CEImgFilter::OnFilter_Laplacian4	(pIn, strIn, pOut, strOut, time);
-			else if (strLib == _T("Laplacian8"))	bRet = CEImgFilter::OnFilter_Laplacian8	(pIn, strIn, pOut, strOut, time);
+			CFormImg* pImg = (CFormImg*)m_pFormImg;
+
+			if (pImg->IsConvolution(strLib) == true)
+			{
+				if (strLib == _T("Uniform"))			bRet = CEImgConvolution::Uniform		(pIn, strIn, pOut, strOut, time);
+				else if (strLib == _T("Uniform3x3"))	bRet = CEImgConvolution::Uniform3x3		(pIn, strIn, pOut, strOut, time);
+				else if (strLib == _T("Uniform5x5"))	bRet = CEImgConvolution::Uniform5x5		(pIn, strIn, pOut, strOut, time);
+				else if (strLib == _T("Uniform7x7"))	bRet = CEImgConvolution::Uniform7x7		(pIn, strIn, pOut, strOut, time);
+				else if (strLib == _T("Gaussian"))		bRet = CEImgConvolution::Gaussian		(pIn, strIn, pOut, strOut, time);
+				else if (strLib == _T("Gaussian3x3"))	bRet = CEImgConvolution::Gaussian3x3	(pIn, strIn, pOut, strOut, time);
+				else if (strLib == _T("Gaussian5x5"))	bRet = CEImgConvolution::Gaussian5x5	(pIn, strIn, pOut, strOut, time);
+				else if (strLib == _T("Gaussian7x7"))	bRet = CEImgConvolution::Gaussian7x7	(pIn, strIn, pOut, strOut, time);
+				else if (strLib == _T("Lowpass1"))		bRet = CEImgConvolution::Lowpass1		(pIn, strIn, pOut, strOut, time);
+				else if (strLib == _T("Lowpass2"))		bRet = CEImgConvolution::Lowpass2		(pIn, strIn, pOut, strOut, time);
+				else if (strLib == _T("Highpass1"))		bRet = CEImgConvolution::Highpass1		(pIn, strIn, pOut, strOut, time);
+				else if (strLib == _T("Highpass2"))		bRet = CEImgConvolution::Highpass2		(pIn, strIn, pOut, strOut, time);
+				else if (strLib == _T("Gradient"))		bRet = CEImgConvolution::Gradient		(pIn, strIn, pOut, strOut, time);
+				else if (strLib == _T("GradientX"))		bRet = CEImgConvolution::GradientX		(pIn, strIn, pOut, strOut, time);
+				else if (strLib == _T("GradientY"))		bRet = CEImgConvolution::GradientY		(pIn, strIn, pOut, strOut, time);
+				else if (strLib == _T("Sobel"))			bRet = CEImgConvolution::Sobel			(pIn, strIn, pOut, strOut, time);
+				else if (strLib == _T("SobelX"))		bRet = CEImgConvolution::SobelX			(pIn, strIn, pOut, strOut, time);
+				else if (strLib == _T("SobelY"))		bRet = CEImgConvolution::SobelY			(pIn, strIn, pOut, strOut, time);
+				else if (strLib == _T("Prewitt"))		bRet = CEImgConvolution::Prewitt		(pIn, strIn, pOut, strOut, time);
+				else if (strLib == _T("PrewittX"))		bRet = CEImgConvolution::PrewittX		(pIn, strIn, pOut, strOut, time);
+				else if (strLib == _T("PrewittY"))		bRet = CEImgConvolution::PrewittY		(pIn, strIn, pOut, strOut, time);
+				else if (strLib == _T("Roberts"))		bRet = CEImgConvolution::Roberts		(pIn, strIn, pOut, strOut, time);
+				else if (strLib == _T("LaplacianX"))	bRet = CEImgConvolution::LaplacianX		(pIn, strIn, pOut, strOut, time);
+				else if (strLib == _T("LaplacianY"))	bRet = CEImgConvolution::LaplacianY		(pIn, strIn, pOut, strOut, time);
+				else if (strLib == _T("Laplacian4"))	bRet = CEImgConvolution::Laplacian4		(pIn, strIn, pOut, strOut, time);
+				else if (strLib == _T("Laplacian8"))	bRet = CEImgConvolution::Laplacian8		(pIn, strIn, pOut, strOut, time);
+			}
+			else if (pImg->IsMorphology(strLib) == true)
+			{
+				if (strLib == _T("Erode"))				bRet = CEImgMorphology::Erode		(pIn, strIn, pOut, strOut, 1, time);
+				else if (strLib == _T("Dilate"))		bRet = CEImgMorphology::Dilate		(pIn, strIn, pOut, strOut, 1, time);
+				else if (strLib == _T("Open"))			bRet = CEImgMorphology::Open		(pIn, strIn, pOut, strOut, 1, time);
+				else if (strLib == _T("Close"))			bRet = CEImgMorphology::Close		(pIn, strIn, pOut, strOut, 1, time);
+				else if (strLib == _T("White Top Hat"))	bRet = CEImgMorphology::WhiteTopHat	(pIn, strIn, pOut, strOut, 1, time);
+				else if (strLib == _T("Black Top Hat"))	bRet = CEImgMorphology::BlackTopHat	(pIn, strIn, pOut, strOut, 1, time);
+				else if (strLib == _T("Morpho Gradient"))bRet = CEImgMorphology::Gradient	(pIn, strIn, pOut, strOut, 1, time);
+				else if (strLib == _T("Median 3x3"))	bRet = CEImgMorphology::Median3x3	(pIn, strIn, pOut, strOut, time);
+			}
 
 			if (bRet == false)
 			{

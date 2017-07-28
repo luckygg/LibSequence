@@ -17,6 +17,7 @@ CFormImg::CFormImg()
 	: CFormView(CFormImg::IDD)
 {
 	m_pFormConvol = NULL;
+	m_pFormMorpho = NULL;
 }
 
 CFormImg::~CFormImg()
@@ -75,9 +76,18 @@ void CFormImg::OnInitialUpdate()
 	m_pFormConvol = pView;
 
 	m_pFormConvol->ShowWindow(SW_HIDE);
+
+	// Form Morphology
+	pView = (CView*)RUNTIME_CLASS(CFormMorpho)->CreateObject();
+	GetDlgItem(IDC_IMG_PC_TAB1)->GetWindowRect(&rect);
+	ScreenToClient(&rect);
+	pView->Create(NULL, NULL, WS_CHILD, rect, this, IDD_FORM_MORPHOLOGY, &context);
+	pView->OnInitialUpdate();
+	m_pFormMorpho = pView;
+
+	m_pFormMorpho->ShowWindow(SW_HIDE);
 	
 	GetDlgItem(IDC_IMG_PC_TAB1)->DestroyWindow();
-
 
 	CComboBox* pCB = (CComboBox*)GetDlgItem(IDC_TAB1_CB_PROCESSING);
 	pCB->AddString(_T("Convolution"));
@@ -97,11 +107,17 @@ void CFormImg::UpdateControls(StItemInfo info)
 	{
 		pCB->SetCurSel(0);	// Convolution
 		FormSwitching(EConvolution);
+
+		CFormConvol* pCvl = (CFormConvol*)m_pFormConvol;
+		pCvl->SetSelectKernelByText(info.strType);
 	}
 	else if (IsMorphology(info.strType) == true)
 	{
 		pCB->SetCurSel(1);	// Morphology
 		FormSwitching(EMorphology);
+
+		CFormMorpho* pCvl = (CFormMorpho*)m_pFormMorpho;
+		pCvl->SetSelectOperByText(info.strType);
 	}
 	else if (IsThreshold(info.strType) == true)
 	{
@@ -114,8 +130,7 @@ void CFormImg::UpdateControls(StItemInfo info)
 		FormSwitching(EArith);
 	}
 
-	CFormConvol* pCvl = (CFormConvol*)m_pFormConvol;
-	pCvl->SetSelectKernelByText(info.strType);
+	
 }
 
 void CFormImg::ResetControls()
@@ -149,6 +164,14 @@ CString CFormImg::GetTextCBSelectedConvolution()
 	return pCvl->GetTextCBSelectedKernel();
 }
 
+CString CFormImg::GetTextSelectedMorphology()
+{
+	CFormMorpho* pMpl = (CFormMorpho*)m_pFormMorpho;
+	if (pMpl == NULL) return _T("");
+
+	return pMpl->GetTextSelectedOper();
+}
+
 BOOL CFormImg::Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext)
 {
 	m_wndRc = rect;
@@ -170,21 +193,27 @@ void CFormImg::FormSwitching(eProcessing eType)
 	{
 	case EConvolution :
 		m_pFormConvol->ShowWindow(SW_SHOW);
+		m_pFormMorpho->ShowWindow(SW_HIDE);
 		break;
 	case EMorphology : 
 		m_pFormConvol->ShowWindow(SW_HIDE);
+		m_pFormMorpho->ShowWindow(SW_SHOW);
 		break;
 	case EThreshold : 
 		m_pFormConvol->ShowWindow(SW_HIDE);
+		m_pFormMorpho->ShowWindow(SW_HIDE);
 		break;
 	case EArith : 
 		m_pFormConvol->ShowWindow(SW_HIDE);
+		m_pFormMorpho->ShowWindow(SW_HIDE);
 		break;
 	case EScale : 
 		m_pFormConvol->ShowWindow(SW_HIDE);
+		m_pFormMorpho->ShowWindow(SW_HIDE);
 		break;
 	case EGain : 
 		m_pFormConvol->ShowWindow(SW_HIDE);
+		m_pFormMorpho->ShowWindow(SW_HIDE);
 		break;
 	}
 }
@@ -244,9 +273,9 @@ bool CFormImg::IsMorphology(CString strValue)
 	else if (strValue == _T("Dilate"))			return true;
 	else if (strValue == _T("Open"))			return true;
 	else if (strValue == _T("Close"))			return true;
-	else if (strValue == _T("white Top Hat"))	return true;
+	else if (strValue == _T("White Top Hat"))	return true;
 	else if (strValue == _T("Black Top Hat"))	return true;
-	else if (strValue == _T("Gradient"))		return true;
+	else if (strValue == _T("Morpho Gradient"))	return true;
 	else if (strValue == _T("Median 3x3"))		return true;
 	else return false;
 }

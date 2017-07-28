@@ -1,21 +1,21 @@
 #include "StdAfx.h"
-#include "EImgFilter.h"
+#include "EImgConvolution.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
-CEImgFilter::CEImgFilter(void)
+CEImgConvolution::CEImgConvolution(void)
 {
 }
 
 
-CEImgFilter::~CEImgFilter(void)
+CEImgConvolution::~CEImgConvolution(void)
 {
 }
 
 
-bool CEImgFilter::OnFilter_Uniform(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, double &dTime)
+bool CEImgConvolution::Uniform(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, double &dTime)
 {
 	if (pIn == NULL || pOut == NULL) return false;
 	try
@@ -68,7 +68,7 @@ bool CEImgFilter::OnFilter_Uniform(CEImage *pIn, CString strIn, CEImage *pOut, C
 	}
 }
 
-bool CEImgFilter::OnFilter_Uniform3x3(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, double &dTime)
+bool CEImgConvolution::Uniform3x3(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, double &dTime)
 {
 	if (pIn == NULL || pOut == NULL) return false;
 	try
@@ -119,7 +119,7 @@ bool CEImgFilter::OnFilter_Uniform3x3(CEImage *pIn, CString strIn, CEImage *pOut
 	}
 }
 
-bool CEImgFilter::OnFilter_Uniform5x5(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, double &dTime)
+bool CEImgConvolution::Uniform5x5(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, double &dTime)
 {
 	if (pIn == NULL || pOut == NULL) return false;
 	try
@@ -170,7 +170,7 @@ bool CEImgFilter::OnFilter_Uniform5x5(CEImage *pIn, CString strIn, CEImage *pOut
 	}
 }
 
-bool CEImgFilter::OnFilter_Uniform7x7(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, double &dTime)
+bool CEImgConvolution::Uniform7x7(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, double &dTime)
 {
 	if (pIn == NULL || pOut == NULL) return false;
 	try
@@ -221,7 +221,7 @@ bool CEImgFilter::OnFilter_Uniform7x7(CEImage *pIn, CString strIn, CEImage *pOut
 	}
 }
 
-bool CEImgFilter::OnFilter_Gaussian(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, double &dTime)
+bool CEImgConvolution::Gaussian(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, double &dTime)
 {
 	if (pIn == NULL || pOut == NULL) return false;
 	try
@@ -272,7 +272,7 @@ bool CEImgFilter::OnFilter_Gaussian(CEImage *pIn, CString strIn, CEImage *pOut, 
 	}
 }
 
-bool CEImgFilter::OnFilter_Gaussian3x3(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, double &dTime)
+bool CEImgConvolution::Gaussian3x3(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, double &dTime)
 {
 	if (pIn == NULL || pOut == NULL) return false;
 	try
@@ -323,7 +323,7 @@ bool CEImgFilter::OnFilter_Gaussian3x3(CEImage *pIn, CString strIn, CEImage *pOu
 	}
 }
 
-bool CEImgFilter::OnFilter_Gaussian5x5(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, double &dTime)
+bool CEImgConvolution::Gaussian5x5(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, double &dTime)
 {
 	if (pIn == NULL || pOut == NULL) return false;
 	try
@@ -374,7 +374,7 @@ bool CEImgFilter::OnFilter_Gaussian5x5(CEImage *pIn, CString strIn, CEImage *pOu
 	}
 }
 
-bool CEImgFilter::OnFilter_Gaussian7x7(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, double &dTime)
+bool CEImgConvolution::Gaussian7x7(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, double &dTime)
 {
 	if (pIn == NULL || pOut == NULL) return false;
 	try
@@ -425,7 +425,7 @@ bool CEImgFilter::OnFilter_Gaussian7x7(CEImage *pIn, CString strIn, CEImage *pOu
 	}
 }
 
-bool CEImgFilter::OnFilter_Lowpass1(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, double &dTime)
+bool CEImgConvolution::Lowpass1(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, double &dTime)
 {
 	if (pIn == NULL || pOut == NULL) return false;
 	try
@@ -476,7 +476,7 @@ bool CEImgFilter::OnFilter_Lowpass1(CEImage *pIn, CString strIn, CEImage *pOut, 
 	}
 }
 
-bool CEImgFilter::OnFilter_Lowpass2(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, double &dTime)
+bool CEImgConvolution::Lowpass2(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, double &dTime)
 {
 	if (pIn == NULL || pOut == NULL) return false;
 	try
@@ -527,7 +527,7 @@ bool CEImgFilter::OnFilter_Lowpass2(CEImage *pIn, CString strIn, CEImage *pOut, 
 	}
 }
 
-bool CEImgFilter::OnFilter_Lowpass3(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, double &dTime)
+bool CEImgConvolution::Lowpass3(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, double &dTime)
 {
 	if (pIn == NULL || pOut == NULL) return false;
 	try
@@ -578,7 +578,7 @@ bool CEImgFilter::OnFilter_Lowpass3(CEImage *pIn, CString strIn, CEImage *pOut, 
 	}
 }
 
-bool CEImgFilter::OnFilter_Highpass1(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, double &dTime)
+bool CEImgConvolution::Highpass1(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, double &dTime)
 {
 	if (pIn == NULL || pOut == NULL) return false;
 	try
@@ -629,7 +629,7 @@ bool CEImgFilter::OnFilter_Highpass1(CEImage *pIn, CString strIn, CEImage *pOut,
 	}
 }
 
-bool CEImgFilter::OnFilter_Highpass2(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, double &dTime)
+bool CEImgConvolution::Highpass2(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, double &dTime)
 {
 	if (pIn == NULL || pOut == NULL) return false;
 	try
@@ -680,7 +680,7 @@ bool CEImgFilter::OnFilter_Highpass2(CEImage *pIn, CString strIn, CEImage *pOut,
 	}
 }
 
-bool CEImgFilter::OnFilter_Gradient(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, double &dTime)
+bool CEImgConvolution::Gradient(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, double &dTime)
 {
 	if (pIn == NULL || pOut == NULL) return false;
 	try
@@ -731,7 +731,7 @@ bool CEImgFilter::OnFilter_Gradient(CEImage *pIn, CString strIn, CEImage *pOut, 
 	}
 }
 
-bool CEImgFilter::OnFilter_GradientX(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, double &dTime)
+bool CEImgConvolution::GradientX(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, double &dTime)
 {
 	if (pIn == NULL || pOut == NULL) return false;
 	try
@@ -782,7 +782,7 @@ bool CEImgFilter::OnFilter_GradientX(CEImage *pIn, CString strIn, CEImage *pOut,
 	}
 }
 
-bool CEImgFilter::OnFilter_GradientY(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, double &dTime)
+bool CEImgConvolution::GradientY(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, double &dTime)
 {
 	if (pIn == NULL || pOut == NULL) return false;
 	try
@@ -833,7 +833,7 @@ bool CEImgFilter::OnFilter_GradientY(CEImage *pIn, CString strIn, CEImage *pOut,
 	}
 }
 
-bool CEImgFilter::OnFilter_Sobel(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, double &dTime)
+bool CEImgConvolution::Sobel(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, double &dTime)
 {
 	if (pIn == NULL || pOut == NULL) return false;
 	try
@@ -884,7 +884,7 @@ bool CEImgFilter::OnFilter_Sobel(CEImage *pIn, CString strIn, CEImage *pOut, CSt
 	}
 }
 
-bool CEImgFilter::OnFilter_SobelX(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, double &dTime)
+bool CEImgConvolution::SobelX(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, double &dTime)
 {
 	if (pIn == NULL || pOut == NULL) return false;
 	try
@@ -935,7 +935,7 @@ bool CEImgFilter::OnFilter_SobelX(CEImage *pIn, CString strIn, CEImage *pOut, CS
 	}
 }
 
-bool CEImgFilter::OnFilter_SobelY(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, double &dTime)
+bool CEImgConvolution::SobelY(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, double &dTime)
 {
 	if (pIn == NULL || pOut == NULL) return false;
 	try
@@ -986,7 +986,7 @@ bool CEImgFilter::OnFilter_SobelY(CEImage *pIn, CString strIn, CEImage *pOut, CS
 	}
 }
 
-bool CEImgFilter::OnFilter_Prewitt(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, double &dTime)
+bool CEImgConvolution::Prewitt(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, double &dTime)
 {
 	if (pIn == NULL || pOut == NULL) return false;
 	try
@@ -1037,7 +1037,7 @@ bool CEImgFilter::OnFilter_Prewitt(CEImage *pIn, CString strIn, CEImage *pOut, C
 	}
 }
 
-bool CEImgFilter::OnFilter_PrewittX(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, double &dTime)
+bool CEImgConvolution::PrewittX(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, double &dTime)
 {
 	if (pIn == NULL || pOut == NULL) return false;
 	try
@@ -1088,7 +1088,7 @@ bool CEImgFilter::OnFilter_PrewittX(CEImage *pIn, CString strIn, CEImage *pOut, 
 	}
 }
 
-bool CEImgFilter::OnFilter_PrewittY(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, double &dTime)
+bool CEImgConvolution::PrewittY(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, double &dTime)
 {
 	if (pIn == NULL || pOut == NULL) return false;
 	try
@@ -1139,7 +1139,7 @@ bool CEImgFilter::OnFilter_PrewittY(CEImage *pIn, CString strIn, CEImage *pOut, 
 	}
 }
 
-bool CEImgFilter::OnFilter_Roberts(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, double &dTime)
+bool CEImgConvolution::Roberts(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, double &dTime)
 {
 	if (pIn == NULL || pOut == NULL) return false;
 	try
@@ -1190,7 +1190,7 @@ bool CEImgFilter::OnFilter_Roberts(CEImage *pIn, CString strIn, CEImage *pOut, C
 	}
 }
 
-bool CEImgFilter::OnFilter_LaplacianX(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, double &dTime)
+bool CEImgConvolution::LaplacianX(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, double &dTime)
 {
 	if (pIn == NULL || pOut == NULL) return false;
 	try
@@ -1241,7 +1241,7 @@ bool CEImgFilter::OnFilter_LaplacianX(CEImage *pIn, CString strIn, CEImage *pOut
 	}
 }
 
-bool CEImgFilter::OnFilter_LaplacianY(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, double &dTime)
+bool CEImgConvolution::LaplacianY(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, double &dTime)
 {
 	if (pIn == NULL || pOut == NULL) return false;
 	try
@@ -1292,7 +1292,7 @@ bool CEImgFilter::OnFilter_LaplacianY(CEImage *pIn, CString strIn, CEImage *pOut
 	}
 }
 
-bool CEImgFilter::OnFilter_Laplacian4(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, double &dTime)
+bool CEImgConvolution::Laplacian4(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, double &dTime)
 {
 	if (pIn == NULL || pOut == NULL) return false;
 	try
@@ -1343,7 +1343,7 @@ bool CEImgFilter::OnFilter_Laplacian4(CEImage *pIn, CString strIn, CEImage *pOut
 	}
 }
 
-bool CEImgFilter::OnFilter_Laplacian8(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, double &dTime)
+bool CEImgConvolution::Laplacian8(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, double &dTime)
 {
 	if (pIn == NULL || pOut == NULL) return false;
 	try

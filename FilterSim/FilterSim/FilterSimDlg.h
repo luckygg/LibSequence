@@ -9,7 +9,8 @@
 #include "include/Base/FileDialogEx.h"
 #include <vector>
 #include "EImage.h"
-#include "EImgFilter.h"
+#include "EImgConvolution.h"
+#include "EImgMorphology.h"
 #include "EMatrix.h"
 
 

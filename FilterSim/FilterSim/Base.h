@@ -32,6 +32,7 @@ struct StConvolution
 struct StMorphology
 {
 	CString strType;	// Operation Type
+	int nHalfKernel;	// Half of Kernel
 };
 
 struct StThreshold
