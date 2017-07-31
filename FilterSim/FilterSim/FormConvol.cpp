@@ -98,6 +98,8 @@ void CFormConvol::OnInitialUpdate()
 	pCB->AddString(_T("LaplacianY"));
 	pCB->AddString(_T("Laplacian4"));
 	pCB->AddString(_T("Laplacian8"));
+
+	InitControls();
 }
 
 CString CFormConvol::GetTextCBSelectedKernel()
@@ -123,4 +125,11 @@ void CFormConvol::SetSelectKernelByText(CString strData)
 	pCB = (CComboBox*)GetDlgItem(IDC_CVL_CB_PREKERNEL);
 	sel = pCB->FindString(-1, strData);
 	pCB->SetCurSel(sel);
+}
+
+void CFormConvol::InitControls()
+{
+	CComboBox* pCB = (CComboBox*)GetDlgItem(IDC_CVL_CB_PREKERNEL);
+
+	pCB->SetCurSel(-1);
 }

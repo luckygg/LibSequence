@@ -8,7 +8,7 @@
 
 class CFormImg : public CFormView
 {
-	enum eProcessing {EConvolution=0, EMorphology, EThreshold, EArith, EScale, EGain};
+	enum eProcessing {EConvolution=0, EMorphology, EThreshold, EArith, EScale, EGain, ENone};
 
 	DECLARE_DYNCREATE(CFormImg)
 
@@ -23,11 +23,13 @@ private :
 
 public :
 	CRect m_wndRc;
+	
 	void UpdateControls(StItemInfo info);
-	void ResetControls();
+	void InitControls();
 	CString GetTextCBSelectedProcessing();
 	CString GetTextCBSelectedConvolution();
 	CString GetTextSelectedMorphology();
+	int GetValueMorphologyHalfKernel();
 	bool IsConvolution(CString strValue);
 	bool IsMorphology(CString strValue);
 	bool IsArtihemetic(CString strValue);

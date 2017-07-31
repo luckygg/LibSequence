@@ -116,8 +116,9 @@ void CFormImg::UpdateControls(StItemInfo info)
 		pCB->SetCurSel(1);	// Morphology
 		FormSwitching(EMorphology);
 
-		CFormMorpho* pCvl = (CFormMorpho*)m_pFormMorpho;
-		pCvl->SetSelectOperByText(info.strType);
+		CFormMorpho* pMpl = (CFormMorpho*)m_pFormMorpho;
+		pMpl->SetSelectOperByText(info.strType);
+		pMpl->SetHalfKernel(info.stLibrary.stImg.stMorphology.nHalfKernel);
 	}
 	else if (IsThreshold(info.strType) == true)
 	{
@@ -129,16 +130,16 @@ void CFormImg::UpdateControls(StItemInfo info)
 		pCB->SetCurSel(3); // Arithmetic & Logic
 		FormSwitching(EArith);
 	}
-
-	
 }
 
-void CFormImg::ResetControls()
+void CFormImg::InitControls()
 {
 	CComboBox* pCB = NULL;
 
 	pCB = (CComboBox*)GetDlgItem(IDC_TAB1_CB_PROCESSING);
 	pCB->SetCurSel(-1);
+
+	FormSwitching(ENone);
 }
 
 CString CFormImg::GetTextCBSelectedProcessing()
@@ -172,6 +173,14 @@ CString CFormImg::GetTextSelectedMorphology()
 	return pMpl->GetTextSelectedOper();
 }
 
+int CFormImg::GetValueMorphologyHalfKernel()
+{
+	CFormMorpho* pMpl = (CFormMorpho*)m_pFormMorpho;
+	if (pMpl == NULL) return 0;
+
+	return pMpl->GetHalfKernel();
+}
+
 BOOL CFormImg::Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext)
 {
 	m_wndRc = rect;
@@ -192,12 +201,22 @@ void CFormImg::FormSwitching(eProcessing eType)
 	switch (eType)
 	{
 	case EConvolution :
-		m_pFormConvol->ShowWindow(SW_SHOW);
-		m_pFormMorpho->ShowWindow(SW_HIDE);
+		{
+			m_pFormConvol->ShowWindow(SW_SHOW);
+			m_pFormMorpho->ShowWindow(SW_HIDE);
+
+			CFormConvol* pCvl = (CFormConvol*)m_pFormConvol;
+			pCvl->InitControls();
+		}
 		break;
 	case EMorphology : 
-		m_pFormConvol->ShowWindow(SW_HIDE);
-		m_pFormMorpho->ShowWindow(SW_SHOW);
+		{
+			m_pFormConvol->ShowWindow(SW_HIDE);
+			m_pFormMorpho->ShowWindow(SW_SHOW);
+			
+			CFormMorpho* pMpl = (CFormMorpho*)m_pFormMorpho;
+			pMpl->InitControls();
+		}
 		break;
 	case EThreshold : 
 		m_pFormConvol->ShowWindow(SW_HIDE);
@@ -212,6 +231,10 @@ void CFormImg::FormSwitching(eProcessing eType)
 		m_pFormMorpho->ShowWindow(SW_HIDE);
 		break;
 	case EGain : 
+		m_pFormConvol->ShowWindow(SW_HIDE);
+		m_pFormMorpho->ShowWindow(SW_HIDE);
+		break;
+	case ENone : 
 		m_pFormConvol->ShowWindow(SW_HIDE);
 		m_pFormMorpho->ShowWindow(SW_HIDE);
 		break;

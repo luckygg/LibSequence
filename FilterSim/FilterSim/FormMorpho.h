@@ -25,6 +25,7 @@ private :
 	CRect m_wndRc;
 	int m_rbtnOper;
 public :
+	void InitControls();
 	CString GetTextSelectedOper();
 	void SetSelectOperByText(CString strData);
 	int GetHalfKernel();

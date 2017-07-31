@@ -25,6 +25,7 @@ private :
 	CRect m_wndRc;
 
 public :
+	void InitControls();
 	CString GetTextCBSelectedKernel();
 	void SetSelectKernelByText(CString strData);
 

@@ -606,7 +606,7 @@ void CFilterSimDlg::UpdateItemColor()
 	}
 }
 
-void CFilterSimDlg::UpdateItem(int nRow, BOOL bUse, CString strAlgorithm, CString strIn, CString strOut)
+void CFilterSimDlg::UpdateItem(int nRow, BOOL bUse, CString strAlgorithm, CString strIn, CString strOut, StLibrary stLib)
 {
 	if (bUse == TRUE)
 	{
@@ -632,6 +632,7 @@ void CFilterSimDlg::UpdateItem(int nRow, BOOL bUse, CString strAlgorithm, CStrin
 			it->strType = strAlgorithm;
 			it->strInput = strIn;
 			it->strOutput = strOut;
+			it->stLibrary = stLib;
 			break;
 		}
 		else
@@ -790,7 +791,8 @@ void CFilterSimDlg::OnCbnSelchangeMainCbLib()
 			int nRow = GetDlgItemInt(IDC_MAIN_LB_ROW);
 			FormSwitching(EEasyImage);
 			CFormImg* pImg = (CFormImg*)m_pFormImg;
-			pImg->UpdateControls(m_vItmInfo.at(nRow));
+			pImg->InitControls();
+			//pImg->UpdateControls(m_vItmInfo.at(nRow));
 
 			GetDlgItem(IDC_MAIN_CB_INPUT1)->EnableWindow(TRUE);
 		}
@@ -817,12 +819,22 @@ void CFilterSimDlg::FormSwitching(eAlgorithm eType)
 	switch (eType)
 	{
 	case EEasyImage :
-		m_pFormImg->ShowWindow(SW_SHOW);
-		m_pFormMtx->ShowWindow(SW_HIDE);
+		{
+			m_pFormImg->ShowWindow(SW_SHOW);
+			m_pFormMtx->ShowWindow(SW_HIDE);
+
+			CFormImg *pImg = (CFormImg*)m_pFormImg;
+			pImg->InitControls();
+		}
 		break;
 	case EEasyMatrix : 
-		m_pFormImg->ShowWindow(SW_HIDE);
-		m_pFormMtx->ShowWindow(SW_SHOW);
+		{
+			m_pFormImg->ShowWindow(SW_HIDE);
+			m_pFormMtx->ShowWindow(SW_SHOW);
+
+			CFormMtx *pMtx = (CFormMtx*)m_pFormMtx;
+			//pImg->InitControls();
+		}
 		break;
 	case ENone : 
 		m_pFormImg->ShowWindow(SW_HIDE);
@@ -832,7 +844,7 @@ void CFilterSimDlg::FormSwitching(eAlgorithm eType)
 
 void CFilterSimDlg::OnBnClickedMainBtnApply()
 {
-	
+	StLibrary library;
 	int nRow = GetDlgItemInt(IDC_MAIN_LB_ROW);
 	CString strLib = GetTextCBSelected(IDC_MAIN_CB_LIB);
 	if (strLib == _T("EasyImage"))
@@ -842,10 +854,14 @@ void CFilterSimDlg::OnBnClickedMainBtnApply()
 		if (strLib == _T("Convolution"))
 		{
 			strLib = pImg->GetTextCBSelectedConvolution();
+			library.stImg.stConvolution.strType = strLib;
 		}
 		else if (strLib == _T("Morphology"))
 		{
 			strLib = pImg->GetTextSelectedMorphology();
+			int nValue = pImg->GetValueMorphologyHalfKernel();
+			library.stImg.stMorphology.strType = strLib;
+			library.stImg.stMorphology.nHalfKernel = nValue;
 		}
 	}
 
@@ -855,7 +871,7 @@ void CFilterSimDlg::OnBnClickedMainBtnApply()
 	
 	BOOL bChk = IsDlgButtonChecked(IDC_MAIN_CHK_USE);
 
-	UpdateItem(nRow, bChk, strLib, strIn, strOut);
+	UpdateItem(nRow, bChk, strLib, strIn, strOut, library);
 }
 
 void CFilterSimDlg::OnExecute()
@@ -986,13 +1002,15 @@ void CFilterSimDlg::OnExecute()
 			}
 			else if (pImg->IsMorphology(strLib) == true)
 			{
-				if (strLib == _T("Erode"))				bRet = CEImgMorphology::Erode		(pIn, strIn, pOut, strOut, 1, time);
-				else if (strLib == _T("Dilate"))		bRet = CEImgMorphology::Dilate		(pIn, strIn, pOut, strOut, 1, time);
-				else if (strLib == _T("Open"))			bRet = CEImgMorphology::Open		(pIn, strIn, pOut, strOut, 1, time);
-				else if (strLib == _T("Close"))			bRet = CEImgMorphology::Close		(pIn, strIn, pOut, strOut, 1, time);
-				else if (strLib == _T("White Top Hat"))	bRet = CEImgMorphology::WhiteTopHat	(pIn, strIn, pOut, strOut, 1, time);
-				else if (strLib == _T("Black Top Hat"))	bRet = CEImgMorphology::BlackTopHat	(pIn, strIn, pOut, strOut, 1, time);
-				else if (strLib == _T("Morpho Gradient"))bRet = CEImgMorphology::Gradient	(pIn, strIn, pOut, strOut, 1, time);
+				StItemInfo info = m_vItmInfo.at(i);
+				int nHalf = info.stLibrary.stImg.stMorphology.nHalfKernel;
+				if (strLib == _T("Erode"))				bRet = CEImgMorphology::Erode		(pIn, strIn, pOut, strOut, nHalf, time);
+				else if (strLib == _T("Dilate"))		bRet = CEImgMorphology::Dilate		(pIn, strIn, pOut, strOut, nHalf, time);
+				else if (strLib == _T("Open"))			bRet = CEImgMorphology::Open		(pIn, strIn, pOut, strOut, nHalf, time);
+				else if (strLib == _T("Close"))			bRet = CEImgMorphology::Close		(pIn, strIn, pOut, strOut, nHalf, time);
+				else if (strLib == _T("White Top Hat"))	bRet = CEImgMorphology::WhiteTopHat	(pIn, strIn, pOut, strOut, nHalf, time);
+				else if (strLib == _T("Black Top Hat"))	bRet = CEImgMorphology::BlackTopHat	(pIn, strIn, pOut, strOut, nHalf, time);
+				else if (strLib == _T("Morpho Gradient"))bRet = CEImgMorphology::Gradient	(pIn, strIn, pOut, strOut, nHalf, time);
 				else if (strLib == _T("Median 3x3"))	bRet = CEImgMorphology::Median3x3	(pIn, strIn, pOut, strOut, time);
 			}
 

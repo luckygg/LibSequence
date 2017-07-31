@@ -49,7 +49,7 @@ private :
 	// List Control 의 아이템 개수 만큼 Input / Output 재입력.
 	void UpdateItemList();
 	// Tab 에서 Input / Output / Lib 입력 후 Apply 누르면 저장되는 부분.
-	void UpdateItem(int nRow, BOOL bUse, CString strAlgorithm, CString strIn, CString strOut);
+	void UpdateItem(int nRow, BOOL bUse, CString strAlgorithm, CString strIn, CString strOut, StLibrary stLib);
 	// Enable 설정에 따라 Green / Red 표기 부분.
 	void UpdateItemColor();
 	// 선택된 Combo Image 에 따라 모든 Picture Control 을 갱신하는 부분.
