@@ -108,6 +108,21 @@
     <ClInclude Include="EImgConvolution.h">
       <Filter>include\Algorithm</Filter>
     </ClInclude>
+    <ClInclude Include="FormThdAdt.h">
+      <Filter>PGM UI\Form</Filter>
+    </ClInclude>
+    <ClInclude Include="FormThreshold.h">
+      <Filter>PGM UI\Form</Filter>
+    </ClInclude>
+    <ClInclude Include="FormThdSpl.h">
+      <Filter>PGM UI\Form</Filter>
+    </ClInclude>
+    <ClInclude Include="FormThdDbl.h">
+      <Filter>PGM UI\Form</Filter>
+    </ClInclude>
+    <ClInclude Include="EImgThreshold.h">
+      <Filter>include\Algorithm</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FilterSim.cpp">
@@ -159,6 +174,21 @@
       <Filter>include\Algorithm</Filter>
     </ClCompile>
     <ClCompile Include="EImgConvolution.cpp">
+      <Filter>include\Algorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="FormThdAdt.cpp">
+      <Filter>PGM UI\Form</Filter>
+    </ClCompile>
+    <ClCompile Include="FormThdSpl.cpp">
+      <Filter>PGM UI\Form</Filter>
+    </ClCompile>
+    <ClCompile Include="FormThdDbl.cpp">
+      <Filter>PGM UI\Form</Filter>
+    </ClCompile>
+    <ClCompile Include="FormThreshold.cpp">
+      <Filter>PGM UI\Form</Filter>
+    </ClCompile>
+    <ClCompile Include="EImgThreshold.cpp">
       <Filter>include\Algorithm</Filter>
     </ClCompile>
   </ItemGroup>

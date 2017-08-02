@@ -4,6 +4,7 @@
 #include "EImage.h"
 #include "FormConvol.h"
 #include "FormMorpho.h"
+#include "FormThreshold.h"
 // CFormImg form view
 
 class CFormImg : public CFormView
@@ -17,23 +18,24 @@ protected:
 	virtual ~CFormImg();
 
 private :
-	CView* m_pFormConvol;
-	CView* m_pFormMorpho;
+	CView* m_pFormCvl;
+	CView* m_pFormMpl;
+	CView* m_pFormThd;
 	void FormSwitching(eProcessing eType);
 
 public :
 	CRect m_wndRc;
 	
-	void UpdateControls(StItemInfo info);
+	
 	void InitControls();
-	CString GetTextCBSelectedProcessing();
-	CString GetTextCBSelectedConvolution();
-	CString GetTextSelectedMorphology();
-	int GetValueMorphologyHalfKernel();
+
 	bool IsConvolution(CString strValue);
 	bool IsMorphology(CString strValue);
 	bool IsArtihemetic(CString strValue);
 	bool IsThreshold(CString strValue);
+
+	void GetParameter(StLibrary& info);
+	void SetParameter(StLibrary info);
 public:
 	enum { IDD = IDD_FORM_IMAGE };
 #ifdef _DEBUG

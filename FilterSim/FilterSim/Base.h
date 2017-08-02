@@ -9,11 +9,11 @@ struct StSimpleThd
 
 struct StDoubleThd
 {
-	int	nPxlHighVal;	// Pixel High Value
-	int	nThdHighVal;	// Threshold High Value
-	int	nPxlBtwVal;		// Pixel Between Value
-	int	nThdLowVal;		// Threshold Low Value
-	int	nPxlLowVal;		// Pixel Low Value
+	int	nPxlHigh;	// Pixel High Value
+	int	nThdHigh;	// Threshold High Value
+	int	nPxlMid;		// Pixel Between Value
+	int	nThdLow;		// Threshold Low Value
+	int	nPxlLow;		// Pixel Low Value
 };
 
 struct StAdaptiveThd
@@ -37,6 +37,7 @@ struct StMorphology
 
 struct StThreshold
 {
+	CString strType;			// Threshold Method
 	StSimpleThd stSimple;		// Simple Threshold
 	StDoubleThd stDouble;		// Double Threshold
 	StAdaptiveThd stAdaptive;	// Adpative Threshold
@@ -86,6 +87,7 @@ struct StMtx
 
 struct StImg
 {
+	CString strType;				// Selected Algorithm
 	StConvolution stConvolution;	// Convolution
 	StMorphology stMorphology;		// Morphology
 	StThreshold stThreshold;		// Threshold

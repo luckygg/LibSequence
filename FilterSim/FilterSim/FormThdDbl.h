@@ -2,18 +2,18 @@
 
 #include "Base.h"
 
-// CFormConvol form view
+// CFormThdDbl form view
 
-class CFormConvol : public CFormView
+class CFormThdDbl : public CFormView
 {
-	DECLARE_DYNCREATE(CFormConvol)
+	DECLARE_DYNCREATE(CFormThdDbl)
 
 protected:
-	CFormConvol();           // protected constructor used by dynamic creation
-	virtual ~CFormConvol();
+	CFormThdDbl();           // protected constructor used by dynamic creation
+	virtual ~CFormThdDbl();
 
 public:
-	enum { IDD = IDD_FORM_CONVOL };
+	enum { IDD = IDD_FORM_THD_DOUBLE };
 #ifdef _DEBUG
 	virtual void AssertValid() const;
 #ifndef _WIN32_WCE
@@ -21,13 +21,13 @@ public:
 #endif
 #endif
 
-private :
-	CRect m_wndRc;
-
 public :
 	void InitControls();
 	void GetParameter(StLibrary &info);
 	void SetParameter(StLibrary info);
+
+private :
+	CRect m_wndRc;
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support

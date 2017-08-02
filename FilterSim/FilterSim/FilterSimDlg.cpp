@@ -763,7 +763,7 @@ void CFilterSimDlg::OnNMClickMainLcItem(NMHDR *pNMHDR, LRESULT *pResult)
 		SetDlgItemInt(IDC_MAIN_LB_ROW, nRow);
 
 		CFormImg* pImg = (CFormImg*)m_pFormImg;
-		pImg->UpdateControls(m_vItmInfo.at(nRow));
+		pImg->SetParameter(m_vItmInfo.at(nRow).stLibrary);
 
 		GetDlgItem(IDC_MAIN_CB_INPUT1)->EnableWindow(TRUE);
 	}
@@ -845,23 +845,26 @@ void CFilterSimDlg::FormSwitching(eAlgorithm eType)
 void CFilterSimDlg::OnBnClickedMainBtnApply()
 {
 	StLibrary library;
+
+	CFormImg* pImg = (CFormImg*)m_pFormImg;
+	pImg->GetParameter(library);
+
 	int nRow = GetDlgItemInt(IDC_MAIN_LB_ROW);
 	CString strLib = GetTextCBSelected(IDC_MAIN_CB_LIB);
 	if (strLib == _T("EasyImage"))
 	{
-		CFormImg* pImg = (CFormImg*)m_pFormImg;
-		strLib = pImg->GetTextCBSelectedProcessing();
-		if (strLib == _T("Convolution"))
+		//strLib = pImg->GetTextCBSelectedProcessing();
+		if (library.stImg.strType == _T("Convolution"))
 		{
-			strLib = pImg->GetTextCBSelectedConvolution();
-			library.stImg.stConvolution.strType = strLib;
+			strLib = library.stImg.stConvolution.strType;
 		}
-		else if (strLib == _T("Morphology"))
+		else if (library.stImg.strType == _T("Morphology"))
 		{
-			strLib = pImg->GetTextSelectedMorphology();
-			int nValue = pImg->GetValueMorphologyHalfKernel();
-			library.stImg.stMorphology.strType = strLib;
-			library.stImg.stMorphology.nHalfKernel = nValue;
+			strLib = library.stImg.stMorphology.strType;
+		}
+		else if (library.stImg.strType == _T("Threshold"))
+		{
+			strLib = library.stImg.stThreshold.strType;
 		}
 	}
 
@@ -1012,6 +1015,43 @@ void CFilterSimDlg::OnExecute()
 				else if (strLib == _T("Black Top Hat"))	bRet = CEImgMorphology::BlackTopHat	(pIn, strIn, pOut, strOut, nHalf, time);
 				else if (strLib == _T("Morpho Gradient"))bRet = CEImgMorphology::Gradient	(pIn, strIn, pOut, strOut, nHalf, time);
 				else if (strLib == _T("Median 3x3"))	bRet = CEImgMorphology::Median3x3	(pIn, strIn, pOut, strOut, time);
+			}
+			else if (pImg->IsThreshold(strLib) == true)
+			{
+				StItemInfo info = m_vItmInfo.at(i);
+				if (strLib == _T("Simple Threshold"))
+				{
+					CString strType = info.stLibrary.stImg.stThreshold.stSimple.strType;
+					if (strType == _T("Absolute"))				bRet = CEImgThreshold::ThresholdABS(pIn, strIn, pOut, strOut, info.stLibrary.stImg.stThreshold.stSimple.nAbs, time);
+					else if (strType == _T("Relative"))
+					{
+						float fRel = (float)(info.stLibrary.stImg.stThreshold.stSimple.nRel)/100;
+						bRet = CEImgThreshold::ThresholdRelative(pIn, strIn, pOut, strOut, fRel, time);
+					}
+					else if (strType == _T("Minimum Residue"))	bRet = CEImgThreshold::ThresholdMinResidue(pIn, strIn, pOut, strOut, time);
+					else if (strType == _T("Maximum Entropy"))	bRet = CEImgThreshold::ThresholdMaxEntropy(pIn, strIn, pOut, strOut, time);
+					else if (strType == _T("Iso-Data"))			bRet = CEImgThreshold::ThresholdIsoData(pIn, strIn, pOut, strOut, time);
+				}
+				else if (strLib == _T("Double Threshold"))
+				{
+					int nPxlHigh = info.stLibrary.stImg.stThreshold.stDouble.nPxlHigh;
+					int nPxlMid  = info.stLibrary.stImg.stThreshold.stDouble.nPxlMid;
+					int nPxlLow  = info.stLibrary.stImg.stThreshold.stDouble.nPxlLow;
+					int nThdHigh = info.stLibrary.stImg.stThreshold.stDouble.nThdHigh;
+					int nThdLow  = info.stLibrary.stImg.stThreshold.stDouble.nThdLow;
+
+					bRet = CEImgThreshold::ThresholdDouble(pIn, strIn, pOut, strOut, nPxlHigh, nThdHigh, nPxlMid, nThdLow, nPxlLow, time);
+				}
+				else if (strLib == _T("Adaptive Threshold"))
+				{
+					CString strType = info.stLibrary.stImg.stThreshold.stAdaptive.strType;
+					int nKernel = info.stLibrary.stImg.stThreshold.stAdaptive.nKernel;
+					int nOffset = info.stLibrary.stImg.stThreshold.stAdaptive.nOffset;
+
+					if (strType == _T("Mean"))			bRet = CEImgThreshold::ThresholdAdaptiveMean(pIn, strIn, pOut, strOut, nKernel, nOffset, time);
+					else if (strType == _T("Median"))	bRet = CEImgThreshold::ThresholdAdaptiveMedian(pIn, strIn, pOut, strOut, nKernel, nOffset, time);
+					else if (strType == _T("Middle"))	bRet = CEImgThreshold::ThresholdAdaptiveMiddle(pIn, strIn, pOut, strOut, nKernel, nOffset, time);
+				}
 			}
 
 			if (bRet == false)
@@ -1289,25 +1329,6 @@ void CFilterSimDlg::OnCbnSelchangeMainCbImglist()
 		SetDlgItemText(IDC_MAIN_EDIT_HEIGHT, _T(""));
 		SetDlgItemText(IDC_MAIN_EDIT_ROINAME, _T(""));
 	}
-}
-
-CString CFilterSimDlg::CheckLibrary(CString strLib)
-{
-	CString strLibrary=_T("");
-
-	if (strLib != _T("EasyMatrix"))
-	{
-		if ( !strLib.Find(_T("Uniform")) || !strLib.Find(_T("Gaussian")) || !strLib.Find(_T("Low"))
-			|| !strLib.Find(_T("High")) || !strLib.Find(_T("Gradient")) || !strLib.Find(_T("Sobel"))
-			|| !strLib.Find(_T("Prewitt")) || !strLib.Find(_T("Roberts")) || !strLib.Find(_T("Laplacian")))
-		{
-			strLib = _T("");;
-		}
-	}
-	else
-		strLibrary = strLib;
-
-	return strLibrary;
 }
 
 void CFilterSimDlg::OnDestroy()

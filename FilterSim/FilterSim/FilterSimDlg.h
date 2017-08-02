@@ -11,6 +11,7 @@
 #include "EImage.h"
 #include "EImgConvolution.h"
 #include "EImgMorphology.h"
+#include "EImgThreshold.h"
 #include "EMatrix.h"
 
 
@@ -77,8 +78,6 @@ private :
 	void DrawImage(int nViewIdx, CString strFileName);
 	void FormSwitching(eAlgorithm eType);
 	void OnExecute();
-	CString CheckLibrary(CString strLib);
-	
 	
 // Implementation
 protected:

@@ -2,18 +2,20 @@
 
 #include "Base.h"
 
-// CFormConvol form view
+// CFormThdAdt form view
 
-class CFormConvol : public CFormView
+class CFormThdAdt : public CFormView
 {
-	DECLARE_DYNCREATE(CFormConvol)
+	enum eMethod {EMean=0, EMedian, EMiddle, ENone};
+
+	DECLARE_DYNCREATE(CFormThdAdt)
 
 protected:
-	CFormConvol();           // protected constructor used by dynamic creation
-	virtual ~CFormConvol();
+	CFormThdAdt();           // protected constructor used by dynamic creation
+	virtual ~CFormThdAdt();
 
 public:
-	enum { IDD = IDD_FORM_CONVOL };
+	enum { IDD = IDD_FORM_THD_ADAPTIVE };
 #ifdef _DEBUG
 	virtual void AssertValid() const;
 #ifndef _WIN32_WCE
@@ -21,13 +23,14 @@ public:
 #endif
 #endif
 
-private :
-	CRect m_wndRc;
-
 public :
 	void InitControls();
 	void GetParameter(StLibrary &info);
 	void SetParameter(StLibrary info);
+
+private :
+	int m_rbtnMethod;
+	CRect m_wndRc;
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
@@ -36,6 +39,7 @@ protected:
 public:
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	virtual BOOL Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext = NULL);
+	afx_msg void OnBnClickedThdAdtRBtnMethod(UINT ID);
 	virtual void OnInitialUpdate();
 };
 

@@ -88,7 +88,18 @@ void CFormMorpho::OnBnClickedMplRBtnOperation(UINT ID)
 	}
 }
 
-CString CFormMorpho::GetTextSelectedOper()
+void CFormMorpho::InitControls()
+{
+	CheckRadioButton(IDC_MPL_RBTN_ERODE, IDC_MPL_RBTN_MEDIAN3X3, IDC_MPL_RBTN_ERODE);
+
+	SetDlgItemInt(IDC_MPL_EDIT_HALFKERNEL, 1);
+
+	CSpinButtonCtrl* pSpCtrl = (CSpinButtonCtrl*)GetDlgItem(IDC_MPL_SPIN_HALFKERNEL);
+	pSpCtrl->SetRange(0,255);
+	pSpCtrl->SetPos(1);
+}
+
+void CFormMorpho::GetParameter(StLibrary &info)
 {
 	CString strOper=_T("");
 	switch(m_rbtnOper)
@@ -103,52 +114,36 @@ CString CFormMorpho::GetTextSelectedOper()
 		case 7 : strOper = _T("Median 3x3");	break;
 	}
 
-	return strOper;
+	info.stImg.stMorphology.strType = strOper;
+
+	CSpinButtonCtrl* pSpCtrl = (CSpinButtonCtrl*)GetDlgItem(IDC_MPL_SPIN_HALFKERNEL);
+
+	info.stImg.stMorphology.nHalfKernel = pSpCtrl->GetPos();
 }
 
-void CFormMorpho::SetSelectOperByText(CString strData)
+void CFormMorpho::SetParameter(StLibrary info)
 {
-	if (strData == _T("Erode"))
+	CString strOper=_T("");
+
+	strOper = info.stImg.stMorphology.strType;
+	if (strOper == _T("Erode"))
 		CheckRadioButton(IDC_MPL_RBTN_ERODE, IDC_MPL_RBTN_MEDIAN3X3, IDC_MPL_RBTN_ERODE);
-	else if (strData == _T("Dilate"))
+	else if (strOper == _T("Dilate"))
 		CheckRadioButton(IDC_MPL_RBTN_ERODE, IDC_MPL_RBTN_MEDIAN3X3, IDC_MPL_RBTN_DILATE);
-	else if (strData == _T("Open"))
+	else if (strOper == _T("Open"))
 		CheckRadioButton(IDC_MPL_RBTN_ERODE, IDC_MPL_RBTN_MEDIAN3X3, IDC_MPL_RBTN_OPEN);
-	else if (strData == _T("Close"))
+	else if (strOper == _T("Close"))
 		CheckRadioButton(IDC_MPL_RBTN_ERODE, IDC_MPL_RBTN_MEDIAN3X3, IDC_MPL_RBTN_CLOSE);
-	else if (strData == _T("White Top Hat"))
+	else if (strOper == _T("White Top Hat"))
 		CheckRadioButton(IDC_MPL_RBTN_ERODE, IDC_MPL_RBTN_MEDIAN3X3, IDC_MPL_RBTN_WTHAT);
-	else if (strData == _T("Black Top Hat"))
+	else if (strOper == _T("Black Top Hat"))
 		CheckRadioButton(IDC_MPL_RBTN_ERODE, IDC_MPL_RBTN_MEDIAN3X3, IDC_MPL_RBTN_BTHAT);
-	else if (strData == _T("Gradient"))
+	else if (strOper == _T("Morpho Gradient"))
 		CheckRadioButton(IDC_MPL_RBTN_ERODE, IDC_MPL_RBTN_MEDIAN3X3, IDC_MPL_RBTN_GRADIENT);
-	else if (strData == _T("Median 3x3"))
+	else if (strOper == _T("Median 3x3"))
 		CheckRadioButton(IDC_MPL_RBTN_ERODE, IDC_MPL_RBTN_MEDIAN3X3, IDC_MPL_RBTN_MEDIAN3X3);
-}
-
-int CFormMorpho::GetHalfKernel()
-{
-	CSpinButtonCtrl* pSpCtrl = (CSpinButtonCtrl*)GetDlgItem(IDC_MPL_SPIN_HALFKERNEL);
-	if (pSpCtrl == NULL) return -1;
-
-	return pSpCtrl->GetPos();
-}
-
-void CFormMorpho::SetHalfKernel(int nHalfKernel)
-{
-	CSpinButtonCtrl* pSpCtrl = (CSpinButtonCtrl*)GetDlgItem(IDC_MPL_SPIN_HALFKERNEL);
-	if (pSpCtrl == NULL) return;
-
-	pSpCtrl->SetPos(nHalfKernel);
-}
-
-void CFormMorpho::InitControls()
-{
-	CheckRadioButton(IDC_MPL_RBTN_ERODE, IDC_MPL_RBTN_MEDIAN3X3, IDC_MPL_RBTN_ERODE);
-
-	SetDlgItemInt(IDC_MPL_EDIT_HALFKERNEL, 1);
 
 	CSpinButtonCtrl* pSpCtrl = (CSpinButtonCtrl*)GetDlgItem(IDC_MPL_SPIN_HALFKERNEL);
-	pSpCtrl->SetRange(0,255);
-	pSpCtrl->SetPos(1);
+
+	pSpCtrl->SetPos(info.stImg.stMorphology.nHalfKernel);
 }

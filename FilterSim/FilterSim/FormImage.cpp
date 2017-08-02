@@ -16,8 +16,9 @@ IMPLEMENT_DYNCREATE(CFormImg, CFormView)
 CFormImg::CFormImg()
 	: CFormView(CFormImg::IDD)
 {
-	m_pFormConvol = NULL;
-	m_pFormMorpho = NULL;
+	m_pFormCvl = NULL;
+	m_pFormMpl = NULL;
+	m_pFormThd = NULL;
 }
 
 CFormImg::~CFormImg()
@@ -73,9 +74,9 @@ void CFormImg::OnInitialUpdate()
 	ScreenToClient(&rect);
 	pView->Create(NULL, NULL, WS_CHILD, rect, this, IDD_FORM_CONVOL, &context);
 	pView->OnInitialUpdate();
-	m_pFormConvol = pView;
+	m_pFormCvl = pView;
 
-	m_pFormConvol->ShowWindow(SW_HIDE);
+	m_pFormCvl->ShowWindow(SW_HIDE);
 
 	// Form Morphology
 	pView = (CView*)RUNTIME_CLASS(CFormMorpho)->CreateObject();
@@ -83,9 +84,19 @@ void CFormImg::OnInitialUpdate()
 	ScreenToClient(&rect);
 	pView->Create(NULL, NULL, WS_CHILD, rect, this, IDD_FORM_MORPHOLOGY, &context);
 	pView->OnInitialUpdate();
-	m_pFormMorpho = pView;
+	m_pFormMpl = pView;
 
-	m_pFormMorpho->ShowWindow(SW_HIDE);
+	m_pFormMpl->ShowWindow(SW_HIDE);
+
+	// Form Threshold
+	pView = (CView*)RUNTIME_CLASS(CFormThreshold)->CreateObject();
+	GetDlgItem(IDC_IMG_PC_TAB1)->GetWindowRect(&rect);
+	ScreenToClient(&rect);
+	pView->Create(NULL, NULL, WS_CHILD, rect, this, IDD_FORM_THRESHOLD, &context);
+	pView->OnInitialUpdate();
+	m_pFormThd = pView;
+
+	m_pFormThd->ShowWindow(SW_HIDE);
 	
 	GetDlgItem(IDC_IMG_PC_TAB1)->DestroyWindow();
 
@@ -98,40 +109,6 @@ void CFormImg::OnInitialUpdate()
 	pCB->AddString(_T("Gain & Offset"));
 }
 
-void CFormImg::UpdateControls(StItemInfo info)
-{
-	CComboBox* pCB = NULL;
-	pCB = (CComboBox*)GetDlgItem(IDC_TAB1_CB_PROCESSING);
-	
-	if (IsConvolution(info.strType) == true)
-	{
-		pCB->SetCurSel(0);	// Convolution
-		FormSwitching(EConvolution);
-
-		CFormConvol* pCvl = (CFormConvol*)m_pFormConvol;
-		pCvl->SetSelectKernelByText(info.strType);
-	}
-	else if (IsMorphology(info.strType) == true)
-	{
-		pCB->SetCurSel(1);	// Morphology
-		FormSwitching(EMorphology);
-
-		CFormMorpho* pMpl = (CFormMorpho*)m_pFormMorpho;
-		pMpl->SetSelectOperByText(info.strType);
-		pMpl->SetHalfKernel(info.stLibrary.stImg.stMorphology.nHalfKernel);
-	}
-	else if (IsThreshold(info.strType) == true)
-	{
-		pCB->SetCurSel(2);	// Threshold
-		FormSwitching(EThreshold);
-	}
-	else if (IsArtihemetic(info.strType) == true)
-	{
-		pCB->SetCurSel(3); // Arithmetic & Logic
-		FormSwitching(EArith);
-	}
-}
-
 void CFormImg::InitControls()
 {
 	CComboBox* pCB = NULL;
@@ -140,45 +117,6 @@ void CFormImg::InitControls()
 	pCB->SetCurSel(-1);
 
 	FormSwitching(ENone);
-}
-
-CString CFormImg::GetTextCBSelectedProcessing()
-{
-	CComboBox* pCB = NULL;
-	CString strText=_T("");
-	int sel=-1;
-
-	pCB = (CComboBox*)GetDlgItem(IDC_TAB1_CB_PROCESSING);
-	sel = pCB->GetCurSel();
-	if (sel == -1) return _T("");
-	
-	pCB->GetLBText(sel,strText);
-
-	return strText;
-}
-
-CString CFormImg::GetTextCBSelectedConvolution()
-{
-	CFormConvol* pCvl = (CFormConvol*)m_pFormConvol;
-	if (pCvl == NULL) return _T("");
-
-	return pCvl->GetTextCBSelectedKernel();
-}
-
-CString CFormImg::GetTextSelectedMorphology()
-{
-	CFormMorpho* pMpl = (CFormMorpho*)m_pFormMorpho;
-	if (pMpl == NULL) return _T("");
-
-	return pMpl->GetTextSelectedOper();
-}
-
-int CFormImg::GetValueMorphologyHalfKernel()
-{
-	CFormMorpho* pMpl = (CFormMorpho*)m_pFormMorpho;
-	if (pMpl == NULL) return 0;
-
-	return pMpl->GetHalfKernel();
 }
 
 BOOL CFormImg::Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext)
@@ -202,41 +140,54 @@ void CFormImg::FormSwitching(eProcessing eType)
 	{
 	case EConvolution :
 		{
-			m_pFormConvol->ShowWindow(SW_SHOW);
-			m_pFormMorpho->ShowWindow(SW_HIDE);
+			m_pFormCvl->ShowWindow(SW_SHOW);
+			m_pFormMpl->ShowWindow(SW_HIDE);
+			m_pFormThd->ShowWindow(SW_HIDE);
 
-			CFormConvol* pCvl = (CFormConvol*)m_pFormConvol;
+			CFormConvol* pCvl = (CFormConvol*)m_pFormCvl;
 			pCvl->InitControls();
 		}
 		break;
 	case EMorphology : 
 		{
-			m_pFormConvol->ShowWindow(SW_HIDE);
-			m_pFormMorpho->ShowWindow(SW_SHOW);
-			
-			CFormMorpho* pMpl = (CFormMorpho*)m_pFormMorpho;
+			m_pFormCvl->ShowWindow(SW_HIDE);
+			m_pFormMpl->ShowWindow(SW_SHOW);
+			m_pFormThd->ShowWindow(SW_HIDE);
+
+			CFormMorpho* pMpl = (CFormMorpho*)m_pFormMpl;
 			pMpl->InitControls();
 		}
 		break;
 	case EThreshold : 
-		m_pFormConvol->ShowWindow(SW_HIDE);
-		m_pFormMorpho->ShowWindow(SW_HIDE);
+		{
+			m_pFormCvl->ShowWindow(SW_HIDE);
+			m_pFormMpl->ShowWindow(SW_HIDE);
+			m_pFormThd->ShowWindow(SW_SHOW);
+
+			CFormThreshold* pThd = (CFormThreshold*)m_pFormThd;
+			pThd->InitControls();
+		}
+		
 		break;
 	case EArith : 
-		m_pFormConvol->ShowWindow(SW_HIDE);
-		m_pFormMorpho->ShowWindow(SW_HIDE);
+		m_pFormCvl->ShowWindow(SW_HIDE);
+		m_pFormMpl->ShowWindow(SW_HIDE);
+		m_pFormThd->ShowWindow(SW_HIDE);
 		break;
 	case EScale : 
-		m_pFormConvol->ShowWindow(SW_HIDE);
-		m_pFormMorpho->ShowWindow(SW_HIDE);
+		m_pFormCvl->ShowWindow(SW_HIDE);
+		m_pFormMpl->ShowWindow(SW_HIDE);
+		m_pFormThd->ShowWindow(SW_HIDE);
 		break;
 	case EGain : 
-		m_pFormConvol->ShowWindow(SW_HIDE);
-		m_pFormMorpho->ShowWindow(SW_HIDE);
+		m_pFormCvl->ShowWindow(SW_HIDE);
+		m_pFormMpl->ShowWindow(SW_HIDE);
+		m_pFormThd->ShowWindow(SW_HIDE);
 		break;
 	case ENone : 
-		m_pFormConvol->ShowWindow(SW_HIDE);
-		m_pFormMorpho->ShowWindow(SW_HIDE);
+		m_pFormCvl->ShowWindow(SW_HIDE);
+		m_pFormMpl->ShowWindow(SW_HIDE);
+		m_pFormThd->ShowWindow(SW_HIDE);
 		break;
 	}
 }
@@ -347,8 +298,106 @@ bool CFormImg::IsArtihemetic(CString strValue)
 
 bool CFormImg::IsThreshold(CString strValue)
 {
-	if (strValue == _T("Simpe"))			return true;
-	else if (strValue == _T("Double"))		return true;
-	else if (strValue == _T("Adaptive"))	return true;
+	if (strValue == _T("Simple Threshold"))			return true;
+	else if (strValue == _T("Double Threshold"))	return true;
+	else if (strValue == _T("Adaptive Threshold"))	return true;
 	else return false;
+}
+
+void CFormImg::GetParameter(StLibrary& info)
+{
+	CComboBox* pCB = NULL;
+	CString strMethod=_T("");
+	int sel=-1;
+
+	pCB = (CComboBox*)GetDlgItem(IDC_TAB1_CB_PROCESSING);
+	sel = pCB->GetCurSel();
+	if (sel == -1) return;
+
+	pCB->GetLBText(sel,strMethod);
+	info.stImg.strType = strMethod;
+
+	CFormConvol* pCvl = (CFormConvol*)m_pFormCvl;
+	pCvl->GetParameter(info);
+
+	CFormMorpho* pMpl = (CFormMorpho*)m_pFormMpl;
+	pMpl->GetParameter(info);
+
+	CFormThreshold* pThd = (CFormThreshold*)m_pFormThd;
+	pThd->GetParameter(info);
+}
+
+void CFormImg::SetParameter(StLibrary info)
+{
+	CComboBox* pCB = NULL;
+	pCB = (CComboBox*)GetDlgItem(IDC_TAB1_CB_PROCESSING);
+
+	if (info.stImg.strType == _T("Convolution"))
+	{
+		// Convolution
+		pCB->SetCurSel(0);	
+		FormSwitching(EConvolution);
+
+		CFormConvol* pCvl = (CFormConvol*)m_pFormCvl;
+		pCvl->SetParameter(info);
+	}
+	else if (info.stImg.strType == _T("Morphology"))
+	{
+		// Morphology
+		pCB->SetCurSel(1);	
+		FormSwitching(EMorphology);
+
+		CFormMorpho* pMpl = (CFormMorpho*)m_pFormMpl;
+		pMpl->SetParameter(info);
+	}
+	else if (info.stImg.strType == _T("Threshold"))
+	{
+		// Threshold
+		pCB->SetCurSel(2);	
+		FormSwitching(EThreshold);
+
+		CFormThreshold* pThd = (CFormThreshold*)m_pFormThd;
+		pThd->SetParameter(info);
+
+	}
+	else if (info.stImg.strType == _T("Arithmetic"))
+	{
+		// Arithmetic & Logic
+		pCB->SetCurSel(3); 
+		FormSwitching(EArith);
+	}
+	//if (IsConvolution(info.stImg.strType) == true)
+	//{
+	//	// Convolution
+	//	pCB->SetCurSel(0);	
+	//	FormSwitching(EConvolution);
+
+	//	CFormConvol* pCvl = (CFormConvol*)m_pFormCvl;
+	//	pCvl->SetParameter(info);
+	//}
+	//else if (IsMorphology(info.stImg.strType) == true)
+	//{
+	//	// Morphology
+	//	pCB->SetCurSel(1);	
+	//	FormSwitching(EMorphology);
+
+	//	CFormMorpho* pMpl = (CFormMorpho*)m_pFormMpl;
+	//	pMpl->SetParameter(info);
+	//}
+	//else if (IsThreshold(info.stImg.strType) == true)
+	//{
+	//	// Threshold
+	//	pCB->SetCurSel(2);	
+	//	FormSwitching(EThreshold);
+
+	//	CFormThreshold* pThd = (CFormThreshold*)m_pFormThd;
+	//	pThd->SetParameter(info);
+
+	//}
+	//else if (IsArtihemetic(info.stImg.strType) == true)
+	//{
+	//	// Arithmetic & Logic
+	//	pCB->SetCurSel(3); 
+	//	FormSwitching(EArith);
+	//}
 }

@@ -1,19 +1,24 @@
 #pragma once
 
-#include "Base.h"
+#include "FormThdSpl.h"
+#include "FormThdDbl.h"
+#include "FormThdAdt.h"
+#include "FilterSimDlg.h"
 
-// CFormMorpho form view
+// CFormThreshold form view
 
-class CFormMorpho : public CFormView
+class CFormThreshold : public CFormView
 {
-	DECLARE_DYNCREATE(CFormMorpho)
+	enum eMethod {ESimple=0, EDouble, EAdaptive, ENone};
+
+	DECLARE_DYNCREATE(CFormThreshold)
 
 protected:
-	CFormMorpho();           // protected constructor used by dynamic creation
-	virtual ~CFormMorpho();
+	CFormThreshold();           // protected constructor used by dynamic creation
+	virtual ~CFormThreshold();
 
 public:
-	enum { IDD = IDD_FORM_MORPHOLOGY };
+	enum { IDD = IDD_FORM_THRESHOLD };
 #ifdef _DEBUG
 	virtual void AssertValid() const;
 #ifndef _WIN32_WCE
@@ -27,16 +32,22 @@ public :
 	void SetParameter(StLibrary info);
 
 private :
+	int m_rbtnMethod;
 	CRect m_wndRc;
-	int m_rbtnOper;
+	CView* m_pFormSpl;
+	CView* m_pFormDbl;
+	CView* m_pFormAdt;
+	void FormSwitching(int nMethod);
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
 	DECLARE_MESSAGE_MAP()
 public:
-	afx_msg void OnSize(UINT nType, int cx, int cy);
 	virtual BOOL Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext = NULL);
+	afx_msg void OnSize(UINT nType, int cx, int cy);
 	virtual void OnInitialUpdate();
-	afx_msg void OnBnClickedMplRBtnOperation(UINT ID);
+	afx_msg void OnBnClickedThdRBtnMethod(UINT ID);
 };
+
+

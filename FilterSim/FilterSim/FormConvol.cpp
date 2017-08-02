@@ -102,7 +102,14 @@ void CFormConvol::OnInitialUpdate()
 	InitControls();
 }
 
-CString CFormConvol::GetTextCBSelectedKernel()
+void CFormConvol::InitControls()
+{
+	CComboBox* pCB = (CComboBox*)GetDlgItem(IDC_CVL_CB_PREKERNEL);
+
+	pCB->SetCurSel(-1);
+}
+
+void CFormConvol::GetParameter(StLibrary &info)
 {
 	CComboBox* pCB = NULL;
 	CString strText=_T("");
@@ -110,26 +117,22 @@ CString CFormConvol::GetTextCBSelectedKernel()
 
 	pCB = (CComboBox*)GetDlgItem(IDC_CVL_CB_PREKERNEL);
 	sel = pCB->GetCurSel();
-	if (sel == -1) return _T("");
+	if (sel == -1) return;
 
 	pCB->GetLBText(sel,strText);
 
-	return strText;
+	info.stImg.stConvolution.strType = strText;
 }
 
-void CFormConvol::SetSelectKernelByText(CString strData)
+void CFormConvol::SetParameter(StLibrary info)
 {
 	CComboBox* pCB = NULL;
 	int sel=-1;
-
+	CString strData=_T("");
 	pCB = (CComboBox*)GetDlgItem(IDC_CVL_CB_PREKERNEL);
+
+	strData = info.stImg.stConvolution.strType;
+
 	sel = pCB->FindString(-1, strData);
 	pCB->SetCurSel(sel);
-}
-
-void CFormConvol::InitControls()
-{
-	CComboBox* pCB = (CComboBox*)GetDlgItem(IDC_CVL_CB_PREKERNEL);
-
-	pCB->SetCurSel(-1);
 }
