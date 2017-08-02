@@ -5,20 +5,20 @@
 #include "FormThdAdt.h"
 #include "FilterSimDlg.h"
 
-// CFormThreshold form view
+// CFormImgThd form view
 
-class CFormThreshold : public CFormView
+class CFormImgThd : public CFormView
 {
 	enum eMethod {ESimple=0, EDouble, EAdaptive, ENone};
 
-	DECLARE_DYNCREATE(CFormThreshold)
+	DECLARE_DYNCREATE(CFormImgThd)
 
 protected:
-	CFormThreshold();           // protected constructor used by dynamic creation
-	virtual ~CFormThreshold();
+	CFormImgThd();           // protected constructor used by dynamic creation
+	virtual ~CFormImgThd();
 
 public:
-	enum { IDD = IDD_FORM_THRESHOLD };
+	enum { IDD = IDD_FORM_IMG_THRESHOLD };
 #ifdef _DEBUG
 	virtual void AssertValid() const;
 #ifndef _WIN32_WCE

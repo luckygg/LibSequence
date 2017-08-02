@@ -2,18 +2,18 @@
 
 #include "Base.h"
 
-// CFormConvol form view
+// CFormImgArh form view
 
-class CFormConvol : public CFormView
+class CFormImgArh : public CFormView
 {
-	DECLARE_DYNCREATE(CFormConvol)
+	DECLARE_DYNCREATE(CFormImgArh)
 
 protected:
-	CFormConvol();           // protected constructor used by dynamic creation
-	virtual ~CFormConvol();
+	CFormImgArh();           // protected constructor used by dynamic creation
+	virtual ~CFormImgArh();
 
 public:
-	enum { IDD = IDD_FORM_CONVOL };
+	enum { IDD = IDD_FORM_IMG_ARITHMETIC };
 #ifdef _DEBUG
 	virtual void AssertValid() const;
 #ifndef _WIN32_WCE
@@ -33,7 +33,7 @@ protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
 	DECLARE_MESSAGE_MAP()
-public:
+public :
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	virtual BOOL Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext = NULL);
 	virtual void OnInitialUpdate();

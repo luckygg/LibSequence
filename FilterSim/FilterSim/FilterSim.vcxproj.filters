@@ -93,14 +93,8 @@
     <ClInclude Include="EImage.h">
       <Filter>include\Algorithm</Filter>
     </ClInclude>
-    <ClInclude Include="FormConvol.h">
-      <Filter>PGM UI\Form</Filter>
-    </ClInclude>
     <ClInclude Include="Base.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FormMorpho.h">
-      <Filter>PGM UI\Form</Filter>
     </ClInclude>
     <ClInclude Include="EImgMorphology.h">
       <Filter>include\Algorithm</Filter>
@@ -111,9 +105,6 @@
     <ClInclude Include="FormThdAdt.h">
       <Filter>PGM UI\Form</Filter>
     </ClInclude>
-    <ClInclude Include="FormThreshold.h">
-      <Filter>PGM UI\Form</Filter>
-    </ClInclude>
     <ClInclude Include="FormThdSpl.h">
       <Filter>PGM UI\Form</Filter>
     </ClInclude>
@@ -122,6 +113,21 @@
     </ClInclude>
     <ClInclude Include="EImgThreshold.h">
       <Filter>include\Algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="FormImgMpl.h">
+      <Filter>PGM UI\Form</Filter>
+    </ClInclude>
+    <ClInclude Include="FormImgCvl.h">
+      <Filter>PGM UI\Form</Filter>
+    </ClInclude>
+    <ClInclude Include="FormImgThd.h">
+      <Filter>PGM UI\Form</Filter>
+    </ClInclude>
+    <ClInclude Include="EImgArithmetic.h">
+      <Filter>include\Algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="FormImgArh.h">
+      <Filter>PGM UI\Form</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -164,12 +170,6 @@
     <ClCompile Include="EImage.cpp">
       <Filter>include\Algorithm</Filter>
     </ClCompile>
-    <ClCompile Include="FormConvol.cpp">
-      <Filter>PGM UI\Form</Filter>
-    </ClCompile>
-    <ClCompile Include="FormMorpho.cpp">
-      <Filter>PGM UI\Form</Filter>
-    </ClCompile>
     <ClCompile Include="EImgMorphology.cpp">
       <Filter>include\Algorithm</Filter>
     </ClCompile>
@@ -185,11 +185,23 @@
     <ClCompile Include="FormThdDbl.cpp">
       <Filter>PGM UI\Form</Filter>
     </ClCompile>
-    <ClCompile Include="FormThreshold.cpp">
-      <Filter>PGM UI\Form</Filter>
-    </ClCompile>
     <ClCompile Include="EImgThreshold.cpp">
       <Filter>include\Algorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="FormImgMpl.cpp">
+      <Filter>PGM UI\Form</Filter>
+    </ClCompile>
+    <ClCompile Include="FormImgCvl.cpp">
+      <Filter>PGM UI\Form</Filter>
+    </ClCompile>
+    <ClCompile Include="FormImgThd.cpp">
+      <Filter>PGM UI\Form</Filter>
+    </ClCompile>
+    <ClCompile Include="EImgArithmetic.cpp">
+      <Filter>include\Algorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="FormImgArh.cpp">
+      <Filter>PGM UI\Form</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

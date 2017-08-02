@@ -1,4 +1,10 @@
 #pragma once
+struct StRGB
+{
+	int nR;
+	int nG;
+	int nB;
+};
 
 struct StSimpleThd
 {

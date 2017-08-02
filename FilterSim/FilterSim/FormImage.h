@@ -2,9 +2,10 @@
 
 #include <vector>
 #include "EImage.h"
-#include "FormConvol.h"
-#include "FormMorpho.h"
-#include "FormThreshold.h"
+#include "FormImgCvl.h"
+#include "FormImgMpl.h"
+#include "FormImgThd.h"
+#include "FormImgArh.h"
 // CFormImg form view
 
 class CFormImg : public CFormView
@@ -21,6 +22,7 @@ private :
 	CView* m_pFormCvl;
 	CView* m_pFormMpl;
 	CView* m_pFormThd;
+	CView* m_pFormArh;
 	void FormSwitching(eProcessing eType);
 
 public :

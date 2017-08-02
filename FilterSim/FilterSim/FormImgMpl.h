@@ -2,18 +2,18 @@
 
 #include "Base.h"
 
-// CFormMorpho form view
+// CFormImgMpl form view
 
-class CFormMorpho : public CFormView
+class CFormImgMpl : public CFormView
 {
-	DECLARE_DYNCREATE(CFormMorpho)
+	DECLARE_DYNCREATE(CFormImgMpl)
 
 protected:
-	CFormMorpho();           // protected constructor used by dynamic creation
-	virtual ~CFormMorpho();
+	CFormImgMpl();           // protected constructor used by dynamic creation
+	virtual ~CFormImgMpl();
 
 public:
-	enum { IDD = IDD_FORM_MORPHOLOGY };
+	enum { IDD = IDD_FORM_IMG_MORPHOLOGY };
 #ifdef _DEBUG
 	virtual void AssertValid() const;
 #ifndef _WIN32_WCE

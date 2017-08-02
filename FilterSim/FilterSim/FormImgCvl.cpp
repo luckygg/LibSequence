@@ -3,45 +3,45 @@
 
 #include "stdafx.h"
 #include "FilterSim.h"
-#include "FormConvol.h"
+#include "FormImgCvl.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
-// CFormConvol
+// CFormImgCvl
 
-IMPLEMENT_DYNCREATE(CFormConvol, CFormView)
+IMPLEMENT_DYNCREATE(CFormImgCvl, CFormView)
 
-CFormConvol::CFormConvol()
-	: CFormView(CFormConvol::IDD)
+CFormImgCvl::CFormImgCvl()
+	: CFormView(CFormImgCvl::IDD)
 {
 
 }
 
-CFormConvol::~CFormConvol()
+CFormImgCvl::~CFormImgCvl()
 {
 }
 
-void CFormConvol::DoDataExchange(CDataExchange* pDX)
+void CFormImgCvl::DoDataExchange(CDataExchange* pDX)
 {
 	CFormView::DoDataExchange(pDX);
 }
 
-BEGIN_MESSAGE_MAP(CFormConvol, CFormView)
+BEGIN_MESSAGE_MAP(CFormImgCvl, CFormView)
 	ON_WM_SIZE()
 END_MESSAGE_MAP()
 
 
-// CFormConvol diagnostics
+// CFormImgCvl diagnostics
 
 #ifdef _DEBUG
-void CFormConvol::AssertValid() const
+void CFormImgCvl::AssertValid() const
 {
 	CFormView::AssertValid();
 }
 
 #ifndef _WIN32_WCE
-void CFormConvol::Dump(CDumpContext& dc) const
+void CFormImgCvl::Dump(CDumpContext& dc) const
 {
 	CFormView::Dump(dc);
 }
@@ -49,10 +49,10 @@ void CFormConvol::Dump(CDumpContext& dc) const
 #endif //_DEBUG
 
 
-// CFormConvol message handlers
+// CFormImgCvl message handlers
 
 
-void CFormConvol::OnSize(UINT nType, int cx, int cy)
+void CFormImgCvl::OnSize(UINT nType, int cx, int cy)
 {
 	CFormView::OnSize(nType, cx, cy);
 
@@ -60,18 +60,18 @@ void CFormConvol::OnSize(UINT nType, int cx, int cy)
 }
 
 
-BOOL CFormConvol::Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext)
+BOOL CFormImgCvl::Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext)
 {
 	m_wndRc = rect;
 
 	return CFormView::Create(lpszClassName, lpszWindowName, dwStyle, rect, pParentWnd, nID, pContext);
 }
 
-void CFormConvol::OnInitialUpdate()
+void CFormImgCvl::OnInitialUpdate()
 {
 	CFormView::OnInitialUpdate();
 
-	CComboBox* pCB = (CComboBox*)GetDlgItem(IDC_CVL_CB_PREKERNEL);
+	CComboBox* pCB = (CComboBox*)GetDlgItem(IDC_IMG_CVL_CB_PREKERNEL);
 	pCB->AddString(_T("Uniform"));
 	pCB->AddString(_T("Uniform3x3"));
 	pCB->AddString(_T("Uniform5x5"));
@@ -102,20 +102,20 @@ void CFormConvol::OnInitialUpdate()
 	InitControls();
 }
 
-void CFormConvol::InitControls()
+void CFormImgCvl::InitControls()
 {
-	CComboBox* pCB = (CComboBox*)GetDlgItem(IDC_CVL_CB_PREKERNEL);
+	CComboBox* pCB = (CComboBox*)GetDlgItem(IDC_IMG_CVL_CB_PREKERNEL);
 
 	pCB->SetCurSel(-1);
 }
 
-void CFormConvol::GetParameter(StLibrary &info)
+void CFormImgCvl::GetParameter(StLibrary &info)
 {
 	CComboBox* pCB = NULL;
 	CString strText=_T("");
 	int sel=-1;
 
-	pCB = (CComboBox*)GetDlgItem(IDC_CVL_CB_PREKERNEL);
+	pCB = (CComboBox*)GetDlgItem(IDC_IMG_CVL_CB_PREKERNEL);
 	sel = pCB->GetCurSel();
 	if (sel == -1) return;
 
@@ -124,12 +124,12 @@ void CFormConvol::GetParameter(StLibrary &info)
 	info.stImg.stConvolution.strType = strText;
 }
 
-void CFormConvol::SetParameter(StLibrary info)
+void CFormImgCvl::SetParameter(StLibrary info)
 {
 	CComboBox* pCB = NULL;
 	int sel=-1;
 	CString strData=_T("");
-	pCB = (CComboBox*)GetDlgItem(IDC_CVL_CB_PREKERNEL);
+	pCB = (CComboBox*)GetDlgItem(IDC_IMG_CVL_CB_PREKERNEL);
 
 	strData = info.stImg.stConvolution.strType;
 

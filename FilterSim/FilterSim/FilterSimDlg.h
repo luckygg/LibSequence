@@ -12,6 +12,7 @@
 #include "EImgConvolution.h"
 #include "EImgMorphology.h"
 #include "EImgThreshold.h"
+#include "EImgArithmetic.h"
 #include "EMatrix.h"
 
 
@@ -22,9 +23,14 @@ struct StItemInfo
 {
 	BOOL bUse;
 	CString strType;
-	CString strInput;
-	CString strOutput;
-	StLibrary stLibrary;
+	CString strIn1;
+	CString strIn2;
+	CString strOut;
+	int nY8_In1;
+	int nY8_In2;
+	StRGB stRGB_In1;
+	StRGB stRGB_In2;
+	StLibrary stLib;
 };
 
 #include "FormImage.h"
@@ -50,7 +56,7 @@ private :
 	// List Control 의 아이템 개수 만큼 Input / Output 재입력.
 	void UpdateItemList();
 	// Tab 에서 Input / Output / Lib 입력 후 Apply 누르면 저장되는 부분.
-	void UpdateItem(int nRow, BOOL bUse, CString strAlgorithm, CString strIn, CString strOut, StLibrary stLib);
+	void UpdateItem(int nRow, BOOL bUse, CString strAlgorithm, CString strIn1, CString strIn2, CString strOut, StLibrary stLib);
 	// Enable 설정에 따라 Green / Red 표기 부분.
 	void UpdateItemColor();
 	// 선택된 Combo Image 에 따라 모든 Picture Control 을 갱신하는 부분.
@@ -74,6 +80,11 @@ private :
 
 	int m_nImgCnt;
 	
+	// Radio Button
+	int m_rbtnIn1;
+	int m_rbtnIn2;
+	int m_rbtnCst1;
+	int m_rbtnCst2;
 	void InitContorls();
 	void DrawImage(int nViewIdx, CString strFileName);
 	void FormSwitching(eAlgorithm eType);
@@ -113,4 +124,5 @@ public:
 	afx_msg void OnBnClickedMainRBtnImgCst2(UINT ID);
 	afx_msg void OnBnClickedMainRBtnGrayClr1(UINT ID);
 	afx_msg void OnBnClickedMainRBtnGrayClr2(UINT ID);
+	
 };

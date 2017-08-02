@@ -181,17 +181,19 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Base.h" />
+    <ClInclude Include="EImgArithmetic.h" />
     <ClInclude Include="EImgMorphology.h" />
     <ClInclude Include="EImgThreshold.h" />
     <ClInclude Include="EMatrix.h" />
-    <ClInclude Include="FormConvol.h" />
+    <ClInclude Include="FormImgArh.h" />
+    <ClInclude Include="FormImgCvl.h" />
     <ClInclude Include="FormMatrix.h" />
     <ClInclude Include="FormImage.h" />
-    <ClInclude Include="FormMorpho.h" />
+    <ClInclude Include="FormImgMpl.h" />
     <ClInclude Include="FormThdAdt.h" />
     <ClInclude Include="FormThdDbl.h" />
     <ClInclude Include="FormThdSpl.h" />
-    <ClInclude Include="FormThreshold.h" />
+    <ClInclude Include="FormImgThd.h" />
     <ClInclude Include="include\Base\StopWatch.h" />
     <ClInclude Include="include\UI\ListEx.h" />
     <ClInclude Include="SelectDlg.h" />
@@ -208,17 +210,19 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="EImgArithmetic.cpp" />
     <ClCompile Include="EImgMorphology.cpp" />
     <ClCompile Include="EImgThreshold.cpp" />
     <ClCompile Include="EMatrix.cpp" />
-    <ClCompile Include="FormConvol.cpp" />
+    <ClCompile Include="FormImgArh.cpp" />
+    <ClCompile Include="FormImgCvl.cpp" />
     <ClCompile Include="FormMatrix.cpp" />
     <ClCompile Include="FormImage.cpp" />
-    <ClCompile Include="FormMorpho.cpp" />
+    <ClCompile Include="FormImgMpl.cpp" />
     <ClCompile Include="FormThdAdt.cpp" />
     <ClCompile Include="FormThdDbl.cpp" />
     <ClCompile Include="FormThdSpl.cpp" />
-    <ClCompile Include="FormThreshold.cpp" />
+    <ClCompile Include="FormImgThd.cpp" />
     <ClCompile Include="include\UI\ListEx.cpp" />
     <ClCompile Include="SelectDlg.cpp" />
     <ClCompile Include="NameDlg.cpp" />

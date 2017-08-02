@@ -3,15 +3,15 @@
 
 #include "stdafx.h"
 #include "FilterSim.h"
-#include "FormThreshold.h"
+#include "FormImgThd.h"
 
 
-// CFormThreshold
+// CFormImgThd
 
-IMPLEMENT_DYNCREATE(CFormThreshold, CFormView)
+IMPLEMENT_DYNCREATE(CFormImgThd, CFormView)
 
-CFormThreshold::CFormThreshold()
-	: CFormView(CFormThreshold::IDD)
+CFormImgThd::CFormImgThd()
+	: CFormView(CFormImgThd::IDD)
 	, m_rbtnMethod(0)
 {
 	m_pFormSpl = NULL;
@@ -19,32 +19,32 @@ CFormThreshold::CFormThreshold()
 	m_pFormAdt = NULL;
 }
 
-CFormThreshold::~CFormThreshold()
+CFormImgThd::~CFormImgThd()
 {
 }
 
-void CFormThreshold::DoDataExchange(CDataExchange* pDX)
+void CFormImgThd::DoDataExchange(CDataExchange* pDX)
 {
 	CFormView::DoDataExchange(pDX);
 	DDX_Radio(pDX, IDC_THD_RBTN_SIMPLE, m_rbtnMethod);
 }
 
-BEGIN_MESSAGE_MAP(CFormThreshold, CFormView)
+BEGIN_MESSAGE_MAP(CFormImgThd, CFormView)
 	ON_WM_SIZE()
-	ON_CONTROL_RANGE(BN_CLICKED, IDC_THD_RBTN_SIMPLE, IDC_THD_RBTN_ADAPTIVE, CFormThreshold::OnBnClickedThdRBtnMethod)
+	ON_CONTROL_RANGE(BN_CLICKED, IDC_THD_RBTN_SIMPLE, IDC_THD_RBTN_ADAPTIVE, CFormImgThd::OnBnClickedThdRBtnMethod)
 END_MESSAGE_MAP()
 
 
-// CFormThreshold diagnostics
+// CFormImgThd diagnostics
 
 #ifdef _DEBUG
-void CFormThreshold::AssertValid() const
+void CFormImgThd::AssertValid() const
 {
 	CFormView::AssertValid();
 }
 
 #ifndef _WIN32_WCE
-void CFormThreshold::Dump(CDumpContext& dc) const
+void CFormImgThd::Dump(CDumpContext& dc) const
 {
 	CFormView::Dump(dc);
 }
@@ -52,10 +52,10 @@ void CFormThreshold::Dump(CDumpContext& dc) const
 #endif //_DEBUG
 
 
-// CFormThreshold message handlers
+// CFormImgThd message handlers
 
 
-BOOL CFormThreshold::Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext)
+BOOL CFormImgThd::Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext)
 {
 	m_wndRc = rect;
 
@@ -63,7 +63,7 @@ BOOL CFormThreshold::Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD
 }
 
 
-void CFormThreshold::OnSize(UINT nType, int cx, int cy)
+void CFormImgThd::OnSize(UINT nType, int cx, int cy)
 {
 	CFormView::OnSize(nType, cx, cy);
 
@@ -71,7 +71,7 @@ void CFormThreshold::OnSize(UINT nType, int cx, int cy)
 }
 
 
-void CFormThreshold::OnInitialUpdate()
+void CFormImgThd::OnInitialUpdate()
 {
 	CFormView::OnInitialUpdate();
 
@@ -118,14 +118,14 @@ void CFormThreshold::OnInitialUpdate()
 	InitControls();
 }
 
-void CFormThreshold::InitControls()
+void CFormImgThd::InitControls()
 {
 	CheckRadioButton(IDC_THD_RBTN_SIMPLE, IDC_THD_RBTN_ADAPTIVE, IDC_THD_RBTN_SIMPLE);
 
 	FormSwitching(ESimple);
 }
 
-void CFormThreshold::FormSwitching(int nMethod)
+void CFormImgThd::FormSwitching(int nMethod)
 {
 	switch (nMethod)
 	{
@@ -167,14 +167,14 @@ void CFormThreshold::FormSwitching(int nMethod)
 	}
 }
 
-void CFormThreshold::OnBnClickedThdRBtnMethod(UINT ID)
+void CFormImgThd::OnBnClickedThdRBtnMethod(UINT ID)
 {
 	UpdateData(TRUE);
 
 	FormSwitching(m_rbtnMethod);
 }
 
-void CFormThreshold::GetParameter(StLibrary &info)
+void CFormImgThd::GetParameter(StLibrary &info)
 {
 	CString strMethod=_T("");
 	switch (m_rbtnMethod)
@@ -195,7 +195,7 @@ void CFormThreshold::GetParameter(StLibrary &info)
 	pAdt->GetParameter(info);
 }
 
-void CFormThreshold::SetParameter(StLibrary info)
+void CFormImgThd::SetParameter(StLibrary info)
 {
 	if (info.stImg.stThreshold.strType == _T("Simple Threshold"))
 	{

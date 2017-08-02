@@ -23,6 +23,10 @@
 
 CFilterSimDlg::CFilterSimDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(CFilterSimDlg::IDD, pParent)
+	, m_rbtnIn1(0)
+	, m_rbtnIn2(0)
+	, m_rbtnCst1(0)
+	, m_rbtnCst2(0)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 	m_nImgCnt = 0;
@@ -35,7 +39,11 @@ void CFilterSimDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_MAIN_LC_ITEM, m_wndLc);
-	
+
+	DDX_Radio(pDX, IDC_MAIN_RBTN_INIMG1, m_rbtnIn1);
+	DDX_Radio(pDX, IDC_MAIN_RBTN_INIMG2, m_rbtnIn2);
+	DDX_Radio(pDX, IDC_MAIN_RBTN_CSTGRAY1, m_rbtnCst1);
+	DDX_Radio(pDX, IDC_MAIN_RBTN_CSTGRAY2, m_rbtnCst2);
 }
 
 BEGIN_MESSAGE_MAP(CFilterSimDlg, CDialogEx)
@@ -124,47 +132,14 @@ HCURSOR CFilterSimDlg::OnQueryDragIcon()
 
 void CFilterSimDlg::InitContorls()
 {
-	int w = GetSystemMetrics(SM_CXSCREEN);
-	int h = GetSystemMetrics(SM_CYSCREEN);
-
-	/*this->MoveWindow( (w-1375)/2, (h-1000)/2, 1375, 1000);
-
-	GetDlgItem(IDC_MAIN_BTN_LOADIMG)->MoveWindow( 950,  30, 100,  50);
-	GetDlgItem(IDC_MAIN_BTN_SAVEIMG)->MoveWindow(1050,  30, 100,  50);
-	GetDlgItem(IDC_MAIN_BTN_NEWIMG )->MoveWindow(1150,  30, 100,  50);
-	GetDlgItem(IDC_MAIN_BTN_DELIMG )->MoveWindow(1250,  30, 100,  50);
-	GetDlgItem(IDC_MAIN_BTN_ADDITEM)->MoveWindow( 950, 450, 100,  50);
-	GetDlgItem(IDC_MAIN_BTN_DELITEM)->MoveWindow(1050, 450, 100,  50);
-	GetDlgItem(IDC_MAIN_BTN_EXECUTE)->MoveWindow(1245, 450, 100,  50);
-
-	GetDlgItem(IDC_MAIN_PC_VIEW1)->MoveWindow(  25,  30, 450, 450);
-	GetDlgItem(IDC_MAIN_PC_VIEW2)->MoveWindow( 485,  30, 450, 450);
-	GetDlgItem(IDC_MAIN_PC_VIEW3)->MoveWindow(  25, 510, 450, 450);
-	GetDlgItem(IDC_MAIN_PC_VIEW4)->MoveWindow( 485, 510, 450, 450);
-
-	GetDlgItem(IDC_MAIN_LB_INFO1)->MoveWindow(  25,   9, 200,  15);
-	GetDlgItem(IDC_MAIN_LB_INFO2)->MoveWindow( 485,   9, 200,  15);
-	GetDlgItem(IDC_MAIN_LB_INFO3)->MoveWindow(  25, 489, 200,  15);
-	GetDlgItem(IDC_MAIN_LB_INFO4)->MoveWindow( 485, 489, 200,  15);
-
-	GetDlgItem(IDC_MAIN_CB_VIEW1)->MoveWindow( 325,   9, 150,  15);
-	GetDlgItem(IDC_MAIN_CB_VIEW2)->MoveWindow( 785,   9, 150,  15);
-	GetDlgItem(IDC_MAIN_CB_VIEW3)->MoveWindow( 325, 489, 150,  15);
-	GetDlgItem(IDC_MAIN_CB_VIEW4)->MoveWindow( 785, 489, 150,  15);
-
-	GetDlgItem(IDC_MAIN_LB_LIB  )->MoveWindow( 950,  93,  45,  15);
-	GetDlgItem(IDC_MAIN_CB_LIB  )->MoveWindow(1000,  90, 100,  20);
-	GetDlgItem(IDC_MAIN_PC_TAB1 )->MoveWindow( 950, 115, 395, 335);
-	GetDlgItem(IDC_MAIN_LC_ITEM )->MoveWindow( 950, 500, 395, 460);*/
-
-	
 	m_wndLc.AddColumn(1, _T("No.")		,  30);
 	m_wndLc.AddColumn(2, _T("Use")		,  30);
 	m_wndLc.AddColumn(3, _T("Algorithm"),  90);
-	m_wndLc.AddColumn(4, _T("Input")	,  90);
-	m_wndLc.AddColumn(5, _T("Output")	,  90);
-	m_wndLc.AddColumn(6, _T("Time")		,  60);
-	m_wndLc.AddColumn(7, _T("Result")	,  50);
+	m_wndLc.AddColumn(4, _T("Input1")	,  90);
+	m_wndLc.AddColumn(5, _T("Input2")	,  90);
+	m_wndLc.AddColumn(6, _T("Output")	,  90);
+	m_wndLc.AddColumn(7, _T("Time")		,  60);
+	m_wndLc.AddColumn(8, _T("Result")	,  50);
 	m_wndLc.SetExtendedStyle(LVS_EX_FULLROWSELECT);
 
 	CComboBox* pCB = NULL;
@@ -260,8 +235,9 @@ void CFilterSimDlg::OnBnClickedBtnAddItem()
 	StItemInfo info;
 	info.bUse = FALSE;
 	info.strType = _T("");
-	info.strInput = _T("");
-	info.strOutput = _T("");
+	info.strIn1 = _T("");
+	info.strIn2 = _T("");
+	info.strOut = _T("");
 
 	m_vItmInfo.push_back(info);
 
@@ -523,10 +499,12 @@ void CFilterSimDlg::OnBnClickedBtnDelimg()
 
 		for (std::vector<StItemInfo>::iterator it = m_vItmInfo.begin(); it != m_vItmInfo.end(); ++it)
 		{
-			if (it->strInput == fileName)
-				it->strInput = _T("");
-			if (it->strOutput == fileName)
-				it->strOutput = _T("");
+			if (it->strIn1 == fileName)
+				it->strIn1 = _T("");
+			if (it->strIn2 == fileName)
+				it->strIn2 = _T("");
+			if (it->strOut == fileName)
+				it->strOut = _T("");
 		}
 
 		UpdateCBList();
@@ -537,7 +515,7 @@ void CFilterSimDlg::OnBnClickedBtnDelimg()
 void CFilterSimDlg::UpdateCBList()
 {
 	// Picture Control Combo Box 4 + Intput + Output
-	for (int i=0; i<7; i++)
+	for (int i=0; i<8; i++)
 	{
 		CComboBox* pCB = (CComboBox*)GetDlgItem(IDC_MAIN_CB_VIEW1+i);
 		CString strLastText=_T("");
@@ -580,8 +558,9 @@ void CFilterSimDlg::UpdateItemList()
 	{
 		StItemInfo info = m_vItmInfo.at(i);
 
-		m_wndLc.SetItemText(i,4,info.strInput);
-		m_wndLc.SetItemText(i,5,info.strOutput);
+		m_wndLc.SetItemText(i,4,info.strIn1);
+		m_wndLc.SetItemText(i,5,info.strIn2);
+		m_wndLc.SetItemText(i,6,info.strOut);
 	}
 }
 
@@ -600,13 +579,13 @@ void CFilterSimDlg::UpdateItemColor()
 			m_wndLc.SetItemText(nRow, 2, _T("F"));
 			m_wndLc.SetItemColor(nRow, 2, RGB(255,0,0));
 		}
-		m_wndLc.SetItemColor(nRow, 7, RGB(128,128,128));
+		m_wndLc.SetItemColor(nRow, 8, RGB(128,128,128));
 
 		nRow++;
 	}
 }
 
-void CFilterSimDlg::UpdateItem(int nRow, BOOL bUse, CString strAlgorithm, CString strIn, CString strOut, StLibrary stLib)
+void CFilterSimDlg::UpdateItem(int nRow, BOOL bUse, CString strAlgorithm, CString strIn1, CString strIn2, CString strOut, StLibrary stLib)
 {
 	if (bUse == TRUE)
 	{
@@ -620,8 +599,9 @@ void CFilterSimDlg::UpdateItem(int nRow, BOOL bUse, CString strAlgorithm, CStrin
 	}
 
 	m_wndLc.SetItemText(nRow, 3, strAlgorithm);
-	m_wndLc.SetItemText(nRow, 4, strIn);
-	m_wndLc.SetItemText(nRow, 5, strOut);
+	m_wndLc.SetItemText(nRow, 4, strIn1);
+	m_wndLc.SetItemText(nRow, 5, strIn2);
+	m_wndLc.SetItemText(nRow, 6, strOut);
 
 	int nCnt=0;
 	for (std::vector<StItemInfo>::iterator it = m_vItmInfo.begin(); it != m_vItmInfo.end(); it++)
@@ -630,9 +610,10 @@ void CFilterSimDlg::UpdateItem(int nRow, BOOL bUse, CString strAlgorithm, CStrin
 		{
 			it->bUse = bUse;
 			it->strType = strAlgorithm;
-			it->strInput = strIn;
-			it->strOutput = strOut;
-			it->stLibrary = stLib;
+			it->strIn1 = strIn1;
+			it->strIn2 = strIn2;
+			it->strOut = strOut;
+			it->stLib = stLib;
 			break;
 		}
 		else
@@ -763,13 +744,14 @@ void CFilterSimDlg::OnNMClickMainLcItem(NMHDR *pNMHDR, LRESULT *pResult)
 		SetDlgItemInt(IDC_MAIN_LB_ROW, nRow);
 
 		CFormImg* pImg = (CFormImg*)m_pFormImg;
-		pImg->SetParameter(m_vItmInfo.at(nRow).stLibrary);
+		pImg->SetParameter(m_vItmInfo.at(nRow).stLib);
 
 		GetDlgItem(IDC_MAIN_CB_INPUT1)->EnableWindow(TRUE);
 	}
 
-	SetCBItembyText(IDC_MAIN_CB_INPUT1,m_vItmInfo.at(nRow).strInput);
-	SetCBItembyText(IDC_MAIN_CB_OUTPUT,m_vItmInfo.at(nRow).strOutput);
+	SetCBItembyText(IDC_MAIN_CB_INPUT1,m_vItmInfo.at(nRow).strIn1);
+	SetCBItembyText(IDC_MAIN_CB_INPUT2,m_vItmInfo.at(nRow).strIn2);
+	SetCBItembyText(IDC_MAIN_CB_OUTPUT,m_vItmInfo.at(nRow).strOut);
 	
 	int state=0;
 	m_vItmInfo.at(nRow).bUse ? state=1 : state=0;
@@ -853,7 +835,6 @@ void CFilterSimDlg::OnBnClickedMainBtnApply()
 	CString strLib = GetTextCBSelected(IDC_MAIN_CB_LIB);
 	if (strLib == _T("EasyImage"))
 	{
-		//strLib = pImg->GetTextCBSelectedProcessing();
 		if (library.stImg.strType == _T("Convolution"))
 		{
 			strLib = library.stImg.stConvolution.strType;
@@ -866,21 +847,60 @@ void CFilterSimDlg::OnBnClickedMainBtnApply()
 		{
 			strLib = library.stImg.stThreshold.strType;
 		}
+		else if (library.stImg.strType == _T("Arithmetic & Logic"))
+		{
+			strLib = library.stImg.stArithmetic.strType;
+		}
 	}
 
-	CString strIn  = GetTextCBSelected(IDC_MAIN_CB_INPUT1);
+	CString strIn1=_T(""),strIn2=_T("");
+	if (m_rbtnIn1 == 0)
+		strIn1 = GetTextCBSelected(IDC_MAIN_CB_INPUT1);
+	else
+	{
+		if (m_rbtnCst1 == 0)
+		{
+			int nY8 = GetDlgItemInt(IDC_MAIN_EDIT_GRAY1);
+			strIn1.Format(_T("Y8(%d)"),nY8);
+		}
+		else
+		{
+			int nR = GetDlgItemInt(IDC_MAIN_EDIT_R1);
+			int nG = GetDlgItemInt(IDC_MAIN_EDIT_G1);
+			int nB = GetDlgItemInt(IDC_MAIN_EDIT_B1);
+			strIn1.Format(_T("RGB24(%d:%d:%d)"),nR,nG,nB);
+		}
+	}
 	
+	if (m_rbtnIn2 == 0)
+		strIn2 = GetTextCBSelected(IDC_MAIN_CB_INPUT2);
+	else
+	{
+		if (m_rbtnCst2 == 0)
+		{
+			int nY8 = GetDlgItemInt(IDC_MAIN_EDIT_GRAY2);
+			strIn2.Format(_T("Y8(%d)"),nY8);
+		}
+		else
+		{
+			int nR = GetDlgItemInt(IDC_MAIN_EDIT_R2);
+			int nG = GetDlgItemInt(IDC_MAIN_EDIT_G2);
+			int nB = GetDlgItemInt(IDC_MAIN_EDIT_B2);
+			strIn2.Format(_T("RGB24(%d:%d:%d)"),nR,nG,nB);
+		}
+	}
+
 	CString strOut = GetTextCBSelected(IDC_MAIN_CB_OUTPUT);
 	
 	BOOL bChk = IsDlgButtonChecked(IDC_MAIN_CHK_USE);
 
-	UpdateItem(nRow, bChk, strLib, strIn, strOut, library);
+	UpdateItem(nRow, bChk, strLib, strIn1, strIn2, strOut, library);
 }
 
 void CFilterSimDlg::OnExecute()
 {
 	int n = m_wndLc.GetItemCount();
-	CEImage *pIn = NULL, *pOut = NULL;
+	CEImage *pIn1 = NULL, *pIn2 = NULL, *pOut = NULL;
 	
 	for (int i=0; i<n; i++)
 	{
@@ -893,13 +913,21 @@ void CFilterSimDlg::OnExecute()
 			continue;
 
 		CString strLib = m_wndLc.GetItemText(i,3);
-		CString strIn  = m_wndLc.GetItemText(i,4);
-		CString strOut = m_wndLc.GetItemText(i,5);
+		CString strIn1 = m_wndLc.GetItemText(i,4);
+		CString strIn2 = m_wndLc.GetItemText(i,5);
+		CString strOut = m_wndLc.GetItemText(i,6);
 
-		if (strIn.Find(_T(" - ")) == 0)
+		if (strIn1.Find(_T(" - ")) == 0)
 		{
-			int len = strIn.GetLength();
-			strIn = strIn.Right(len-3);
+			int len = strIn1.GetLength();
+			strIn1 = strIn1.Right(len-3);
+			bInRoi = true;
+		}
+
+		if (strIn2.Find(_T(" - ")) == 0)
+		{
+			int len = strIn2.GetLength();
+			strIn2 = strIn2.Right(len-3);
 			bInRoi = true;
 		}
 
@@ -915,11 +943,17 @@ void CFilterSimDlg::OnExecute()
 			CString fileName=_T("");
 			it->GetImageName(fileName);
 
-			if (it->HasROI(strIn) == true)
-				pIn = it->GetEImage();
+			if (it->HasROI(strIn1) == true)
+				pIn1 = it->GetEImage();
 			
-			if (fileName == strIn)
-				pIn = it->GetEImage();
+			if (fileName == strIn1)
+				pIn1 = it->GetEImage();
+
+			if (it->HasROI(strIn2) == true)
+				pIn2 = it->GetEImage();
+
+			if (fileName == strIn2)
+				pIn2 = it->GetEImage();
 
 			if (it->HasROI(strOut) == true)
 				pOut = it->GetEImage();
@@ -942,11 +976,11 @@ void CFilterSimDlg::OnExecute()
 
 			if (bRet == false)
 			{
-				m_wndLc.SetItemColor(i, 7, RGB(255,0,0));
+				m_wndLc.SetItemColor(i, 8, RGB(255,0,0));
 				continue;
 			}
 
-			m_wndLc.SetItemColor(i, 7, RGB(0,255,0));
+			m_wndLc.SetItemColor(i, 8, RGB(0,255,0));
 
 			for (int k=0; k<4; k++)
 			{
@@ -976,91 +1010,983 @@ void CFilterSimDlg::OnExecute()
 
 			if (pImg->IsConvolution(strLib) == true)
 			{
-				if (strLib == _T("Uniform"))			bRet = CEImgConvolution::Uniform		(pIn, strIn, pOut, strOut, time);
-				else if (strLib == _T("Uniform3x3"))	bRet = CEImgConvolution::Uniform3x3		(pIn, strIn, pOut, strOut, time);
-				else if (strLib == _T("Uniform5x5"))	bRet = CEImgConvolution::Uniform5x5		(pIn, strIn, pOut, strOut, time);
-				else if (strLib == _T("Uniform7x7"))	bRet = CEImgConvolution::Uniform7x7		(pIn, strIn, pOut, strOut, time);
-				else if (strLib == _T("Gaussian"))		bRet = CEImgConvolution::Gaussian		(pIn, strIn, pOut, strOut, time);
-				else if (strLib == _T("Gaussian3x3"))	bRet = CEImgConvolution::Gaussian3x3	(pIn, strIn, pOut, strOut, time);
-				else if (strLib == _T("Gaussian5x5"))	bRet = CEImgConvolution::Gaussian5x5	(pIn, strIn, pOut, strOut, time);
-				else if (strLib == _T("Gaussian7x7"))	bRet = CEImgConvolution::Gaussian7x7	(pIn, strIn, pOut, strOut, time);
-				else if (strLib == _T("Lowpass1"))		bRet = CEImgConvolution::Lowpass1		(pIn, strIn, pOut, strOut, time);
-				else if (strLib == _T("Lowpass2"))		bRet = CEImgConvolution::Lowpass2		(pIn, strIn, pOut, strOut, time);
-				else if (strLib == _T("Highpass1"))		bRet = CEImgConvolution::Highpass1		(pIn, strIn, pOut, strOut, time);
-				else if (strLib == _T("Highpass2"))		bRet = CEImgConvolution::Highpass2		(pIn, strIn, pOut, strOut, time);
-				else if (strLib == _T("Gradient"))		bRet = CEImgConvolution::Gradient		(pIn, strIn, pOut, strOut, time);
-				else if (strLib == _T("GradientX"))		bRet = CEImgConvolution::GradientX		(pIn, strIn, pOut, strOut, time);
-				else if (strLib == _T("GradientY"))		bRet = CEImgConvolution::GradientY		(pIn, strIn, pOut, strOut, time);
-				else if (strLib == _T("Sobel"))			bRet = CEImgConvolution::Sobel			(pIn, strIn, pOut, strOut, time);
-				else if (strLib == _T("SobelX"))		bRet = CEImgConvolution::SobelX			(pIn, strIn, pOut, strOut, time);
-				else if (strLib == _T("SobelY"))		bRet = CEImgConvolution::SobelY			(pIn, strIn, pOut, strOut, time);
-				else if (strLib == _T("Prewitt"))		bRet = CEImgConvolution::Prewitt		(pIn, strIn, pOut, strOut, time);
-				else if (strLib == _T("PrewittX"))		bRet = CEImgConvolution::PrewittX		(pIn, strIn, pOut, strOut, time);
-				else if (strLib == _T("PrewittY"))		bRet = CEImgConvolution::PrewittY		(pIn, strIn, pOut, strOut, time);
-				else if (strLib == _T("Roberts"))		bRet = CEImgConvolution::Roberts		(pIn, strIn, pOut, strOut, time);
-				else if (strLib == _T("LaplacianX"))	bRet = CEImgConvolution::LaplacianX		(pIn, strIn, pOut, strOut, time);
-				else if (strLib == _T("LaplacianY"))	bRet = CEImgConvolution::LaplacianY		(pIn, strIn, pOut, strOut, time);
-				else if (strLib == _T("Laplacian4"))	bRet = CEImgConvolution::Laplacian4		(pIn, strIn, pOut, strOut, time);
-				else if (strLib == _T("Laplacian8"))	bRet = CEImgConvolution::Laplacian8		(pIn, strIn, pOut, strOut, time);
+				if (strLib == _T("Uniform"))			bRet = CEImgConvolution::Uniform		(pIn1, strIn1, pOut, strOut, time);
+				else if (strLib == _T("Uniform3x3"))	bRet = CEImgConvolution::Uniform3x3		(pIn1, strIn1, pOut, strOut, time);
+				else if (strLib == _T("Uniform5x5"))	bRet = CEImgConvolution::Uniform5x5		(pIn1, strIn1, pOut, strOut, time);
+				else if (strLib == _T("Uniform7x7"))	bRet = CEImgConvolution::Uniform7x7		(pIn1, strIn1, pOut, strOut, time);
+				else if (strLib == _T("Gaussian"))		bRet = CEImgConvolution::Gaussian		(pIn1, strIn1, pOut, strOut, time);
+				else if (strLib == _T("Gaussian3x3"))	bRet = CEImgConvolution::Gaussian3x3	(pIn1, strIn1, pOut, strOut, time);
+				else if (strLib == _T("Gaussian5x5"))	bRet = CEImgConvolution::Gaussian5x5	(pIn1, strIn1, pOut, strOut, time);
+				else if (strLib == _T("Gaussian7x7"))	bRet = CEImgConvolution::Gaussian7x7	(pIn1, strIn1, pOut, strOut, time);
+				else if (strLib == _T("Lowpass1"))		bRet = CEImgConvolution::Lowpass1		(pIn1, strIn1, pOut, strOut, time);
+				else if (strLib == _T("Lowpass2"))		bRet = CEImgConvolution::Lowpass2		(pIn1, strIn1, pOut, strOut, time);
+				else if (strLib == _T("Highpass1"))		bRet = CEImgConvolution::Highpass1		(pIn1, strIn1, pOut, strOut, time);
+				else if (strLib == _T("Highpass2"))		bRet = CEImgConvolution::Highpass2		(pIn1, strIn1, pOut, strOut, time);
+				else if (strLib == _T("Gradient"))		bRet = CEImgConvolution::Gradient		(pIn1, strIn1, pOut, strOut, time);
+				else if (strLib == _T("GradientX"))		bRet = CEImgConvolution::GradientX		(pIn1, strIn1, pOut, strOut, time);
+				else if (strLib == _T("GradientY"))		bRet = CEImgConvolution::GradientY		(pIn1, strIn1, pOut, strOut, time);
+				else if (strLib == _T("Sobel"))			bRet = CEImgConvolution::Sobel			(pIn1, strIn1, pOut, strOut, time);
+				else if (strLib == _T("SobelX"))		bRet = CEImgConvolution::SobelX			(pIn1, strIn1, pOut, strOut, time);
+				else if (strLib == _T("SobelY"))		bRet = CEImgConvolution::SobelY			(pIn1, strIn1, pOut, strOut, time);
+				else if (strLib == _T("Prewitt"))		bRet = CEImgConvolution::Prewitt		(pIn1, strIn1, pOut, strOut, time);
+				else if (strLib == _T("PrewittX"))		bRet = CEImgConvolution::PrewittX		(pIn1, strIn1, pOut, strOut, time);
+				else if (strLib == _T("PrewittY"))		bRet = CEImgConvolution::PrewittY		(pIn1, strIn1, pOut, strOut, time);
+				else if (strLib == _T("Roberts"))		bRet = CEImgConvolution::Roberts		(pIn1, strIn1, pOut, strOut, time);
+				else if (strLib == _T("LaplacianX"))	bRet = CEImgConvolution::LaplacianX		(pIn1, strIn1, pOut, strOut, time);
+				else if (strLib == _T("LaplacianY"))	bRet = CEImgConvolution::LaplacianY		(pIn1, strIn1, pOut, strOut, time);
+				else if (strLib == _T("Laplacian4"))	bRet = CEImgConvolution::Laplacian4		(pIn1, strIn1, pOut, strOut, time);
+				else if (strLib == _T("Laplacian8"))	bRet = CEImgConvolution::Laplacian8		(pIn1, strIn1, pOut, strOut, time);
 			}
 			else if (pImg->IsMorphology(strLib) == true)
 			{
 				StItemInfo info = m_vItmInfo.at(i);
-				int nHalf = info.stLibrary.stImg.stMorphology.nHalfKernel;
-				if (strLib == _T("Erode"))				bRet = CEImgMorphology::Erode		(pIn, strIn, pOut, strOut, nHalf, time);
-				else if (strLib == _T("Dilate"))		bRet = CEImgMorphology::Dilate		(pIn, strIn, pOut, strOut, nHalf, time);
-				else if (strLib == _T("Open"))			bRet = CEImgMorphology::Open		(pIn, strIn, pOut, strOut, nHalf, time);
-				else if (strLib == _T("Close"))			bRet = CEImgMorphology::Close		(pIn, strIn, pOut, strOut, nHalf, time);
-				else if (strLib == _T("White Top Hat"))	bRet = CEImgMorphology::WhiteTopHat	(pIn, strIn, pOut, strOut, nHalf, time);
-				else if (strLib == _T("Black Top Hat"))	bRet = CEImgMorphology::BlackTopHat	(pIn, strIn, pOut, strOut, nHalf, time);
-				else if (strLib == _T("Morpho Gradient"))bRet = CEImgMorphology::Gradient	(pIn, strIn, pOut, strOut, nHalf, time);
-				else if (strLib == _T("Median 3x3"))	bRet = CEImgMorphology::Median3x3	(pIn, strIn, pOut, strOut, time);
+				int nHalf = info.stLib.stImg.stMorphology.nHalfKernel;
+				if (strLib == _T("Erode"))				bRet = CEImgMorphology::Erode		(pIn1, strIn1, pOut, strOut, nHalf, time);
+				else if (strLib == _T("Dilate"))		bRet = CEImgMorphology::Dilate		(pIn1, strIn1, pOut, strOut, nHalf, time);
+				else if (strLib == _T("Open"))			bRet = CEImgMorphology::Open		(pIn1, strIn1, pOut, strOut, nHalf, time);
+				else if (strLib == _T("Close"))			bRet = CEImgMorphology::Close		(pIn1, strIn1, pOut, strOut, nHalf, time);
+				else if (strLib == _T("White Top Hat"))	bRet = CEImgMorphology::WhiteTopHat	(pIn1, strIn1, pOut, strOut, nHalf, time);
+				else if (strLib == _T("Black Top Hat"))	bRet = CEImgMorphology::BlackTopHat	(pIn1, strIn1, pOut, strOut, nHalf, time);
+				else if (strLib == _T("Morpho Gradient"))bRet = CEImgMorphology::Gradient	(pIn1, strIn1, pOut, strOut, nHalf, time);
+				else if (strLib == _T("Median 3x3"))	bRet = CEImgMorphology::Median3x3	(pIn1, strIn1, pOut, strOut, time);
 			}
 			else if (pImg->IsThreshold(strLib) == true)
 			{
 				StItemInfo info = m_vItmInfo.at(i);
 				if (strLib == _T("Simple Threshold"))
 				{
-					CString strType = info.stLibrary.stImg.stThreshold.stSimple.strType;
-					if (strType == _T("Absolute"))				bRet = CEImgThreshold::ThresholdABS(pIn, strIn, pOut, strOut, info.stLibrary.stImg.stThreshold.stSimple.nAbs, time);
+					CString strType = info.stLib.stImg.stThreshold.stSimple.strType;
+					if (strType == _T("Absolute"))				bRet = CEImgThreshold::ThresholdABS(pIn1, strIn1, pOut, strOut, info.stLib.stImg.stThreshold.stSimple.nAbs, time);
 					else if (strType == _T("Relative"))
 					{
-						float fRel = (float)(info.stLibrary.stImg.stThreshold.stSimple.nRel)/100;
-						bRet = CEImgThreshold::ThresholdRelative(pIn, strIn, pOut, strOut, fRel, time);
+						float fRel = (float)(info.stLib.stImg.stThreshold.stSimple.nRel)/100;
+						bRet = CEImgThreshold::ThresholdRelative(pIn1, strIn1, pOut, strOut, fRel, time);
 					}
-					else if (strType == _T("Minimum Residue"))	bRet = CEImgThreshold::ThresholdMinResidue(pIn, strIn, pOut, strOut, time);
-					else if (strType == _T("Maximum Entropy"))	bRet = CEImgThreshold::ThresholdMaxEntropy(pIn, strIn, pOut, strOut, time);
-					else if (strType == _T("Iso-Data"))			bRet = CEImgThreshold::ThresholdIsoData(pIn, strIn, pOut, strOut, time);
+					else if (strType == _T("Minimum Residue"))	bRet = CEImgThreshold::ThresholdMinResidue(pIn1, strIn1, pOut, strOut, time);
+					else if (strType == _T("Maximum Entropy"))	bRet = CEImgThreshold::ThresholdMaxEntropy(pIn1, strIn1, pOut, strOut, time);
+					else if (strType == _T("Iso-Data"))			bRet = CEImgThreshold::ThresholdIsoData(pIn1, strIn1, pOut, strOut, time);
 				}
 				else if (strLib == _T("Double Threshold"))
 				{
-					int nPxlHigh = info.stLibrary.stImg.stThreshold.stDouble.nPxlHigh;
-					int nPxlMid  = info.stLibrary.stImg.stThreshold.stDouble.nPxlMid;
-					int nPxlLow  = info.stLibrary.stImg.stThreshold.stDouble.nPxlLow;
-					int nThdHigh = info.stLibrary.stImg.stThreshold.stDouble.nThdHigh;
-					int nThdLow  = info.stLibrary.stImg.stThreshold.stDouble.nThdLow;
+					int nPxlHigh = info.stLib.stImg.stThreshold.stDouble.nPxlHigh;
+					int nPxlMid  = info.stLib.stImg.stThreshold.stDouble.nPxlMid;
+					int nPxlLow  = info.stLib.stImg.stThreshold.stDouble.nPxlLow;
+					int nThdHigh = info.stLib.stImg.stThreshold.stDouble.nThdHigh;
+					int nThdLow  = info.stLib.stImg.stThreshold.stDouble.nThdLow;
 
-					bRet = CEImgThreshold::ThresholdDouble(pIn, strIn, pOut, strOut, nPxlHigh, nThdHigh, nPxlMid, nThdLow, nPxlLow, time);
+					bRet = CEImgThreshold::ThresholdDouble(pIn1, strIn1, pOut, strOut, nPxlHigh, nThdHigh, nPxlMid, nThdLow, nPxlLow, time);
 				}
 				else if (strLib == _T("Adaptive Threshold"))
 				{
-					CString strType = info.stLibrary.stImg.stThreshold.stAdaptive.strType;
-					int nKernel = info.stLibrary.stImg.stThreshold.stAdaptive.nKernel;
-					int nOffset = info.stLibrary.stImg.stThreshold.stAdaptive.nOffset;
+					CString strType = info.stLib.stImg.stThreshold.stAdaptive.strType;
+					int nKernel = info.stLib.stImg.stThreshold.stAdaptive.nKernel;
+					int nOffset = info.stLib.stImg.stThreshold.stAdaptive.nOffset;
 
-					if (strType == _T("Mean"))			bRet = CEImgThreshold::ThresholdAdaptiveMean(pIn, strIn, pOut, strOut, nKernel, nOffset, time);
-					else if (strType == _T("Median"))	bRet = CEImgThreshold::ThresholdAdaptiveMedian(pIn, strIn, pOut, strOut, nKernel, nOffset, time);
-					else if (strType == _T("Middle"))	bRet = CEImgThreshold::ThresholdAdaptiveMiddle(pIn, strIn, pOut, strOut, nKernel, nOffset, time);
+					if (strType == _T("Mean"))			bRet = CEImgThreshold::ThresholdAdaptiveMean(pIn1, strIn1, pOut, strOut, nKernel, nOffset, time);
+					else if (strType == _T("Median"))	bRet = CEImgThreshold::ThresholdAdaptiveMedian(pIn1, strIn1, pOut, strOut, nKernel, nOffset, time);
+					else if (strType == _T("Middle"))	bRet = CEImgThreshold::ThresholdAdaptiveMiddle(pIn1, strIn1, pOut, strOut, nKernel, nOffset, time);
+				}
+			}
+			else if (pImg->IsArtihemetic(strLib) == true)
+			{
+				StItemInfo info = m_vItmInfo.at(i);
+
+				CString strType = info.stLib.stImg.stArithmetic.strType;
+				if (strType == _T("Copy"))
+					bRet = CEImgArithmetic::Oper_Copy(pIn1, strIn1, pOut, strOut, time);
+				else if (strType == _T("Invert"))
+					bRet = CEImgArithmetic::Oper_Invert(pIn1, strIn1, pOut, strOut, time);
+				else if (strType == _T("Add"))
+				{
+					// In1 Image & In2 Image
+					if (m_rbtnIn1 == 0 && m_rbtnIn2 == 0)
+						bRet = CEImgArithmetic::Oper_Add(pIn1, strIn1, pIn2, strIn2, pOut, strOut, time);
+					// In1 Constant & In2 Image
+					else if (m_rbtnIn1 == 1 && m_rbtnIn2 == 0)
+					{
+						// In1 Gray
+						if (m_rbtnCst1 == 0)
+						{
+							int nY8 = GetDlgItemInt(IDC_MAIN_EDIT_GRAY1);
+							bRet = CEImgArithmetic::Oper_Add(nY8, pIn2, strIn2, pOut, strOut, time);
+						}
+						// In1 Color
+						else
+						{
+
+						}
+					}
+					// In1 Image & In2 Constant
+					else if (m_rbtnIn1 == 0 && m_rbtnIn2 == 1)
+					{
+						// In2 Gray
+						if (m_rbtnCst2 == 0)
+						{
+							int nY8 = GetDlgItemInt(IDC_MAIN_EDIT_GRAY2);
+							bRet = CEImgArithmetic::Oper_Add(pIn1, strIn1, nY8, pOut, strOut, time);
+						}
+						// In2 Color
+						else
+						{
+
+						}
+					}
+				}
+				else if (strType == _T("Subtract"))
+				{
+					// In1 Image & In2 Image
+					if (m_rbtnIn1 == 0 && m_rbtnIn2 == 0)
+						bRet = CEImgArithmetic::Oper_Subtract(pIn1, strIn1, pIn2, strIn2, pOut, strOut, time);
+					// In1 Constant & In2 Image
+					else if (m_rbtnIn1 == 1 && m_rbtnIn2 == 0)
+					{
+						// In1 Gray
+						if (m_rbtnCst1 == 0)
+						{
+							int nY8 = GetDlgItemInt(IDC_MAIN_EDIT_GRAY1);
+							bRet = CEImgArithmetic::Oper_Subtract(nY8, pIn2, strIn2, pOut, strOut, time);
+						}
+						// In1 Color
+						else
+						{
+
+						}
+					}
+					// In1 Image & In2 Constant
+					else if (m_rbtnIn1 == 0 && m_rbtnIn2 == 1)
+					{
+						// In2 Gray
+						if (m_rbtnCst2 == 0)
+						{
+							int nY8 = GetDlgItemInt(IDC_MAIN_EDIT_GRAY2);
+							bRet = CEImgArithmetic::Oper_Subtract(pIn1, strIn1, nY8, pOut, strOut, time);
+						}
+						// In2 Color
+						else
+						{
+
+						}
+					}
+				}
+				else if (strType == _T("Compare"))
+				{
+					// In1 Image & In2 Image
+					if (m_rbtnIn1 == 0 && m_rbtnIn2 == 0)
+						bRet = CEImgArithmetic::Oper_Compare(pIn1, strIn1, pIn2, strIn2, pOut, strOut, time);
+					// In1 Constant & In2 Image
+					else if (m_rbtnIn1 == 1 && m_rbtnIn2 == 0)
+					{
+						// In1 Gray
+						if (m_rbtnCst1 == 0)
+						{
+							int nY8 = GetDlgItemInt(IDC_MAIN_EDIT_GRAY1);
+							bRet = CEImgArithmetic::Oper_Compare(nY8, pIn2, strIn2, pOut, strOut, time);
+						}
+						// In1 Color
+						else
+						{
+
+						}
+					}
+					// In1 Image & In2 Constant
+					else if (m_rbtnIn1 == 0 && m_rbtnIn2 == 1)
+					{
+						// In2 Gray
+						if (m_rbtnCst2 == 0)
+						{
+							int nY8 = GetDlgItemInt(IDC_MAIN_EDIT_GRAY2);
+							bRet = CEImgArithmetic::Oper_Compare(pIn1, strIn1, nY8, pOut, strOut, time);
+						}
+						// In2 Color
+						else
+						{
+
+						}
+					}
+				}
+				else if (strType == _T("Multiply"))
+				{
+					// In1 Image & In2 Image
+					if (m_rbtnIn1 == 0 && m_rbtnIn2 == 0)
+						bRet = CEImgArithmetic::Oper_Multiply(pIn1, strIn1, pIn2, strIn2, pOut, strOut, time);
+					// In1 Constant & In2 Image
+					else if (m_rbtnIn1 == 1 && m_rbtnIn2 == 0)
+					{
+						// In1 Gray
+						if (m_rbtnCst1 == 0)
+						{
+							int nY8 = GetDlgItemInt(IDC_MAIN_EDIT_GRAY1);
+							bRet = CEImgArithmetic::Oper_Multiply(nY8, pIn2, strIn2, pOut, strOut, time);
+						}
+						// In1 Color
+						else
+						{
+
+						}
+					}
+					// In1 Image & In2 Constant
+					else if (m_rbtnIn1 == 0 && m_rbtnIn2 == 1)
+					{
+						// In2 Gray
+						if (m_rbtnCst2 == 0)
+						{
+							int nY8 = GetDlgItemInt(IDC_MAIN_EDIT_GRAY2);
+							bRet = CEImgArithmetic::Oper_Multiply(pIn1, strIn1, nY8, pOut, strOut, time);
+						}
+						// In2 Color
+						else
+						{
+
+						}
+					}
+				}
+				else if (strType == _T("Divide"))
+				{
+					// In1 Image & In2 Image
+					if (m_rbtnIn1 == 0 && m_rbtnIn2 == 0)
+						bRet = CEImgArithmetic::Oper_Divide(pIn1, strIn1, pIn2, strIn2, pOut, strOut, time);
+					// In1 Constant & In2 Image
+					else if (m_rbtnIn1 == 1 && m_rbtnIn2 == 0)
+					{
+						// In1 Gray
+						if (m_rbtnCst1 == 0)
+						{
+							int nY8 = GetDlgItemInt(IDC_MAIN_EDIT_GRAY1);
+							bRet = CEImgArithmetic::Oper_Divide(nY8, pIn2, strIn2, pOut, strOut, time);
+						}
+						// In1 Color
+						else
+						{
+
+						}
+					}
+					// In1 Image & In2 Constant
+					else if (m_rbtnIn1 == 0 && m_rbtnIn2 == 1)
+					{
+						// In2 Gray
+						if (m_rbtnCst2 == 0)
+						{
+							int nY8 = GetDlgItemInt(IDC_MAIN_EDIT_GRAY2);
+							bRet = CEImgArithmetic::Oper_Divide(pIn1, strIn1, nY8, pOut, strOut, time);
+						}
+						// In2 Color
+						else
+						{
+
+						}
+					}
+				}
+				else if (strType == _T("Modulo"))
+				{
+					// In1 Image & In2 Image
+					if (m_rbtnIn1 == 0 && m_rbtnIn2 == 0)
+						bRet = CEImgArithmetic::Oper_Modulo(pIn1, strIn1, pIn2, strIn2, pOut, strOut, time);
+					// In1 Constant & In2 Image
+					else if (m_rbtnIn1 == 1 && m_rbtnIn2 == 0)
+					{
+						// In1 Gray
+						if (m_rbtnCst1 == 0)
+						{
+							int nY8 = GetDlgItemInt(IDC_MAIN_EDIT_GRAY1);
+							bRet = CEImgArithmetic::Oper_Modulo(nY8, pIn2, strIn2, pOut, strOut, time);
+						}
+						// In1 Color
+						else
+						{
+
+						}
+					}
+					// In1 Image & In2 Constant
+					else if (m_rbtnIn1 == 0 && m_rbtnIn2 == 1)
+					{
+						// In2 Gray
+						if (m_rbtnCst2 == 0)
+						{
+							int nY8 = GetDlgItemInt(IDC_MAIN_EDIT_GRAY2);
+							bRet = CEImgArithmetic::Oper_Modulo(pIn1, strIn1, nY8, pOut, strOut, time);
+						}
+						// In2 Color
+						else
+						{
+
+						}
+					}
+				}
+				else if (strType == _T("Scaled Add"))
+				{
+					// In1 Image & In2 Image
+					if (m_rbtnIn1 == 0 && m_rbtnIn2 == 0)
+						bRet = CEImgArithmetic::Oper_ScaledAdd(pIn1, strIn1, pIn2, strIn2, pOut, strOut, time);
+					// In1 Constant & In2 Image
+					else if (m_rbtnIn1 == 1 && m_rbtnIn2 == 0)
+					{
+						// In1 Gray
+						if (m_rbtnCst1 == 0)
+						{
+							int nY8 = GetDlgItemInt(IDC_MAIN_EDIT_GRAY1);
+							bRet = CEImgArithmetic::Oper_ScaledAdd(nY8, pIn2, strIn2, pOut, strOut, time);
+						}
+						// In1 Color
+						else
+						{
+
+						}
+					}
+					// In1 Image & In2 Constant
+					else if (m_rbtnIn1 == 0 && m_rbtnIn2 == 1)
+					{
+						// In2 Gray
+						if (m_rbtnCst2 == 0)
+						{
+							int nY8 = GetDlgItemInt(IDC_MAIN_EDIT_GRAY2);
+							bRet = CEImgArithmetic::Oper_ScaledAdd(pIn1, strIn1, nY8, pOut, strOut, time);
+						}
+						// In2 Color
+						else
+						{
+
+						}
+					}
+				}
+				else if (strType == _T("Scaled Subtract"))
+				{
+					// In1 Image & In2 Image
+					if (m_rbtnIn1 == 0 && m_rbtnIn2 == 0)
+						bRet = CEImgArithmetic::Oper_ScaledSubtract(pIn1, strIn1, pIn2, strIn2, pOut, strOut, time);
+					// In1 Constant & In2 Image
+					else if (m_rbtnIn1 == 1 && m_rbtnIn2 == 0)
+					{
+						// In1 Gray
+						if (m_rbtnCst1 == 0)
+						{
+							int nY8 = GetDlgItemInt(IDC_MAIN_EDIT_GRAY1);
+							bRet = CEImgArithmetic::Oper_ScaledSubtract(nY8, pIn2, strIn2, pOut, strOut, time);
+						}
+						// In1 Color
+						else
+						{
+
+						}
+					}
+					// In1 Image & In2 Constant
+					else if (m_rbtnIn1 == 0 && m_rbtnIn2 == 1)
+					{
+						// In2 Gray
+						if (m_rbtnCst2 == 0)
+						{
+							int nY8 = GetDlgItemInt(IDC_MAIN_EDIT_GRAY2);
+							bRet = CEImgArithmetic::Oper_ScaledSubtract(pIn1, strIn1, nY8, pOut, strOut, time);
+						}
+						// In2 Color
+						else
+						{
+
+						}
+					}
+				}
+				else if (strType == _T("Scaled Multiply"))
+				{
+					// In1 Image & In2 Image
+					if (m_rbtnIn1 == 0 && m_rbtnIn2 == 0)
+						bRet = CEImgArithmetic::Oper_ScaledMultiply(pIn1, strIn1, pIn2, strIn2, pOut, strOut, time);
+					// In1 Constant & In2 Image
+					else if (m_rbtnIn1 == 1 && m_rbtnIn2 == 0)
+					{
+						// In1 Gray
+						if (m_rbtnCst1 == 0)
+						{
+							int nY8 = GetDlgItemInt(IDC_MAIN_EDIT_GRAY1);
+							bRet = CEImgArithmetic::Oper_ScaledMultiply(nY8, pIn2, strIn2, pOut, strOut, time);
+						}
+						// In1 Color
+						else
+						{
+
+						}
+					}
+					// In1 Image & In2 Constant
+					else if (m_rbtnIn1 == 0 && m_rbtnIn2 == 1)
+					{
+						// In2 Gray
+						if (m_rbtnCst2 == 0)
+						{
+							int nY8 = GetDlgItemInt(IDC_MAIN_EDIT_GRAY2);
+							bRet = CEImgArithmetic::Oper_ScaledMultiply(pIn1, strIn1, nY8, pOut, strOut, time);
+						}
+						// In2 Color
+						else
+						{
+
+						}
+					}
+				}
+				else if (strType == _T("Scaled Divide"))
+				{
+					// In1 Image & In2 Image
+					if (m_rbtnIn1 == 0 && m_rbtnIn2 == 0)
+						bRet = CEImgArithmetic::Oper_ScaledDivide(pIn1, strIn1, pIn2, strIn2, pOut, strOut, time);
+					// In1 Constant & In2 Image
+					else if (m_rbtnIn1 == 1 && m_rbtnIn2 == 0)
+					{
+						// In1 Gray
+						if (m_rbtnCst1 == 0)
+						{
+							int nY8 = GetDlgItemInt(IDC_MAIN_EDIT_GRAY1);
+							bRet = CEImgArithmetic::Oper_ScaledDivide(nY8, pIn2, strIn2, pOut, strOut, time);
+						}
+						// In1 Color
+						else
+						{
+
+						}
+					}
+					// In1 Image & In2 Constant
+					else if (m_rbtnIn1 == 0 && m_rbtnIn2 == 1)
+					{
+						// In2 Gray
+						if (m_rbtnCst2 == 0)
+						{
+							int nY8 = GetDlgItemInt(IDC_MAIN_EDIT_GRAY2);
+							bRet = CEImgArithmetic::Oper_ScaledDivide(pIn1, strIn1, nY8, pOut, strOut, time);
+						}
+						// In2 Color
+						else
+						{
+
+						}
+					}
+				}
+				else if (strType == _T("Shift Left"))
+				{
+					int nY8 = GetDlgItemInt(IDC_MAIN_EDIT_GRAY2);
+					bRet = CEImgArithmetic::Oper_ShiftLeft(pIn1, strIn1, nY8, pOut, strOut, time);
+				}
+				else if (strType == _T("Shift Right"))
+				{
+					int nY8 = GetDlgItemInt(IDC_MAIN_EDIT_GRAY2);
+					bRet = CEImgArithmetic::Oper_ShiftRight(pIn1, strIn1, nY8, pOut, strOut, time);
+				}
+				else if (strType == _T("Bitwise AND"))
+				{
+					// In1 Image & In2 Image
+					if (m_rbtnIn1 == 0 && m_rbtnIn2 == 0)
+						bRet = CEImgArithmetic::Oper_BitwiseAND(pIn1, strIn1, pIn2, strIn2, pOut, strOut, time);
+					// In1 Constant & In2 Image
+					else if (m_rbtnIn1 == 1 && m_rbtnIn2 == 0)
+					{
+						// In1 Gray
+						if (m_rbtnCst1 == 0)
+						{
+							int nY8 = GetDlgItemInt(IDC_MAIN_EDIT_GRAY1);
+							bRet = CEImgArithmetic::Oper_BitwiseAND(nY8, pIn2, strIn2, pOut, strOut, time);
+						}
+						// In1 Color
+						else
+						{
+
+						}
+					}
+					// In1 Image & In2 Constant
+					else if (m_rbtnIn1 == 0 && m_rbtnIn2 == 1)
+					{
+						// In2 Gray
+						if (m_rbtnCst2 == 0)
+						{
+							int nY8 = GetDlgItemInt(IDC_MAIN_EDIT_GRAY2);
+							bRet = CEImgArithmetic::Oper_BitwiseAND(pIn1, strIn1, nY8, pOut, strOut, time);
+						}
+						// In2 Color
+						else
+						{
+
+						}
+					}
+				}
+				else if (strType == _T("Bitwise OR"))
+				{
+					// In1 Image & In2 Image
+					if (m_rbtnIn1 == 0 && m_rbtnIn2 == 0)
+						bRet = CEImgArithmetic::Oper_BitwiseOR(pIn1, strIn1, pIn2, strIn2, pOut, strOut, time);
+					// In1 Constant & In2 Image
+					else if (m_rbtnIn1 == 1 && m_rbtnIn2 == 0)
+					{
+						// In1 Gray
+						if (m_rbtnCst1 == 0)
+						{
+							int nY8 = GetDlgItemInt(IDC_MAIN_EDIT_GRAY1);
+							bRet = CEImgArithmetic::Oper_BitwiseOR(nY8, pIn2, strIn2, pOut, strOut, time);
+						}
+						// In1 Color
+						else
+						{
+
+						}
+					}
+					// In1 Image & In2 Constant
+					else if (m_rbtnIn1 == 0 && m_rbtnIn2 == 1)
+					{
+						// In2 Gray
+						if (m_rbtnCst2 == 0)
+						{
+							int nY8 = GetDlgItemInt(IDC_MAIN_EDIT_GRAY2);
+							bRet = CEImgArithmetic::Oper_BitwiseOR(pIn1, strIn1, nY8, pOut, strOut, time);
+						}
+						// In2 Color
+						else
+						{
+
+						}
+					}
+				}
+				else if (strType == _T("Bitwise XOR"))
+				{
+					// In1 Image & In2 Image
+					if (m_rbtnIn1 == 0 && m_rbtnIn2 == 0)
+						bRet = CEImgArithmetic::Oper_BitwiseXOR(pIn1, strIn1, pIn2, strIn2, pOut, strOut, time);
+					// In1 Constant & In2 Image
+					else if (m_rbtnIn1 == 1 && m_rbtnIn2 == 0)
+					{
+						// In1 Gray
+						if (m_rbtnCst1 == 0)
+						{
+							int nY8 = GetDlgItemInt(IDC_MAIN_EDIT_GRAY1);
+							bRet = CEImgArithmetic::Oper_BitwiseXOR(nY8, pIn2, strIn2, pOut, strOut, time);
+						}
+						// In1 Color
+						else
+						{
+
+						}
+					}
+					// In1 Image & In2 Constant
+					else if (m_rbtnIn1 == 0 && m_rbtnIn2 == 1)
+					{
+						// In2 Gray
+						if (m_rbtnCst2 == 0)
+						{
+							int nY8 = GetDlgItemInt(IDC_MAIN_EDIT_GRAY2);
+							bRet = CEImgArithmetic::Oper_BitwiseXOR(pIn1, strIn1, nY8, pOut, strOut, time);
+						}
+						// In2 Color
+						else
+						{
+
+						}
+					}
+				}
+				else if (strType == _T("Logical AND"))
+				{
+					// In1 Image & In2 Image
+					if (m_rbtnIn1 == 0 && m_rbtnIn2 == 0)
+						bRet = CEImgArithmetic::Oper_LogicalAND(pIn1, strIn1, pIn2, strIn2, pOut, strOut, time);
+					// In1 Constant & In2 Image
+					else if (m_rbtnIn1 == 1 && m_rbtnIn2 == 0)
+					{
+						// In1 Gray
+						if (m_rbtnCst1 == 0)
+						{
+							int nY8 = GetDlgItemInt(IDC_MAIN_EDIT_GRAY1);
+							bRet = CEImgArithmetic::Oper_LogicalAND(nY8, pIn2, strIn2, pOut, strOut, time);
+						}
+						// In1 Color
+						else
+						{
+
+						}
+					}
+				}
+				else if (strType == _T("Logical OR"))
+				{
+					// In1 Image & In2 Image
+					if (m_rbtnIn1 == 0 && m_rbtnIn2 == 0)
+						bRet = CEImgArithmetic::Oper_LogicalOR(pIn1, strIn1, pIn2, strIn2, pOut, strOut, time);
+					// In1 Constant & In2 Image
+					else if (m_rbtnIn1 == 1 && m_rbtnIn2 == 0)
+					{
+						// In1 Gray
+						if (m_rbtnCst1 == 0)
+						{
+							int nY8 = GetDlgItemInt(IDC_MAIN_EDIT_GRAY1);
+							bRet = CEImgArithmetic::Oper_LogicalOR(nY8, pIn2, strIn2, pOut, strOut, time);
+						}
+						// In1 Color
+						else
+						{
+
+						}
+					}
+				}
+				else if (strType == _T("Logical XOR"))
+				{
+					// In1 Image & In2 Image
+					if (m_rbtnIn1 == 0 && m_rbtnIn2 == 0)
+						bRet = CEImgArithmetic::Oper_LogicalXOR(pIn1, strIn1, pIn2, strIn2, pOut, strOut, time);
+					// In1 Constant & In2 Image
+					else if (m_rbtnIn1 == 1 && m_rbtnIn2 == 0)
+					{
+						// In1 Gray
+						if (m_rbtnCst1 == 0)
+						{
+							int nY8 = GetDlgItemInt(IDC_MAIN_EDIT_GRAY1);
+							bRet = CEImgArithmetic::Oper_LogicalXOR(nY8, pIn2, strIn2, pOut, strOut, time);
+						}
+						// In1 Color
+						else
+						{
+
+						}
+					}
+				}
+				else if (strType == _T("Minimum"))
+				{
+					// In1 Image & In2 Image
+					if (m_rbtnIn1 == 0 && m_rbtnIn2 == 0)
+						bRet = CEImgArithmetic::Oper_Minimum(pIn1, strIn1, pIn2, strIn2, pOut, strOut, time);
+					// In1 Constant & In2 Image
+					else if (m_rbtnIn1 == 1 && m_rbtnIn2 == 0)
+					{
+						// In1 Gray
+						if (m_rbtnCst1 == 0)
+						{
+							int nY8 = GetDlgItemInt(IDC_MAIN_EDIT_GRAY1);
+							bRet = CEImgArithmetic::Oper_Minimum(nY8, pIn2, strIn2, pOut, strOut, time);
+						}
+						// In1 Color
+						else
+						{
+
+						}
+					}
+					// In1 Image & In2 Constant
+					else if (m_rbtnIn1 == 0 && m_rbtnIn2 == 1)
+					{
+						// In2 Gray
+						if (m_rbtnCst2 == 0)
+						{
+							int nY8 = GetDlgItemInt(IDC_MAIN_EDIT_GRAY2);
+							bRet = CEImgArithmetic::Oper_Minimum(pIn1, strIn1, nY8, pOut, strOut, time);
+						}
+						// In2 Color
+						else
+						{
+
+						}
+					}
+				}
+				else if (strType == _T("Maximum"))
+				{
+					// In1 Image & In2 Image
+					if (m_rbtnIn1 == 0 && m_rbtnIn2 == 0)
+						bRet = CEImgArithmetic::Oper_Maximum(pIn1, strIn1, pIn2, strIn2, pOut, strOut, time);
+					// In1 Constant & In2 Image
+					else if (m_rbtnIn1 == 1 && m_rbtnIn2 == 0)
+					{
+						// In1 Gray
+						if (m_rbtnCst1 == 0)
+						{
+							int nY8 = GetDlgItemInt(IDC_MAIN_EDIT_GRAY1);
+							bRet = CEImgArithmetic::Oper_Maximum(nY8, pIn2, strIn2, pOut, strOut, time);
+						}
+						// In1 Color
+						else
+						{
+
+						}
+					}
+					// In1 Image & In2 Constant
+					else if (m_rbtnIn1 == 0 && m_rbtnIn2 == 1)
+					{
+						// In2 Gray
+						if (m_rbtnCst2 == 0)
+						{
+							int nY8 = GetDlgItemInt(IDC_MAIN_EDIT_GRAY2);
+							bRet = CEImgArithmetic::Oper_Maximum(pIn1, strIn1, nY8, pOut, strOut, time);
+						}
+						// In2 Color
+						else
+						{
+
+						}
+					}
+				}
+				else if (strType == _T("Set Zero"))
+				{
+					// In1 Image & In2 Image
+					if (m_rbtnIn1 == 0 && m_rbtnIn2 == 0)
+						bRet = CEImgArithmetic::Oper_SetZero(pIn1, strIn1, pIn2, strIn2, pOut, strOut, time);
+					// In1 Constant & In2 Image
+					else if (m_rbtnIn1 == 1 && m_rbtnIn2 == 0)
+					{
+						// In1 Gray
+						if (m_rbtnCst1 == 0)
+						{
+							int nY8 = GetDlgItemInt(IDC_MAIN_EDIT_GRAY1);
+							bRet = CEImgArithmetic::Oper_SetZero(nY8, pIn2, strIn2, pOut, strOut, time);
+						}
+						// In1 Color
+						else
+						{
+
+						}
+					}
+					// In1 Image & In2 Constant
+					else if (m_rbtnIn1 == 0 && m_rbtnIn2 == 1)
+					{
+						// In2 Gray
+						if (m_rbtnCst2 == 0)
+						{
+							int nY8 = GetDlgItemInt(IDC_MAIN_EDIT_GRAY2);
+							bRet = CEImgArithmetic::Oper_SetZero(pIn1, strIn1, nY8, pOut, strOut, time);
+						}
+						// In2 Color
+						else
+						{
+
+						}
+					}
+				}
+				else if (strType == _T("Set Non Zero"))
+				{
+					// In1 Image & In2 Image
+					if (m_rbtnIn1 == 0 && m_rbtnIn2 == 0)
+						bRet = CEImgArithmetic::Oper_SetNonZero(pIn1, strIn1, pIn2, strIn2, pOut, strOut, time);
+					
+					// In1 Image & In2 Constant
+					else if (m_rbtnIn1 == 0 && m_rbtnIn2 == 1)
+					{
+						// In2 Gray
+						if (m_rbtnCst2 == 0)
+						{
+							int nY8 = GetDlgItemInt(IDC_MAIN_EDIT_GRAY2);
+							bRet = CEImgArithmetic::Oper_SetNonZero(pIn1, strIn1, nY8, pOut, strOut, time);
+						}
+					}
+				}
+				else if (strType == _T("Equal"))
+				{
+					// In1 Image & In2 Image
+					if (m_rbtnIn1 == 0 && m_rbtnIn2 == 0)
+						bRet = CEImgArithmetic::Oper_Equal(pIn1, strIn1, pIn2, strIn2, pOut, strOut, time);
+					// In1 Constant & In2 Image
+					else if (m_rbtnIn1 == 1 && m_rbtnIn2 == 0)
+					{
+						// In1 Gray
+						if (m_rbtnCst1 == 0)
+						{
+							int nY8 = GetDlgItemInt(IDC_MAIN_EDIT_GRAY1);
+							bRet = CEImgArithmetic::Oper_Equal(nY8, pIn2, strIn2, pOut, strOut, time);
+						}
+						// In1 Color
+						else
+						{
+
+						}
+					}
+					// In1 Image & In2 Constant
+					else if (m_rbtnIn1 == 0 && m_rbtnIn2 == 1)
+					{
+						// In2 Gray
+						if (m_rbtnCst2 == 0)
+						{
+							int nY8 = GetDlgItemInt(IDC_MAIN_EDIT_GRAY2);
+							bRet = CEImgArithmetic::Oper_Equal(pIn1, strIn1, nY8, pOut, strOut, time);
+						}
+						// In2 Color
+						else
+						{
+
+						}
+					}
+				}
+				else if (strType == _T("Not Equal"))
+				{
+					// In1 Image & In2 Image
+					if (m_rbtnIn1 == 0 && m_rbtnIn2 == 0)
+						bRet = CEImgArithmetic::Oper_NotEqual(pIn1, strIn1, pIn2, strIn2, pOut, strOut, time);
+					// In1 Constant & In2 Image
+					else if (m_rbtnIn1 == 1 && m_rbtnIn2 == 0)
+					{
+						// In1 Gray
+						if (m_rbtnCst1 == 0)
+						{
+							int nY8 = GetDlgItemInt(IDC_MAIN_EDIT_GRAY1);
+							bRet = CEImgArithmetic::Oper_NotEqual(nY8, pIn2, strIn2, pOut, strOut, time);
+						}
+						// In1 Color
+						else
+						{
+
+						}
+					}
+					// In1 Image & In2 Constant
+					else if (m_rbtnIn1 == 0 && m_rbtnIn2 == 1)
+					{
+						// In2 Gray
+						if (m_rbtnCst2 == 0)
+						{
+							int nY8 = GetDlgItemInt(IDC_MAIN_EDIT_GRAY2);
+							bRet = CEImgArithmetic::Oper_NotEqual(pIn1, strIn1, nY8, pOut, strOut, time);
+						}
+						// In2 Color
+						else
+						{
+
+						}
+					}
+				}
+				else if (strType == _T("Greater or Equal"))
+				{
+					// In1 Image & In2 Image
+					if (m_rbtnIn1 == 0 && m_rbtnIn2 == 0)
+						bRet = CEImgArithmetic::Oper_GreaterOrEqual(pIn1, strIn1, pIn2, strIn2, pOut, strOut, time);
+					// In1 Constant & In2 Image
+					else if (m_rbtnIn1 == 1 && m_rbtnIn2 == 0)
+					{
+						// In1 Gray
+						if (m_rbtnCst1 == 0)
+						{
+							int nY8 = GetDlgItemInt(IDC_MAIN_EDIT_GRAY1);
+							bRet = CEImgArithmetic::Oper_GreaterOrEqual(nY8, pIn2, strIn2, pOut, strOut, time);
+						}
+						// In1 Color
+						else
+						{
+
+						}
+					}
+					// In1 Image & In2 Constant
+					else if (m_rbtnIn1 == 0 && m_rbtnIn2 == 1)
+					{
+						// In2 Gray
+						if (m_rbtnCst2 == 0)
+						{
+							int nY8 = GetDlgItemInt(IDC_MAIN_EDIT_GRAY2);
+							bRet = CEImgArithmetic::Oper_GreaterOrEqual(pIn1, strIn1, nY8, pOut, strOut, time);
+						}
+						// In2 Color
+						else
+						{
+
+						}
+					}
+				}
+				else if (strType == _T("Lesser or Equal"))
+				{
+					// In1 Image & In2 Image
+					if (m_rbtnIn1 == 0 && m_rbtnIn2 == 0)
+						bRet = CEImgArithmetic::Oper_LesserOrEqual(pIn1, strIn1, pIn2, strIn2, pOut, strOut, time);
+					// In1 Constant & In2 Image
+					else if (m_rbtnIn1 == 1 && m_rbtnIn2 == 0)
+					{
+						// In1 Gray
+						if (m_rbtnCst1 == 0)
+						{
+							int nY8 = GetDlgItemInt(IDC_MAIN_EDIT_GRAY1);
+							bRet = CEImgArithmetic::Oper_LesserOrEqual(nY8, pIn2, strIn2, pOut, strOut, time);
+						}
+						// In1 Color
+						else
+						{
+
+						}
+					}
+					// In1 Image & In2 Constant
+					else if (m_rbtnIn1 == 0 && m_rbtnIn2 == 1)
+					{
+						// In2 Gray
+						if (m_rbtnCst2 == 0)
+						{
+							int nY8 = GetDlgItemInt(IDC_MAIN_EDIT_GRAY2);
+							bRet = CEImgArithmetic::Oper_LesserOrEqual(pIn1, strIn1, nY8, pOut, strOut, time);
+						}
+						// In2 Color
+						else
+						{
+
+						}
+					}
+				}
+				else if (strType == _T("Greater"))
+				{
+					// In1 Image & In2 Image
+					if (m_rbtnIn1 == 0 && m_rbtnIn2 == 0)
+						bRet = CEImgArithmetic::Oper_Greater(pIn1, strIn1, pIn2, strIn2, pOut, strOut, time);
+					// In1 Constant & In2 Image
+					else if (m_rbtnIn1 == 1 && m_rbtnIn2 == 0)
+					{
+						// In1 Gray
+						if (m_rbtnCst1 == 0)
+						{
+							int nY8 = GetDlgItemInt(IDC_MAIN_EDIT_GRAY1);
+							bRet = CEImgArithmetic::Oper_Greater(nY8, pIn2, strIn2, pOut, strOut, time);
+						}
+						// In1 Color
+						else
+						{
+
+						}
+					}
+					// In1 Image & In2 Constant
+					else if (m_rbtnIn1 == 0 && m_rbtnIn2 == 1)
+					{
+						// In2 Gray
+						if (m_rbtnCst2 == 0)
+						{
+							int nY8 = GetDlgItemInt(IDC_MAIN_EDIT_GRAY2);
+							bRet = CEImgArithmetic::Oper_Greater(pIn1, strIn1, nY8, pOut, strOut, time);
+						}
+						// In2 Color
+						else
+						{
+
+						}
+					}
+				}
+				else if (strType == _T("Lesser"))
+				{
+					// In1 Image & In2 Image
+					if (m_rbtnIn1 == 0 && m_rbtnIn2 == 0)
+						bRet = CEImgArithmetic::Oper_Lesser(pIn1, strIn1, pIn2, strIn2, pOut, strOut, time);
+					// In1 Constant & In2 Image
+					else if (m_rbtnIn1 == 1 && m_rbtnIn2 == 0)
+					{
+						// In1 Gray
+						if (m_rbtnCst1 == 0)
+						{
+							int nY8 = GetDlgItemInt(IDC_MAIN_EDIT_GRAY1);
+							bRet = CEImgArithmetic::Oper_Lesser(nY8, pIn2, strIn2, pOut, strOut, time);
+						}
+						// In1 Color
+						else
+						{
+
+						}
+					}
+					// In1 Image & In2 Constant
+					else if (m_rbtnIn1 == 0 && m_rbtnIn2 == 1)
+					{
+						// In2 Gray
+						if (m_rbtnCst2 == 0)
+						{
+							int nY8 = GetDlgItemInt(IDC_MAIN_EDIT_GRAY2);
+							bRet = CEImgArithmetic::Oper_Lesser(pIn1, strIn1, nY8, pOut, strOut, time);
+						}
+						// In2 Color
+						else
+						{
+
+						}
+					}
 				}
 			}
 
 			if (bRet == false)
 			{
-				m_wndLc.SetItemColor(i, 7, RGB(255,0,0));
+				m_wndLc.SetItemColor(i, 8, RGB(255,0,0));
 				continue;
 			}
 
-			m_wndLc.SetItemColor(i, 7, RGB(0,255,0));
+			m_wndLc.SetItemColor(i, 8, RGB(0,255,0));
 
 			for (vector<CEImage>::iterator it = m_vImgInfo.begin(); it != m_vImgInfo.end(); ++it)
 			{
@@ -1077,12 +2003,11 @@ void CFilterSimDlg::OnExecute()
 			CString fileName = _T("");
 			pOut->GetImageName(fileName);
 			UpdateFileNameView(fileName);
-			//UpdateFileNameView(strOut);
 		}
 
 		CString strTime=_T("");
 		strTime.Format(_T("%.3f"),time);
-		m_wndLc.SetItemText(i,6,strTime);
+		m_wndLc.SetItemText(i,7,strTime);
 
 	}
 }
@@ -1195,10 +2120,12 @@ void CFilterSimDlg::OnBnClickedMainBtnDelroi()
 	std::vector<StItemInfo>::iterator it2;
 	for (it2 = m_vItmInfo.begin(); it2 != m_vItmInfo.end(); it2++)
 	{
-		if (it2->strInput == strSelRoi)
-			it2->strInput = _T("");
-		if (it2->strOutput == strSelRoi)
-			it2->strOutput = _T("");
+		if (it2->strIn1 == strSelRoi)
+			it2->strIn1 = _T("");
+		if (it2->strIn2 == strSelRoi)
+			it2->strIn2 = _T("");
+		if (it2->strOut == strSelRoi)
+			it2->strOut = _T("");
 	}
 
 	SetDlgItemText(IDC_MAIN_EDIT_ORGX, _T(""));
