@@ -37,6 +37,7 @@ public :
 	bool IsMorphology(CString strValue);
 	bool IsArtihemetic(CString strValue);
 	bool IsThreshold(CString strValue);
+	bool IsScaleRotate(CString strValue);
 
 	void GetParameter(StLibrary& info);
 	void SetParameter(StLibrary info);

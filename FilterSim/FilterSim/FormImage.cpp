@@ -211,11 +211,16 @@ void CFormImg::FormSwitching(eProcessing eType)
 		
 		break;
 	case EScale : 
-		m_pFormCvl->ShowWindow(SW_HIDE);
-		m_pFormMpl->ShowWindow(SW_HIDE);
-		m_pFormThd->ShowWindow(SW_HIDE);
-		m_pFormArh->ShowWindow(SW_HIDE);
-		m_pFormScl->ShowWindow(SW_SHOW);
+		{
+			m_pFormCvl->ShowWindow(SW_HIDE);
+			m_pFormMpl->ShowWindow(SW_HIDE);
+			m_pFormThd->ShowWindow(SW_HIDE);
+			m_pFormArh->ShowWindow(SW_HIDE);
+			m_pFormScl->ShowWindow(SW_SHOW);
+
+			CFormImgScl* pScl = (CFormImgScl*)m_pFormScl;
+			pScl->InitControls();
+		}
 
 		break;
 	case EGain : 
@@ -349,6 +354,17 @@ bool CFormImg::IsThreshold(CString strValue)
 	else return false;
 }
 
+bool CFormImg::IsScaleRotate(CString strValue)
+{
+	if (strValue == _T("Src Pivot"))				return true;
+	else if (strValue == _T("Dst Pivot"))			return true;
+	else if (strValue == _T("Scale & Rotate"))		return true;
+	else if (strValue == _T("Rotate"))				return true;
+	else if (strValue == _T("Scale"))				return true;
+	else if (strValue == _T("Scale Anisotrpoic"))	return true;
+	else return false;
+}
+
 void CFormImg::GetParameter(StLibrary& info)
 {
 	CComboBox* pCB = NULL;
@@ -373,6 +389,9 @@ void CFormImg::GetParameter(StLibrary& info)
 
 	CFormImgArh* pArh = (CFormImgArh*)m_pFormArh;
 	pArh->GetParameter(info);
+
+	CFormImgScl* pScl = (CFormImgScl*)m_pFormScl;
+	pScl->GetParameter(info);
 }
 
 void CFormImg::SetParameter(StLibrary info)
@@ -417,4 +436,14 @@ void CFormImg::SetParameter(StLibrary info)
 		CFormImgArh* pArh = (CFormImgArh*)m_pFormArh;
 		pArh->SetParameter(info);
 	}
+	else if (info.stImg.strType == _T("Scale & Rotate"))
+	{
+		// Scale & Rotate
+		pCB->SetCurSel(4); 
+		FormSwitching(EScale);
+
+		CFormImgScl* pScl = (CFormImgScl*)m_pFormScl;
+		pScl->SetParameter(info);
+	}
+	
 }

@@ -56,10 +56,13 @@ struct StArithmetic
 
 struct StScale
 {
-	float fSrcPvt;		// Source Pivot
-	float fDstPvt;		// Destination Pivot
-	float fSclX;		// Scale X
-	float fSclY;		// Scale Y
+	CString strType;	// Mode Type
+	float fSrcPvtX;		// Source Pivot X
+	float fSrcPvtY;		// Source Pivot Y
+	float fDstPvtX;		// Destination Pivot X
+	float fDstPvtY;		// Destination Pivot Y
+	float fScaleX;		// Scale X
+	float fScaleY;		// Scale Y
 	float fAngle;		// Angle
 	int	nBits;			// Interpolation Bits
 };

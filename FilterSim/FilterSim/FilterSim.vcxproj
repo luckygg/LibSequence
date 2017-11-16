@@ -183,6 +183,7 @@
     <ClInclude Include="Base.h" />
     <ClInclude Include="EImgArithmetic.h" />
     <ClInclude Include="EImgMorphology.h" />
+    <ClInclude Include="EImgScaleRotate.h" />
     <ClInclude Include="EImgThreshold.h" />
     <ClInclude Include="EMatrix.h" />
     <ClInclude Include="FormImgArh.h" />
@@ -213,6 +214,7 @@
   <ItemGroup>
     <ClCompile Include="EImgArithmetic.cpp" />
     <ClCompile Include="EImgMorphology.cpp" />
+    <ClCompile Include="EImgScaleRotate.cpp" />
     <ClCompile Include="EImgThreshold.cpp" />
     <ClCompile Include="EMatrix.cpp" />
     <ClCompile Include="FormImgArh.cpp" />

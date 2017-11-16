@@ -132,6 +132,9 @@
     <ClInclude Include="FormImgScl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="EImgScaleRotate.h">
+      <Filter>include\Algorithm</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FilterSim.cpp">
@@ -208,6 +211,9 @@
     </ClCompile>
     <ClCompile Include="FormImgScl.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EImgScaleRotate.cpp">
+      <Filter>include\Algorithm</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

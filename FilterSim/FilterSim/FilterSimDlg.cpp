@@ -852,6 +852,10 @@ void CFilterSimDlg::OnBnClickedMainBtnApply()
 		{
 			strLib = library.stImg.stArithmetic.strType;
 		}
+		else if (library.stImg.strType == _T("Scale & Rotate"))
+		{
+			strLib = library.stImg.stScale.strType;
+		}
 	}
 
 	CString strIn1=_T(""),strIn2=_T("");
@@ -1980,7 +1984,22 @@ void CFilterSimDlg::OnExecute()
 					}
 				}
 			}
+			else if (pImg->IsScaleRotate(strLib) == true)
+			{
+				StItemInfo info = m_vItmInfo.at(i);
+				
+				CString strType = info.stLib.stImg.stThreshold.stSimple.strType;
+				float fSrcPvtX = info.stLib.stImg.stScale.fSrcPvtX;
+				float fSrcPvtY = info.stLib.stImg.stScale.fSrcPvtY;
+				float fDstPvtX = info.stLib.stImg.stScale.fDstPvtX;
+				float fDstPvtY = info.stLib.stImg.stScale.fDstPvtY;
+				float fScaleX = info.stLib.stImg.stScale.fScaleX;
+				float fScaleY = info.stLib.stImg.stScale.fScaleY;
+				float fAngle = info.stLib.stImg.stScale.fAngle;
+				int nBits = info.stLib.stImg.stScale.nBits;
 
+				bRet = CEImgScaleRotate::ScaleRotate(pIn1, strIn1, pOut, strOut, fSrcPvtX, fSrcPvtY, fDstPvtX, fDstPvtY, fScaleX, fScaleY, fAngle, nBits, time);
+			}
 			if (bRet == false)
 			{
 				m_wndLc.SetItemColor(i, 8, RGB(255,0,0));

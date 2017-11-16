@@ -13,6 +13,7 @@
 #include "EImgMorphology.h"
 #include "EImgThreshold.h"
 #include "EImgArithmetic.h"
+#include "EImgScaleRotate.h"
 #include "EMatrix.h"
 
 

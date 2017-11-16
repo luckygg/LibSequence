@@ -1,6 +1,6 @@
 #pragma once
 
-
+#include "Base.h"
 
 // CFormImgScl form view
 
@@ -22,6 +22,12 @@ public:
 #endif
 private :
 	CRect m_wndRc;
+	int m_rbtnMode;
+
+public :
+	void InitControls();
+	void GetParameter(StLibrary &info);
+	void SetParameter(StLibrary info);
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
@@ -31,6 +37,7 @@ public:
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	virtual BOOL Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext = NULL);
 	virtual void OnInitialUpdate();
+	afx_msg void OnBnClickedSclRBtnMode(UINT ID);
 };
 
 
