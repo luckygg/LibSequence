@@ -6,6 +6,7 @@
 #include "FormImgMpl.h"
 #include "FormImgThd.h"
 #include "FormImgArh.h"
+#include "FormImgScl.h"
 // CFormImg form view
 
 class CFormImg : public CFormView
@@ -23,6 +24,7 @@ private :
 	CView* m_pFormMpl;
 	CView* m_pFormThd;
 	CView* m_pFormArh;
+	CView* m_pFormScl;
 	void FormSwitching(eProcessing eType);
 
 public :

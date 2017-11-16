@@ -89,6 +89,12 @@ private :
 	void DrawImage(int nViewIdx, CString strFileName);
 	void FormSwitching(eAlgorithm eType);
 	void OnExecute();
+
+public :
+	void SetEnableInImg1(BOOL bUse);
+	void SetEnableInCst1(BOOL bUse);
+	void SetEnableInImg2(BOOL bUse);
+	void SetEnableInCst2(BOOL bUse);
 	
 // Implementation
 protected:

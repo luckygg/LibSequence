@@ -187,6 +187,7 @@
     <ClInclude Include="EMatrix.h" />
     <ClInclude Include="FormImgArh.h" />
     <ClInclude Include="FormImgCvl.h" />
+    <ClInclude Include="FormImgScl.h" />
     <ClInclude Include="FormMatrix.h" />
     <ClInclude Include="FormImage.h" />
     <ClInclude Include="FormImgMpl.h" />
@@ -216,6 +217,7 @@
     <ClCompile Include="EMatrix.cpp" />
     <ClCompile Include="FormImgArh.cpp" />
     <ClCompile Include="FormImgCvl.cpp" />
+    <ClCompile Include="FormImgScl.cpp" />
     <ClCompile Include="FormMatrix.cpp" />
     <ClCompile Include="FormImage.cpp" />
     <ClCompile Include="FormImgMpl.cpp" />

@@ -508,13 +508,14 @@ void CFilterSimDlg::OnBnClickedBtnDelimg()
 		}
 
 		UpdateCBList();
+		UpdateAllView();
 		UpdateItemList();
 	}
 }
 
 void CFilterSimDlg::UpdateCBList()
 {
-	// Picture Control Combo Box 4 + Intput + Output
+	// Picture Control Combo Box 4 + Input + Output
 	for (int i=0; i<8; i++)
 	{
 		CComboBox* pCB = (CComboBox*)GetDlgItem(IDC_MAIN_CB_VIEW1+i);
@@ -2358,4 +2359,30 @@ void CFilterSimDlg::OnBnClickedMainRBtnGrayClr2(UINT ID)
 		GetDlgItem(IDC_MAIN_EDIT_G2)->EnableWindow(TRUE);
 		GetDlgItem(IDC_MAIN_EDIT_B2)->EnableWindow(TRUE);
 	}
+}
+
+void CFilterSimDlg::SetEnableInImg1(BOOL bUse)
+{
+	GetDlgItem(IDC_MAIN_RBTN_INIMG1)->EnableWindow(bUse);
+	
+	if (bUse == FALSE)
+		CheckRadioButton(IDC_MAIN_RBTN_INIMG1, IDC_MAIN_RBTN_INIMG2, IDC_MAIN_RBTN_INIMG2);
+}
+
+void CFilterSimDlg::SetEnableInCst1(BOOL bUse)
+{
+
+}
+
+void CFilterSimDlg::SetEnableInImg2(BOOL bUse)
+{
+	GetDlgItem(IDC_MAIN_RBTN_INIMG2)->EnableWindow(bUse);
+	
+	if (bUse == FALSE)
+		CheckRadioButton(IDC_MAIN_RBTN_INIMG1, IDC_MAIN_RBTN_INIMG2, IDC_MAIN_RBTN_INIMG1);
+}
+
+void CFilterSimDlg::SetEnableInCst2(BOOL bUse)
+{
+
 }

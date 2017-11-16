@@ -20,6 +20,7 @@ CFormImg::CFormImg()
 	m_pFormMpl = NULL;
 	m_pFormThd = NULL;
 	m_pFormArh = NULL;
+	m_pFormScl = NULL;
 }
 
 CFormImg::~CFormImg()
@@ -108,6 +109,16 @@ void CFormImg::OnInitialUpdate()
 	m_pFormArh = pView;
 
 	m_pFormArh->ShowWindow(SW_HIDE);
+
+	// Form Scale & Rotate
+	pView = (CView*)RUNTIME_CLASS(CFormImgScl)->CreateObject();
+	GetDlgItem(IDC_IMG_PC_TAB1)->GetWindowRect(&rect);
+	ScreenToClient(&rect);
+	pView->Create(NULL, NULL, WS_CHILD, rect, this, IDD_FORM_IMG_SCALEROTATE, &context);
+	pView->OnInitialUpdate();
+	m_pFormScl = pView;
+
+	m_pFormScl->ShowWindow(SW_HIDE);
 	
 	GetDlgItem(IDC_IMG_PC_TAB1)->DestroyWindow();
 
@@ -155,6 +166,7 @@ void CFormImg::FormSwitching(eProcessing eType)
 			m_pFormMpl->ShowWindow(SW_HIDE);
 			m_pFormThd->ShowWindow(SW_HIDE);
 			m_pFormArh->ShowWindow(SW_HIDE);
+			m_pFormScl->ShowWindow(SW_HIDE);
 
 			CFormImgCvl* pCvl = (CFormImgCvl*)m_pFormCvl;
 			pCvl->InitControls();
@@ -166,6 +178,7 @@ void CFormImg::FormSwitching(eProcessing eType)
 			m_pFormMpl->ShowWindow(SW_SHOW);
 			m_pFormThd->ShowWindow(SW_HIDE);
 			m_pFormArh->ShowWindow(SW_HIDE);
+			m_pFormScl->ShowWindow(SW_HIDE);
 
 			CFormImgMpl* pMpl = (CFormImgMpl*)m_pFormMpl;
 			pMpl->InitControls();
@@ -177,6 +190,7 @@ void CFormImg::FormSwitching(eProcessing eType)
 			m_pFormMpl->ShowWindow(SW_HIDE);
 			m_pFormThd->ShowWindow(SW_SHOW);
 			m_pFormArh->ShowWindow(SW_HIDE);
+			m_pFormScl->ShowWindow(SW_HIDE);
 
 			CFormImgThd* pThd = (CFormImgThd*)m_pFormThd;
 			pThd->InitControls();
@@ -189,6 +203,7 @@ void CFormImg::FormSwitching(eProcessing eType)
 			m_pFormMpl->ShowWindow(SW_HIDE);
 			m_pFormThd->ShowWindow(SW_HIDE);
 			m_pFormArh->ShowWindow(SW_SHOW);
+			m_pFormScl->ShowWindow(SW_HIDE);
 
 			CFormImgArh* pArh = (CFormImgArh*)m_pFormArh;
 			pArh->InitControls();
@@ -200,18 +215,24 @@ void CFormImg::FormSwitching(eProcessing eType)
 		m_pFormMpl->ShowWindow(SW_HIDE);
 		m_pFormThd->ShowWindow(SW_HIDE);
 		m_pFormArh->ShowWindow(SW_HIDE);
+		m_pFormScl->ShowWindow(SW_SHOW);
+
 		break;
 	case EGain : 
 		m_pFormCvl->ShowWindow(SW_HIDE);
 		m_pFormMpl->ShowWindow(SW_HIDE);
 		m_pFormThd->ShowWindow(SW_HIDE);
 		m_pFormArh->ShowWindow(SW_HIDE);
+		m_pFormScl->ShowWindow(SW_HIDE);
+
 		break;
 	case ENone : 
 		m_pFormCvl->ShowWindow(SW_HIDE);
 		m_pFormMpl->ShowWindow(SW_HIDE);
 		m_pFormThd->ShowWindow(SW_HIDE);
 		m_pFormArh->ShowWindow(SW_HIDE);
+		m_pFormScl->ShowWindow(SW_HIDE);
+
 		break;
 	}
 }
