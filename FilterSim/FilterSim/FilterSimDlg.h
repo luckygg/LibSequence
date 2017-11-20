@@ -14,6 +14,7 @@
 #include "EImgThreshold.h"
 #include "EImgArithmetic.h"
 #include "EImgScaleRotate.h"
+#include "EImgGainOffset.h"
 #include "EMatrix.h"
 
 

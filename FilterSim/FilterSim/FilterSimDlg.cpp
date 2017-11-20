@@ -856,6 +856,10 @@ void CFilterSimDlg::OnBnClickedMainBtnApply()
 		{
 			strLib = library.stImg.stScale.strType;
 		}
+		else if (library.stImg.strType == _T("Gain & Offset"))
+		{
+			strLib = library.stImg.stGain.strType;
+		}
 	}
 
 	CString strIn1=_T(""),strIn2=_T("");
@@ -1988,7 +1992,6 @@ void CFilterSimDlg::OnExecute()
 			{
 				StItemInfo info = m_vItmInfo.at(i);
 				
-				CString strType = info.stLib.stImg.stThreshold.stSimple.strType;
 				float fSrcPvtX = info.stLib.stImg.stScale.fSrcPvtX;
 				float fSrcPvtY = info.stLib.stImg.stScale.fSrcPvtY;
 				float fDstPvtX = info.stLib.stImg.stScale.fDstPvtX;
@@ -2000,6 +2003,16 @@ void CFilterSimDlg::OnExecute()
 
 				bRet = CEImgScaleRotate::ScaleRotate(pIn1, strIn1, pOut, strOut, fSrcPvtX, fSrcPvtY, fDstPvtX, fDstPvtY, fScaleX, fScaleY, fAngle, nBits, time);
 			}
+			else if (pImg->IsGainOffset(strLib) == true)
+			{
+				StItemInfo info = m_vItmInfo.at(i);
+
+				float fGain = info.stLib.stImg.stGain.fGain;
+				float fOffset = info.stLib.stImg.stGain.fOffset;
+
+				bRet = CEImgGainOffset::GainOffset(pIn1, strIn1, pOut, strOut, fGain, fOffset, time);
+			}
+
 			if (bRet == false)
 			{
 				m_wndLc.SetItemColor(i, 8, RGB(255,0,0));

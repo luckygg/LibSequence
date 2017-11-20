@@ -182,12 +182,14 @@
   <ItemGroup>
     <ClInclude Include="Base.h" />
     <ClInclude Include="EImgArithmetic.h" />
+    <ClInclude Include="EImgGainOffset.h" />
     <ClInclude Include="EImgMorphology.h" />
     <ClInclude Include="EImgScaleRotate.h" />
     <ClInclude Include="EImgThreshold.h" />
     <ClInclude Include="EMatrix.h" />
     <ClInclude Include="FormImgArh.h" />
     <ClInclude Include="FormImgCvl.h" />
+    <ClInclude Include="FormImgGan.h" />
     <ClInclude Include="FormImgScl.h" />
     <ClInclude Include="FormMatrix.h" />
     <ClInclude Include="FormImage.h" />
@@ -213,12 +215,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EImgArithmetic.cpp" />
+    <ClCompile Include="EImgGainOffset.cpp" />
     <ClCompile Include="EImgMorphology.cpp" />
     <ClCompile Include="EImgScaleRotate.cpp" />
     <ClCompile Include="EImgThreshold.cpp" />
     <ClCompile Include="EMatrix.cpp" />
     <ClCompile Include="FormImgArh.cpp" />
     <ClCompile Include="FormImgCvl.cpp" />
+    <ClCompile Include="FormImgGan.cpp" />
     <ClCompile Include="FormImgScl.cpp" />
     <ClCompile Include="FormMatrix.cpp" />
     <ClCompile Include="FormImage.cpp" />

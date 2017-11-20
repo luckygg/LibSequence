@@ -69,6 +69,7 @@ struct StScale
 
 struct StGain
 {
+	CString strType;	// Gain & Offset
 	float fGain;		// Gain
 	float fOffset;		// Offset
 };

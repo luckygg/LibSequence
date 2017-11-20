@@ -7,6 +7,7 @@
 #include "FormImgThd.h"
 #include "FormImgArh.h"
 #include "FormImgScl.h"
+#include "FormImgGan.h"
 // CFormImg form view
 
 class CFormImg : public CFormView
@@ -25,6 +26,7 @@ private :
 	CView* m_pFormThd;
 	CView* m_pFormArh;
 	CView* m_pFormScl;
+	CView* m_pFormGan;
 	void FormSwitching(eProcessing eType);
 
 public :
@@ -38,6 +40,7 @@ public :
 	bool IsArtihemetic(CString strValue);
 	bool IsThreshold(CString strValue);
 	bool IsScaleRotate(CString strValue);
+	bool IsGainOffset(CString strValue);
 
 	void GetParameter(StLibrary& info);
 	void SetParameter(StLibrary info);

@@ -129,10 +129,16 @@
     <ClInclude Include="FormImgArh.h">
       <Filter>PGM UI\Form</Filter>
     </ClInclude>
-    <ClInclude Include="FormImgScl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="EImgScaleRotate.h">
+      <Filter>include\Algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="FormImgScl.h">
+      <Filter>PGM UI\Form</Filter>
+    </ClInclude>
+    <ClInclude Include="FormImgGan.h">
+      <Filter>PGM UI\Form</Filter>
+    </ClInclude>
+    <ClInclude Include="EImgGainOffset.h">
       <Filter>include\Algorithm</Filter>
     </ClInclude>
   </ItemGroup>
@@ -209,10 +215,16 @@
     <ClCompile Include="FormImgArh.cpp">
       <Filter>PGM UI\Form</Filter>
     </ClCompile>
-    <ClCompile Include="FormImgScl.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="EImgScaleRotate.cpp">
+      <Filter>include\Algorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="FormImgGan.cpp">
+      <Filter>PGM UI\Form</Filter>
+    </ClCompile>
+    <ClCompile Include="FormImgScl.cpp">
+      <Filter>PGM UI\Form</Filter>
+    </ClCompile>
+    <ClCompile Include="EImgGainOffset.cpp">
       <Filter>include\Algorithm</Filter>
     </ClCompile>
   </ItemGroup>
