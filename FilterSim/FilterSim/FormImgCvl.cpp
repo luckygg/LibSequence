@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "FilterSim.h"
 #include "FormImgCvl.h"
+#include "FormImage.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

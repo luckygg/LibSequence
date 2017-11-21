@@ -52,6 +52,8 @@ public:
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
 
+public :
+	void SetEnableIOList(bool bIn1Img, bool bIn1Cst, bool bIn2Img, bool bIn2Cst, bool bOutImg);
 private :
 	// Picture Control 및 Input / Output 콤보박스 리스트 재정렬.
 	void UpdateCBList();
@@ -71,6 +73,8 @@ private :
 	void SetCBItembyText(UINT ID, CString strText);
 	// 이미지 정보 vector 에 중복되는 파일명이 있는지 확인.
 	bool IsExistName(CString strName);
+
+	
 private :
 	CView* m_pFormImg;
 	CView* m_pFormMtx;
@@ -89,15 +93,10 @@ private :
 	int m_rbtnCst2;
 	void InitContorls();
 	void DrawImage(int nViewIdx, CString strFileName);
+	void DrawEmptyImage(int nViewIdx);
 	void FormSwitching(eAlgorithm eType);
 	void OnExecute();
 
-public :
-	void SetEnableInImg1(BOOL bUse);
-	void SetEnableInCst1(BOOL bUse);
-	void SetEnableInImg2(BOOL bUse);
-	void SetEnableInCst2(BOOL bUse);
-	
 // Implementation
 protected:
 	HICON m_hIcon;

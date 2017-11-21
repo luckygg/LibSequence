@@ -272,12 +272,30 @@ void CFormImg::OnCbnSelchangeTab1CbProcessing()
 
 	switch (sel)
 	{
-	case 0 : FormSwitching(EConvolution); break;
-	case 1 : FormSwitching(EMorphology); break;
-	case 2 : FormSwitching(EThreshold); break;
-	case 3 : FormSwitching(EArith); break;
-	case 4 : FormSwitching(EScale); break;
-	case 5 : FormSwitching(EGain); break;
+	case 0 : 
+		FormSwitching(EConvolution); 
+		SetEnableIOList(true, false, false, false, true);
+		break;
+	case 1 : 
+		FormSwitching(EMorphology); 
+		SetEnableIOList(true, false, false, false, true);
+		break;
+	case 2 : 
+		FormSwitching(EThreshold);
+		SetEnableIOList(true, false, false, false, true);
+		break;
+	case 3 : 
+		FormSwitching(EArith); 
+		SetEnableIOList(false, false, false, false, false);
+		break;
+	case 4 : 
+		FormSwitching(EScale);
+		SetEnableIOList(true, false, false, false, true);
+		break;
+	case 5 : 
+		FormSwitching(EGain);
+		SetEnableIOList(true, false, false, false, true);
+		break;
 	default:
 		break;
 	}
@@ -487,3 +505,11 @@ void CFormImg::SetParameter(StLibrary info)
 		pGan->SetParameter(info);
 	}
 }
+
+void CFormImg::SetEnableIOList(bool bIn1Img, bool bIn1Cst, bool bIn2Img, bool bIn2Cst, bool bOutImg)
+{
+	CFilterSimDlg *pMain = (CFilterSimDlg*)GetParent();
+
+	pMain->SetEnableIOList(bIn1Img, bIn1Cst, bIn2Img, bIn2Cst, bOutImg);
+}
+

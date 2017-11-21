@@ -4,7 +4,7 @@
 #include "stdafx.h"
 #include "FilterSim.h"
 #include "FormImgArh.h"
-
+#include "FormImage.h"
 
 // CFormImgArh
 
@@ -27,6 +27,7 @@ void CFormImgArh::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(CFormImgArh, CFormView)
 	ON_WM_SIZE()
+	ON_CBN_SELCHANGE(IDC_IMG_ARH_CB_OPER, &CFormImgArh::OnCbnSelchangeImgArhCbOper)
 END_MESSAGE_MAP()
 
 
@@ -142,4 +143,91 @@ void CFormImgArh::SetParameter(StLibrary info)
 
 	sel = pCB->FindString(-1, strData);
 	pCB->SetCurSel(sel);
+}
+
+void CFormImgArh::OnCbnSelchangeImgArhCbOper()
+{
+	CComboBox* pCB = NULL;
+	CString strText=_T("");
+	int sel=-1;
+
+	pCB = (CComboBox*)GetDlgItem(IDC_IMG_ARH_CB_OPER);
+	sel = pCB->GetCurSel();
+	if (sel == -1) return;
+
+	pCB->GetLBText(sel,strText);
+
+	CFormImg* pMain = (CFormImg*)GetParent();
+	if( strText == _T("Copy"))
+		pMain->SetEnableIOList(true, true, false, false, true);
+	else if( strText == _T("Invert"))
+		pMain->SetEnableIOList(true, false, false, false, true);
+	else if( strText == _T("Add"))
+		pMain->SetEnableIOList(true, true, true, true, true);
+	else if( strText == _T("Subtract"))
+		pMain->SetEnableIOList(true, true, true, true, true);
+	else if( strText == _T("Compare"))
+		pMain->SetEnableIOList(true, true, true, true, true);
+	else if( strText == _T("Multiply"))
+		pMain->SetEnableIOList(true, true, true, true, true);
+	else if( strText == _T("Divide"))
+		pMain->SetEnableIOList(true, true, true, true, true);
+	else if( strText == _T("Modulo"))
+		pMain->SetEnableIOList(true, true, true, true, true);
+	else if( strText == _T("Scaled Add"))
+		pMain->SetEnableIOList(true, true, true, true, true);
+	else if( strText == _T("Scaled Subtract"))
+		pMain->SetEnableIOList(true, true, true, true, true);
+	else if( strText == _T("Scaled Multiply"))
+		pMain->SetEnableIOList(true, true, true, true, true);
+	else if( strText == _T("Scaled Divide"))
+		pMain->SetEnableIOList(true, true, true, true, true);
+	else if( strText == _T("Modulo"))
+		pMain->SetEnableIOList(true, true, true, true, true);
+	else if( strText == _T("Scaled Add"))
+		pMain->SetEnableIOList(true, true, true, true, true);
+	else if( strText == _T("Scaled Subtract"))
+		pMain->SetEnableIOList(true, true, true, true, true);
+	else if( strText == _T("Scaled Multiply"))
+		pMain->SetEnableIOList(true, true, true, true, true);
+	else if( strText == _T("Scaled Divide"))
+		pMain->SetEnableIOList(true, true, true, true, true);
+	else if( strText == _T("Shift Left"))
+		pMain->SetEnableIOList(true, false, false, true, true);
+	else if( strText == _T("Shift Right"))
+		pMain->SetEnableIOList(true, false, false, true, true);
+	else if( strText == _T("Bitwise AND"))
+		pMain->SetEnableIOList(true, true, true, true, true);
+	else if( strText == _T("Bitwise OR"))
+		pMain->SetEnableIOList(true, true, true, true, true);
+	else if( strText == _T("Bitwise XOR"))
+		pMain->SetEnableIOList(true, true, true, true, true);
+	else if( strText == _T("Logical AND"))
+		pMain->SetEnableIOList(true, true, true, false, true);
+	else if( strText == _T("Logical OR"))
+		pMain->SetEnableIOList(true, true, true, false, true);
+	else if( strText == _T("Logical XOR"))
+		pMain->SetEnableIOList(true, true, true, false, true);
+	else if( strText == _T("Minimum"))
+		pMain->SetEnableIOList(true, true, true, true, true);
+	else if( strText == _T("Maximum"))
+		pMain->SetEnableIOList(true, true, true, true, true);
+	else if( strText == _T("Set Zero"))
+		pMain->SetEnableIOList(true, true, true, true, true);
+	else if( strText == _T("Set Non Zero"))
+		pMain->SetEnableIOList(true, true, true, true, true);
+	else if( strText == _T("Equal"))
+		pMain->SetEnableIOList(true, true, true, true, true);
+	else if( strText == _T("Not Equal"))
+		pMain->SetEnableIOList(true, true, true, true, true);
+	else if( strText == _T("Greater or Equal"))
+		pMain->SetEnableIOList(true, true, true, true, true);
+	else if( strText == _T("Lesser or Equal"))
+		pMain->SetEnableIOList(true, true, true, true, true);
+	else if( strText == _T("Greater"))
+		pMain->SetEnableIOList(true, true, true, true, true);
+	else if( strText == _T("Lesser"))
+		pMain->SetEnableIOList(true, true, true, true, true);
+	else if( strText == _T("Overlay"))
+		pMain->SetEnableIOList(true, false, true, false, true);
 }

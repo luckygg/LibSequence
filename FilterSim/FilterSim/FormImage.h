@@ -44,6 +44,8 @@ public :
 
 	void GetParameter(StLibrary& info);
 	void SetParameter(StLibrary info);
+
+	void SetEnableIOList(bool bIn1Img, bool bIn1Cst, bool bIn2Img, bool bIn2Cst, bool bOutImg);
 public:
 	enum { IDD = IDD_FORM_IMAGE };
 #ifdef _DEBUG

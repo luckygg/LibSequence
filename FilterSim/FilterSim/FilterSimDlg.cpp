@@ -311,6 +311,24 @@ void CFilterSimDlg::OnBnClickedBtnExecute()
 	OnExecute();
 }
 
+void CFilterSimDlg::DrawEmptyImage(int nViewIdx)
+{
+	CWnd* pWnd = NULL;
+	switch (nViewIdx)
+	{
+		case 0 : pWnd = GetDlgItem(IDC_MAIN_PC_VIEW1); break;
+		case 1 : pWnd = GetDlgItem(IDC_MAIN_PC_VIEW2); break;
+		case 2 : pWnd = GetDlgItem(IDC_MAIN_PC_VIEW3); break;
+		case 3 : pWnd = GetDlgItem(IDC_MAIN_PC_VIEW4); break;
+	}
+
+	CClientDC dc(pWnd);
+	CRect rect;
+	pWnd->GetClientRect(&rect);
+
+	dc.FillSolidRect(rect,RGB(128,128,128));
+}
+
 void CFilterSimDlg::DrawImage(int nViewIdx, CString strFileName)
 {
 	CWnd* pWnd = NULL;
@@ -692,32 +710,16 @@ void CFilterSimDlg::OnNMClickMainLcItem(NMHDR *pNMHDR, LRESULT *pResult)
 		pCB_Lib->SetCurSel(-1);
 
 		pCB_Lib->EnableWindow(FALSE);
-		GetDlgItem(IDC_MAIN_CB_INPUT1)->EnableWindow(FALSE);
-		GetDlgItem(IDC_MAIN_CB_INPUT2)->EnableWindow(FALSE);
-		GetDlgItem(IDC_MAIN_CB_OUTPUT)->EnableWindow(FALSE);
+		
 		GetDlgItem(IDC_MAIN_CHK_USE)->EnableWindow(FALSE);
 
-		GetDlgItem(IDC_MAIN_RBTN_INIMG1)->EnableWindow(FALSE);
-		GetDlgItem(IDC_MAIN_RBTN_INIMG2)->EnableWindow(FALSE);
-		GetDlgItem(IDC_MAIN_RBTN_INCST1)->EnableWindow(FALSE);
-		GetDlgItem(IDC_MAIN_RBTN_INCST2)->EnableWindow(FALSE);
-		GetDlgItem(IDC_MAIN_RBTN_CSTGRAY1)->EnableWindow(FALSE);
-		GetDlgItem(IDC_MAIN_RBTN_CSTGRAY2)->EnableWindow(FALSE);
-		GetDlgItem(IDC_MAIN_RBTN_CSTCLR1)->EnableWindow(FALSE);
-		GetDlgItem(IDC_MAIN_RBTN_CSTCLR2)->EnableWindow(FALSE);
 		return;
 	}
 	else
 	{
 		pCB_Lib->EnableWindow(TRUE);
-		GetDlgItem(IDC_MAIN_CB_INPUT1)->EnableWindow(TRUE);
-		GetDlgItem(IDC_MAIN_CB_OUTPUT)->EnableWindow(TRUE);
+		
 		GetDlgItem(IDC_MAIN_CHK_USE)->EnableWindow(TRUE);
-
-		GetDlgItem(IDC_MAIN_RBTN_INIMG1)->EnableWindow(TRUE);
-		GetDlgItem(IDC_MAIN_RBTN_INIMG2)->EnableWindow(TRUE);
-		GetDlgItem(IDC_MAIN_RBTN_INCST1)->EnableWindow(TRUE);
-		GetDlgItem(IDC_MAIN_RBTN_INCST2)->EnableWindow(TRUE);
 
 		SetDlgItemInt(IDC_MAIN_LB_ROW, nRow);
 	}
@@ -775,19 +777,18 @@ void CFilterSimDlg::OnCbnSelchangeMainCbLib()
 			FormSwitching(EEasyImage);
 			CFormImg* pImg = (CFormImg*)m_pFormImg;
 			pImg->InitControls();
-			//pImg->UpdateControls(m_vItmInfo.at(nRow));
-
-			GetDlgItem(IDC_MAIN_CB_INPUT1)->EnableWindow(TRUE);
 		}
 		
 		break;
 	case 1 :
 		FormSwitching(EEasyMatrix);
 		{
-			GetDlgItem(IDC_MAIN_CB_INPUT1)->EnableWindow(FALSE);
+			
 		}
 		break;
 	}
+
+	SetEnableIOList(false, false, false, false, false);
 }
 
 void CFilterSimDlg::SetCBItembyText(UINT ID, CString strText)
@@ -2179,6 +2180,8 @@ void CFilterSimDlg::UpdateAllView()
 {
 	for (int i=0; i<4; i++)
 	{
+		DrawEmptyImage(i);
+
 		CString name = GetTextCBSelected(IDC_MAIN_CB_VIEW1+i);
 		if (name == _T("")) continue;
 
@@ -2321,6 +2324,8 @@ void CFilterSimDlg::OnBnClickedMainRBtnImgCst1(UINT ID)
 		GetDlgItem(IDC_MAIN_CB_INPUT1)->EnableWindow(FALSE);
 		GetDlgItem(IDC_MAIN_RBTN_CSTGRAY1)->EnableWindow(TRUE);
 		GetDlgItem(IDC_MAIN_RBTN_CSTCLR1)->EnableWindow(TRUE);
+		CheckRadioButton(IDC_MAIN_RBTN_CSTGRAY1, IDC_MAIN_RBTN_CSTCLR1, IDC_MAIN_RBTN_CSTGRAY1);
+		GetDlgItem(IDC_MAIN_EDIT_GRAY1)->EnableWindow(TRUE);
 	}
 }
 
@@ -2346,6 +2351,8 @@ void CFilterSimDlg::OnBnClickedMainRBtnImgCst2(UINT ID)
 		GetDlgItem(IDC_MAIN_CB_INPUT2)->EnableWindow(FALSE);
 		GetDlgItem(IDC_MAIN_RBTN_CSTGRAY2)->EnableWindow(TRUE);
 		GetDlgItem(IDC_MAIN_RBTN_CSTCLR2)->EnableWindow(TRUE);
+		CheckRadioButton(IDC_MAIN_RBTN_CSTGRAY2, IDC_MAIN_RBTN_CSTCLR2, IDC_MAIN_RBTN_CSTGRAY2);
+		GetDlgItem(IDC_MAIN_EDIT_GRAY2)->EnableWindow(TRUE);
 	}
 }
 
@@ -2393,28 +2400,26 @@ void CFilterSimDlg::OnBnClickedMainRBtnGrayClr2(UINT ID)
 	}
 }
 
-void CFilterSimDlg::SetEnableInImg1(BOOL bUse)
+void CFilterSimDlg::SetEnableIOList(bool bIn1Img, bool bIn1Cst, bool bIn2Img, bool bIn2Cst, bool bOutImg)
 {
-	GetDlgItem(IDC_MAIN_RBTN_INIMG1)->EnableWindow(bUse);
+	GetDlgItem(IDC_MAIN_RBTN_INCST1)->EnableWindow(bIn1Cst);
+	if (bIn1Cst == true)
+		CheckRadioButton(IDC_MAIN_RBTN_INIMG1, IDC_MAIN_RBTN_INCST1, IDC_MAIN_RBTN_INCST1);
+
+	GetDlgItem(IDC_MAIN_RBTN_INIMG1)->EnableWindow(bIn1Img);
+	GetDlgItem(IDC_MAIN_CB_INPUT1)->EnableWindow(bIn1Img);
+	if (bIn1Img == true)
+		CheckRadioButton(IDC_MAIN_RBTN_INIMG1, IDC_MAIN_RBTN_INCST1, IDC_MAIN_RBTN_INIMG1);
 	
-	if (bUse == FALSE)
-		CheckRadioButton(IDC_MAIN_RBTN_INIMG1, IDC_MAIN_RBTN_INIMG2, IDC_MAIN_RBTN_INIMG2);
-}
+	GetDlgItem(IDC_MAIN_RBTN_INCST2)->EnableWindow(bIn2Cst);
+	if (bIn2Cst == true)
+		CheckRadioButton(IDC_MAIN_RBTN_INIMG2, IDC_MAIN_RBTN_INCST2, IDC_MAIN_RBTN_INCST2);
 
-void CFilterSimDlg::SetEnableInCst1(BOOL bUse)
-{
-
-}
-
-void CFilterSimDlg::SetEnableInImg2(BOOL bUse)
-{
-	GetDlgItem(IDC_MAIN_RBTN_INIMG2)->EnableWindow(bUse);
+	GetDlgItem(IDC_MAIN_RBTN_INIMG2)->EnableWindow(bIn2Img);
+	GetDlgItem(IDC_MAIN_CB_INPUT2)->EnableWindow(bIn2Img);
+	if (bIn2Img == true)
+		CheckRadioButton(IDC_MAIN_RBTN_INIMG2, IDC_MAIN_RBTN_INCST2, IDC_MAIN_RBTN_INIMG2);
 	
-	if (bUse == FALSE)
-		CheckRadioButton(IDC_MAIN_RBTN_INIMG1, IDC_MAIN_RBTN_INIMG2, IDC_MAIN_RBTN_INIMG1);
+	GetDlgItem(IDC_MAIN_CB_OUTPUT)->EnableWindow(bOutImg);
 }
 
-void CFilterSimDlg::SetEnableInCst2(BOOL bUse)
-{
-
-}

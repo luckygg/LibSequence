@@ -4,7 +4,7 @@
 #include "stdafx.h"
 #include "FilterSim.h"
 #include "FormImgMpl.h"
-
+#include "FormImage.h"
 
 // CFormImgMpl
 
