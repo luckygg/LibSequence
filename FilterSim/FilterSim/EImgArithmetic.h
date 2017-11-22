@@ -17,7 +17,7 @@ private :
 
 public :
 	//----- Last Error Message -----//
-	CString GetLastErrMsg() { return m_strLastErr; }
+	static CString GetLastErrMsg() { return m_strLastErr; }
 
 	// In 1
 	static bool Oper_Copy(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, double &dTime);

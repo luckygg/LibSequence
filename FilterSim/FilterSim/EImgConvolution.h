@@ -16,7 +16,7 @@ private :
 
 public :
 	//----- Last Error Message -----//
-	CString GetLastErrMsg() { return m_strLastErr; }
+	static CString GetLastErrMsg() { return m_strLastErr; }
 
 	static bool Uniform		(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, double &dTime);
 	static bool Uniform3x3	(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, double &dTime);

@@ -457,6 +457,8 @@ void CFormImg::SetParameter(StLibrary info)
 
 		CFormImgCvl* pCvl = (CFormImgCvl*)m_pFormCvl;
 		pCvl->SetParameter(info);
+
+		SetEnableIOList(true, false, false, false, true);
 	}
 	else if (info.stImg.strType == _T("Morphology"))
 	{
@@ -466,6 +468,8 @@ void CFormImg::SetParameter(StLibrary info)
 
 		CFormImgMpl* pMpl = (CFormImgMpl*)m_pFormMpl;
 		pMpl->SetParameter(info);
+
+		SetEnableIOList(true, false, false, false, true);
 	}
 	else if (info.stImg.strType == _T("Threshold"))
 	{
@@ -476,6 +480,7 @@ void CFormImg::SetParameter(StLibrary info)
 		CFormImgThd* pThd = (CFormImgThd*)m_pFormThd;
 		pThd->SetParameter(info);
 
+		SetEnableIOList(true, false, false, false, true);
 	}
 	else if (info.stImg.strType == _T("Arithmetic & Logic"))
 	{
@@ -494,6 +499,8 @@ void CFormImg::SetParameter(StLibrary info)
 
 		CFormImgScl* pScl = (CFormImgScl*)m_pFormScl;
 		pScl->SetParameter(info);
+
+		SetEnableIOList(true, false, false, false, true);
 	}
 	else if (info.stImg.strType == _T("Gain & Offset"))
 	{
@@ -503,6 +510,8 @@ void CFormImg::SetParameter(StLibrary info)
 
 		CFormImgGan* pGan = (CFormImgGan*)m_pFormGan;
 		pGan->SetParameter(info);
+
+		SetEnableIOList(true, false, false, false, true);
 	}
 }
 

@@ -143,6 +143,8 @@ void CFormImgArh::SetParameter(StLibrary info)
 
 	sel = pCB->FindString(-1, strData);
 	pCB->SetCurSel(sel);
+
+	OnCbnSelchangeImgArhCbOper();
 }
 
 void CFormImgArh::OnCbnSelchangeImgArhCbOper()

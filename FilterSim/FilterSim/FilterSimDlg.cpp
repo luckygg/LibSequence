@@ -17,10 +17,6 @@
 
 
 // CFilterSimDlg dialog
-
-
-
-
 CFilterSimDlg::CFilterSimDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(CFilterSimDlg::IDD, pParent)
 	, m_rbtnIn1(0)
@@ -50,7 +46,7 @@ BEGIN_MESSAGE_MAP(CFilterSimDlg, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDC_MAIN_BTN_ADDITEM, &CFilterSimDlg::OnBnClickedBtnAddItem)
-	ON_BN_CLICKED(IDC_MAIN_BTN_DELITEM, &CFilterSimDlg::OnBnClickedBtnDelList)
+	ON_BN_CLICKED(IDC_MAIN_BTN_DELITEM, &CFilterSimDlg::OnBnClickedBtnDelItem)
 	ON_BN_CLICKED(IDC_MAIN_BTN_LOADIMG, &CFilterSimDlg::OnBnClickedBtnLoad)
 	ON_CBN_SELCHANGE(IDC_MAIN_CB_VIEW1, &CFilterSimDlg::OnCbnSelchangeCbView1)
 	ON_CBN_SELCHANGE(IDC_MAIN_CB_VIEW2, &CFilterSimDlg::OnCbnSelchangeCbView2)
@@ -214,22 +210,22 @@ void CFilterSimDlg::InitContorls()
 
 void CFilterSimDlg::OnBnClickedBtnAddItem()
 {
-	int n = m_wndLc.GetItemCount();
+	int nItemIdx = m_wndLc.GetItemCount();
 	
 	CString strIdx=_T("");
 	
-	if (n > 0)
+	if (nItemIdx > 0)
 	{
-		CString strLast = m_wndLc.GetItemText(n-1,1);
+		CString strLast = m_wndLc.GetItemText(nItemIdx-1,1);
 		int temp = _ttoi(strLast);
 		strIdx.Format(_T("%d"),temp+1);
 	}
 	else
 	{
-		strIdx.Format(_T("%d"),n);
+		strIdx.Format(_T("%d"),nItemIdx);
 	}
 
-	m_wndLc.SetItemText(n,1,strIdx);
+	m_wndLc.SetItemText(nItemIdx,1,strIdx);
 
 	StItemInfo info;
 	info.bUse = FALSE;
@@ -241,9 +237,13 @@ void CFilterSimDlg::OnBnClickedBtnAddItem()
 	m_vItmInfo.push_back(info);
 
 	UpdateItemColor();
+
+	CString strLog=_T("");
+	strLog.Format(_T("%d item is added."), nItemIdx);
+	OnWriteLogMsg(strLog);
 }
 
-void CFilterSimDlg::OnBnClickedBtnDelList()
+void CFilterSimDlg::OnBnClickedBtnDelItem()
 {
 	POSITION pos = NULL;
 	int nItemIdx = -1;
@@ -271,6 +271,12 @@ void CFilterSimDlg::OnBnClickedBtnDelList()
 	}
 
 	UpdateItemColor();
+
+	CString strLog=_T("");
+	strLog.Format(_T("%d item is deleted."), nItemIdx);
+	OnWriteLogMsg(strLog);
+
+	GetDlgItem(IDC_MAIN_CB_LIB)->EnableWindow(FALSE);
 }
 
 void CFilterSimDlg::OnBnClickedBtnLoad()
@@ -303,6 +309,8 @@ void CFilterSimDlg::OnBnClickedBtnLoad()
 			m_nImgCnt++;
 
 			CString strLog=_T("");
+			strLog.Format(_T("File is loaded."));
+			OnWriteLogMsg(strLog);
 			strLog.Format(_T("File Name : %s, Path : %s"), fileName, strPath);
 			OnWriteLogMsg(strLog);
 		}
@@ -482,6 +490,8 @@ void CFilterSimDlg::OnBnClickedBtnNewImg()
 		m_nImgCnt++;
 
 		CString strLog=_T("");
+		strLog.Format(_T("File is created."));
+		OnWriteLogMsg(strLog);
 		strLog.Format(_T("File Name : %s"), fileName);
 		OnWriteLogMsg(strLog);
 	}
@@ -535,6 +545,12 @@ void CFilterSimDlg::OnBnClickedBtnDelimg()
 		UpdateCBList();
 		UpdateAllView();
 		UpdateItemList();
+
+		CString strLog=_T("");
+		strLog.Format(_T("File is deleted."));
+		OnWriteLogMsg(strLog);
+		strLog.Format(_T("File Name : %s"), fileName);
+		OnWriteLogMsg(strLog);
 	}
 }
 
@@ -664,6 +680,7 @@ BOOL CFilterSimDlg::PreTranslateMessage(MSG* pMsg)
 void CFilterSimDlg::OnBnClickedBtnSaveimg()
 {
 	CSelectDlg dlg(m_vImgInfo);
+	bool bRet=false;
 	if (dlg.DoModal() == IDOK)
 	{
 		CString fileName = dlg.GetName();
@@ -678,24 +695,17 @@ void CFilterSimDlg::OnBnClickedBtnSaveimg()
 		}
 
 		CString path=_T("");
-		CFileDialogEx::GetPathSaveFileDlg(path);
-
-		ATL::CT2CA str(path);
-		std::string strPath(str); 
-
-		try
+		bRet = CFileDialogEx::GetPathSaveFileDlg(path);
+		if (bRet == true)
 		{
-			
-			EImageBW8* img = it->GetImage();
-			img->Save(strPath);
+			bRet = it->OnSaveImage(path);
 			CString strLog=_T("");
-			strLog.Format(_T("Image is saved. Name : %s, Path : %s"), fileName, strPath);
+			if (bRet == true)
+				strLog.Format(_T("Image is saved. Name : %s, Path : %s"), fileName, path);
+			else
+				strLog.Format(_T("Image save failed."));
+		
 			OnWriteLogMsg(strLog);
-		}
-		catch (EException& e)
-		{
-			CString strErr = (CString)e.What().c_str();
-			OnWriteLogMsg(strErr);
 		}
 	}
 }
@@ -715,61 +725,57 @@ void CFilterSimDlg::OnNMClickMainLcItem(NMHDR *pNMHDR, LRESULT *pResult)
 	CString strLib = m_wndLc.GetItemText(nRow, 3);
 	CComboBox* pCB_Lib = (CComboBox*)GetDlgItem(IDC_MAIN_CB_LIB);
 
+	// 아이템 선택이 없다면.
 	if (nRow == -1)
 	{
-		FormSwitching(ENone);
-		pCB_Lib->SetCurSel(-1);
-
+		// Library ComboBox 는 FormSwitching 에서 공용으로 사용 못함.
 		pCB_Lib->EnableWindow(FALSE);
-		
-		GetDlgItem(IDC_MAIN_CHK_USE)->EnableWindow(FALSE);
-
-		return;
+		pCB_Lib->SetCurSel(-1);
+		FormSwitching(ENone);
 	}
 	else
 	{
+		SetDlgItemInt(IDC_MAIN_LB_ROW, nRow);
+
 		pCB_Lib->EnableWindow(TRUE);
 		
 		GetDlgItem(IDC_MAIN_CHK_USE)->EnableWindow(TRUE);
 
 		SetDlgItemInt(IDC_MAIN_LB_ROW, nRow);
+
+		if (strLib == _T("EasyMatrixCode"))
+		{
+			pCB_Lib->SetCurSel(1);
+
+			FormSwitching(EEasyMatrix);
+
+			//GetDlgItem(IDC_MAIN_CB_INPUT1)->EnableWindow(FALSE);
+		}
+		else if (strLib == _T(""))
+		{
+			pCB_Lib->SetCurSel(-1);
+			FormSwitching(ENone);
+		}
+		// EasyImage 의 strLib 이름은 다양하므로 else 로 처리할 것.
+		else
+		{
+			
+			pCB_Lib->SetCurSel(0);
+
+			FormSwitching(EEasyImage);
+
+			CFormImg* pImg = (CFormImg*)m_pFormImg;
+			pImg->SetParameter(m_vItmInfo.at(nRow).stLib);
+		}
+
+		SetCBItembyText(IDC_MAIN_CB_INPUT1,m_vItmInfo.at(nRow).strIn1);
+		SetCBItembyText(IDC_MAIN_CB_INPUT2,m_vItmInfo.at(nRow).strIn2);
+		SetCBItembyText(IDC_MAIN_CB_OUTPUT,m_vItmInfo.at(nRow).strOut);
+
+		int state=0;
+		m_vItmInfo.at(nRow).bUse ? state=1 : state=0;
+		CheckDlgButton(IDC_MAIN_CHK_USE, state);
 	}
-
-	if (strLib == _T("EasyMatrixCode"))
-	{
-		SetCBItembyText(IDC_MAIN_CB_LIB,strLib);
-
-		FormSwitching(EEasyMatrix);
-
-		GetDlgItem(IDC_MAIN_CB_INPUT1)->EnableWindow(FALSE);
-	}
-	else if (strLib == _T(""))
-	{
-		FormSwitching(ENone);
-		pCB_Lib->SetCurSel(-1);
-	}
-	// EasyImage
-	else
-	{
-		pCB_Lib->SetCurSel(0);
-		
-		FormSwitching(EEasyImage);
-
-		SetDlgItemInt(IDC_MAIN_LB_ROW, nRow);
-
-		CFormImg* pImg = (CFormImg*)m_pFormImg;
-		pImg->SetParameter(m_vItmInfo.at(nRow).stLib);
-
-		GetDlgItem(IDC_MAIN_CB_INPUT1)->EnableWindow(TRUE);
-	}
-
-	SetCBItembyText(IDC_MAIN_CB_INPUT1,m_vItmInfo.at(nRow).strIn1);
-	SetCBItembyText(IDC_MAIN_CB_INPUT2,m_vItmInfo.at(nRow).strIn2);
-	SetCBItembyText(IDC_MAIN_CB_OUTPUT,m_vItmInfo.at(nRow).strOut);
-	
-	int state=0;
-	m_vItmInfo.at(nRow).bUse ? state=1 : state=0;
-	CheckDlgButton(IDC_MAIN_CHK_USE, state);
 
 	*pResult = 0;
 }
@@ -811,6 +817,7 @@ void CFilterSimDlg::SetCBItembyText(UINT ID, CString strText)
 
 void CFilterSimDlg::FormSwitching(eAlgorithm eType)
 {
+	
 	switch (eType)
 	{
 	case EEasyImage :
@@ -832,8 +839,22 @@ void CFilterSimDlg::FormSwitching(eAlgorithm eType)
 		}
 		break;
 	case ENone : 
-		m_pFormImg->ShowWindow(SW_HIDE);
-		m_pFormMtx->ShowWindow(SW_HIDE);
+		{
+			m_pFormImg->ShowWindow(SW_HIDE);
+			m_pFormMtx->ShowWindow(SW_HIDE);
+			SetEnableIOList(false, false, false, false, false);
+
+			CComboBox* pCB = NULL;
+			pCB = (CComboBox*)GetDlgItem(IDC_MAIN_CB_INPUT1);
+			pCB->SetCurSel(-1);
+			pCB = (CComboBox*)GetDlgItem(IDC_MAIN_CB_INPUT2);
+			pCB->SetCurSel(-1);
+			pCB = (CComboBox*)GetDlgItem(IDC_MAIN_CB_OUTPUT);
+			pCB->SetCurSel(-1);
+
+			GetDlgItem(IDC_MAIN_CHK_USE)->EnableWindow(FALSE);
+		}
+		
 	}
 }
 
@@ -916,13 +937,16 @@ void CFilterSimDlg::OnBnClickedMainBtnApply()
 	BOOL bChk = IsDlgButtonChecked(IDC_MAIN_CHK_USE);
 
 	UpdateItem(nRow, bChk, strLib, strIn1, strIn2, strOut, library);
+
+	FormSwitching(ENone);
+	SetEnableIOList(false, false, false, false, false);
 }
 
 void CFilterSimDlg::OnExecute()
 {
 	int n = m_wndLc.GetItemCount();
 	CEImage *pIn1 = NULL, *pIn2 = NULL, *pOut = NULL;
-	
+	CString strLog=_T(""), strErrMsg=_T("");
 	for (int i=0; i<n; i++)
 	{
 		double time=0;
@@ -986,7 +1010,7 @@ void CFilterSimDlg::OnExecute()
 		if (strLib == _T("EasyMatrixCode"))
 		{
 			CEMatrix Mtx;
-			CString strResult = _T("");
+			CString strResult=_T("");
 			if (bOutRoi == true)
 			{
 				EROIBW8* pRoi = pOut->GetROI(strOut);
@@ -998,6 +1022,10 @@ void CFilterSimDlg::OnExecute()
 			if (bRet == false)
 			{
 				m_wndLc.SetItemColor(i, 8, RGB(255,0,0));
+				strLog.Format(_T("Detection failed."));
+				OnWriteLogMsg(strLog);
+				strErrMsg = Mtx.GetLastErrMsg();
+				OnWriteLogMsg(strErrMsg);
 				continue;
 			}
 
@@ -1057,6 +1085,9 @@ void CFilterSimDlg::OnExecute()
 				else if (strLib == _T("LaplacianY"))	bRet = CEImgConvolution::LaplacianY		(pIn1, strIn1, pOut, strOut, time);
 				else if (strLib == _T("Laplacian4"))	bRet = CEImgConvolution::Laplacian4		(pIn1, strIn1, pOut, strOut, time);
 				else if (strLib == _T("Laplacian8"))	bRet = CEImgConvolution::Laplacian8		(pIn1, strIn1, pOut, strOut, time);
+
+				if (bRet == false)
+					strErrMsg = CEImgConvolution::GetLastErrMsg();
 			}
 			else if (pImg->IsMorphology(strLib) == true)
 			{
@@ -1070,6 +1101,9 @@ void CFilterSimDlg::OnExecute()
 				else if (strLib == _T("Black Top Hat"))	bRet = CEImgMorphology::BlackTopHat	(pIn1, strIn1, pOut, strOut, nHalf, time);
 				else if (strLib == _T("Morpho Gradient"))bRet = CEImgMorphology::Gradient	(pIn1, strIn1, pOut, strOut, nHalf, time);
 				else if (strLib == _T("Median 3x3"))	bRet = CEImgMorphology::Median3x3	(pIn1, strIn1, pOut, strOut, time);
+
+				if (bRet == false)
+					strErrMsg = CEImgMorphology::GetLastErrMsg();
 			}
 			else if (pImg->IsThreshold(strLib) == true)
 			{
@@ -1086,6 +1120,9 @@ void CFilterSimDlg::OnExecute()
 					else if (strType == _T("Minimum Residue"))	bRet = CEImgThreshold::ThresholdMinResidue(pIn1, strIn1, pOut, strOut, time);
 					else if (strType == _T("Maximum Entropy"))	bRet = CEImgThreshold::ThresholdMaxEntropy(pIn1, strIn1, pOut, strOut, time);
 					else if (strType == _T("Iso-Data"))			bRet = CEImgThreshold::ThresholdIsoData(pIn1, strIn1, pOut, strOut, time);
+
+					if (bRet == false)
+						strErrMsg = CEImgThreshold::GetLastErrMsg();
 				}
 				else if (strLib == _T("Double Threshold"))
 				{
@@ -1096,6 +1133,9 @@ void CFilterSimDlg::OnExecute()
 					int nThdLow  = info.stLib.stImg.stThreshold.stDouble.nThdLow;
 
 					bRet = CEImgThreshold::ThresholdDouble(pIn1, strIn1, pOut, strOut, nPxlHigh, nThdHigh, nPxlMid, nThdLow, nPxlLow, time);
+
+					if (bRet == false)
+						strErrMsg = CEImgThreshold::GetLastErrMsg();
 				}
 				else if (strLib == _T("Adaptive Threshold"))
 				{
@@ -1106,6 +1146,9 @@ void CFilterSimDlg::OnExecute()
 					if (strType == _T("Mean"))			bRet = CEImgThreshold::ThresholdAdaptiveMean(pIn1, strIn1, pOut, strOut, nKernel, nOffset, time);
 					else if (strType == _T("Median"))	bRet = CEImgThreshold::ThresholdAdaptiveMedian(pIn1, strIn1, pOut, strOut, nKernel, nOffset, time);
 					else if (strType == _T("Middle"))	bRet = CEImgThreshold::ThresholdAdaptiveMiddle(pIn1, strIn1, pOut, strOut, nKernel, nOffset, time);
+
+					if (bRet == false)
+						strErrMsg = CEImgThreshold::GetLastErrMsg();
 				}
 			}
 			else if (pImg->IsArtihemetic(strLib) == true)
@@ -1999,6 +2042,9 @@ void CFilterSimDlg::OnExecute()
 						}
 					}
 				}
+
+				if (bRet == false)
+					strErrMsg = CEImgArithmetic::GetLastErrMsg();
 			}
 			else if (pImg->IsScaleRotate(strLib) == true)
 			{
@@ -2014,6 +2060,9 @@ void CFilterSimDlg::OnExecute()
 				int nBits = info.stLib.stImg.stScale.nBits;
 
 				bRet = CEImgScaleRotate::ScaleRotate(pIn1, strIn1, pOut, strOut, fSrcPvtX, fSrcPvtY, fDstPvtX, fDstPvtY, fScaleX, fScaleY, fAngle, nBits, time);
+
+				if (bRet == false)
+					strErrMsg = CEImgScaleRotate::GetLastErrMsg();
 			}
 			else if (pImg->IsGainOffset(strLib) == true)
 			{
@@ -2023,11 +2072,17 @@ void CFilterSimDlg::OnExecute()
 				float fOffset = info.stLib.stImg.stGain.fOffset;
 
 				bRet = CEImgGainOffset::GainOffset(pIn1, strIn1, pOut, strOut, fGain, fOffset, time);
+
+				if (bRet == false)
+					strErrMsg = CEImgGainOffset::GetLastErrMsg();
 			}
 
 			if (bRet == false)
 			{
 				m_wndLc.SetItemColor(i, 8, RGB(255,0,0));
+				strLog.Format(_T("The error is occured."));
+				OnWriteLogMsg(strLog);
+				OnWriteLogMsg(strErrMsg);
 				continue;
 			}
 

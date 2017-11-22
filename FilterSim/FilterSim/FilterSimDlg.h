@@ -108,7 +108,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnBnClickedBtnAddItem();
-	afx_msg void OnBnClickedBtnDelList();
+	afx_msg void OnBnClickedBtnDelItem();
 	afx_msg void OnBnClickedBtnLoad();
 	afx_msg void OnCbnSelchangeCbView1();
 	afx_msg void OnCbnSelchangeCbView2();

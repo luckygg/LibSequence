@@ -17,7 +17,7 @@ private :
 
 public :
 	//----- Last Error Message -----//
-	CString GetLastErrMsg() { return m_strLastErr; }
+	static CString GetLastErrMsg() { return m_strLastErr; }
 
 public :
 	static bool ThresholdABS(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, int nThreshold, double &dTime);

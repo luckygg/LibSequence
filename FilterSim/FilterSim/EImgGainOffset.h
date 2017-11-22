@@ -17,7 +17,7 @@ private :
 
 public :
 	//----- Last Error Message -----//
-	CString GetLastErrMsg() { return m_strLastErr; }
+	static CString GetLastErrMsg() { return m_strLastErr; }
 
 public :
 	static bool GainOffset(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, float fGain, float fOffset, double &dTime);
