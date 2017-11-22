@@ -5,6 +5,8 @@
 #define new DEBUG_NEW
 #endif
 
+CString CEImgConvolution::m_strLastErr;
+
 CEImgConvolution::CEImgConvolution(void)
 {
 }
@@ -62,8 +64,7 @@ bool CEImgConvolution::Uniform(CEImage *pIn, CString strIn, CEImage *pOut, CStri
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return false;
 	}
 }
@@ -113,8 +114,7 @@ bool CEImgConvolution::Uniform3x3(CEImage *pIn, CString strIn, CEImage *pOut, CS
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return false;
 	}
 }
@@ -164,8 +164,7 @@ bool CEImgConvolution::Uniform5x5(CEImage *pIn, CString strIn, CEImage *pOut, CS
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return false;
 	}
 }
@@ -215,8 +214,7 @@ bool CEImgConvolution::Uniform7x7(CEImage *pIn, CString strIn, CEImage *pOut, CS
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return false;
 	}
 }
@@ -266,8 +264,7 @@ bool CEImgConvolution::Gaussian(CEImage *pIn, CString strIn, CEImage *pOut, CStr
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return false;
 	}
 }
@@ -317,8 +314,7 @@ bool CEImgConvolution::Gaussian3x3(CEImage *pIn, CString strIn, CEImage *pOut, C
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return false;
 	}
 }
@@ -368,8 +364,7 @@ bool CEImgConvolution::Gaussian5x5(CEImage *pIn, CString strIn, CEImage *pOut, C
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return false;
 	}
 }
@@ -419,8 +414,7 @@ bool CEImgConvolution::Gaussian7x7(CEImage *pIn, CString strIn, CEImage *pOut, C
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return false;
 	}
 }
@@ -470,8 +464,7 @@ bool CEImgConvolution::Lowpass1(CEImage *pIn, CString strIn, CEImage *pOut, CStr
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return false;
 	}
 }
@@ -521,8 +514,7 @@ bool CEImgConvolution::Lowpass2(CEImage *pIn, CString strIn, CEImage *pOut, CStr
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return false;
 	}
 }
@@ -572,8 +564,7 @@ bool CEImgConvolution::Lowpass3(CEImage *pIn, CString strIn, CEImage *pOut, CStr
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return false;
 	}
 }
@@ -623,8 +614,7 @@ bool CEImgConvolution::Highpass1(CEImage *pIn, CString strIn, CEImage *pOut, CSt
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return false;
 	}
 }
@@ -674,8 +664,7 @@ bool CEImgConvolution::Highpass2(CEImage *pIn, CString strIn, CEImage *pOut, CSt
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return false;
 	}
 }
@@ -725,8 +714,7 @@ bool CEImgConvolution::Gradient(CEImage *pIn, CString strIn, CEImage *pOut, CStr
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return false;
 	}
 }
@@ -776,8 +764,7 @@ bool CEImgConvolution::GradientX(CEImage *pIn, CString strIn, CEImage *pOut, CSt
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return false;
 	}
 }
@@ -827,8 +814,7 @@ bool CEImgConvolution::GradientY(CEImage *pIn, CString strIn, CEImage *pOut, CSt
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return false;
 	}
 }
@@ -878,8 +864,7 @@ bool CEImgConvolution::Sobel(CEImage *pIn, CString strIn, CEImage *pOut, CString
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return false;
 	}
 }
@@ -929,8 +914,7 @@ bool CEImgConvolution::SobelX(CEImage *pIn, CString strIn, CEImage *pOut, CStrin
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return false;
 	}
 }
@@ -980,8 +964,7 @@ bool CEImgConvolution::SobelY(CEImage *pIn, CString strIn, CEImage *pOut, CStrin
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return false;
 	}
 }
@@ -1031,8 +1014,7 @@ bool CEImgConvolution::Prewitt(CEImage *pIn, CString strIn, CEImage *pOut, CStri
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return false;
 	}
 }
@@ -1082,8 +1064,7 @@ bool CEImgConvolution::PrewittX(CEImage *pIn, CString strIn, CEImage *pOut, CStr
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return false;
 	}
 }
@@ -1133,8 +1114,7 @@ bool CEImgConvolution::PrewittY(CEImage *pIn, CString strIn, CEImage *pOut, CStr
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return false;
 	}
 }
@@ -1184,8 +1164,7 @@ bool CEImgConvolution::Roberts(CEImage *pIn, CString strIn, CEImage *pOut, CStri
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return false;
 	}
 }
@@ -1235,8 +1214,7 @@ bool CEImgConvolution::LaplacianX(CEImage *pIn, CString strIn, CEImage *pOut, CS
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return false;
 	}
 }
@@ -1286,8 +1264,7 @@ bool CEImgConvolution::LaplacianY(CEImage *pIn, CString strIn, CEImage *pOut, CS
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return false;
 	}
 }
@@ -1337,8 +1314,7 @@ bool CEImgConvolution::Laplacian4(CEImage *pIn, CString strIn, CEImage *pOut, CS
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return false;
 	}
 }
@@ -1388,8 +1364,7 @@ bool CEImgConvolution::Laplacian8(CEImage *pIn, CString strIn, CEImage *pOut, CS
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return false;
 	}
 }

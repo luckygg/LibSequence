@@ -1,9 +1,11 @@
 #include "StdAfx.h"
 #include "EImgGainOffset.h"
 
+CString CEImgGainOffset::m_strLastErr;
 
 CEImgGainOffset::CEImgGainOffset(void)
 {
+	m_strLastErr = _T("No Error.");
 }
 
 
@@ -59,8 +61,7 @@ bool CEImgGainOffset::GainOffset(CEImage *pIn, CString strIn, CEImage *pOut, CSt
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return false;
 	}
 }

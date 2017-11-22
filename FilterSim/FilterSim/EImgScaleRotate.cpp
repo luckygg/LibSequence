@@ -1,6 +1,7 @@
 #include "StdAfx.h"
 #include "EImgScaleRotate.h"
 
+CString CEImgScaleRotate::m_strLastErr;
 
 CEImgScaleRotate::CEImgScaleRotate(void)
 {
@@ -59,9 +60,7 @@ bool CEImgScaleRotate::ScaleRotate(CEImage *pIn, CString strIn, CEImage *pOut, C
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return false;
 	}
-	 
 }

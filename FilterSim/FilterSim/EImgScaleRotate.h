@@ -12,6 +12,13 @@ public:
 	CEImgScaleRotate(void);
 	~CEImgScaleRotate(void);
 
+private :
+	static CString m_strLastErr;
+
+public :
+	//----- Last Error Message -----//
+	CString GetLastErrMsg() { return m_strLastErr; }
+
 public :
 	static bool ScaleRotate(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, float fSrcPviotX, float fSrcPviotY, float fDstPviotX, float fDstPviotY, float fScaleX, float fScaleY, float fAngle, int nBits, double &dTime);
 	

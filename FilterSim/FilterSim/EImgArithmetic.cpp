@@ -1,9 +1,11 @@
 #include "StdAfx.h"
 #include "EImgArithmetic.h"
 
+CString CEImgArithmetic::m_strLastErr;
 
 CEImgArithmetic::CEImgArithmetic(void)
 {
+	m_strLastErr = _T("No Error.");
 }
 
 
@@ -58,8 +60,7 @@ bool CEImgArithmetic::Oper_Copy(CEImage *pIn, CString strIn, CEImage *pOut, CStr
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return false;
 	}
 }

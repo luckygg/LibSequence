@@ -12,6 +12,13 @@ public:
 	CEImgThreshold(void);
 	~CEImgThreshold(void);
 
+private :
+	static CString m_strLastErr;
+
+public :
+	//----- Last Error Message -----//
+	CString GetLastErrMsg() { return m_strLastErr; }
+
 public :
 	static bool ThresholdABS(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, int nThreshold, double &dTime);
 	static bool ThresholdRelative(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, float fRelative, double &dTime);

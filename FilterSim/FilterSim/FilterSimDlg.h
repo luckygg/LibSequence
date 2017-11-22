@@ -74,7 +74,7 @@ private :
 	// 이미지 정보 vector 에 중복되는 파일명이 있는지 확인.
 	bool IsExistName(CString strName);
 
-	
+	void OnWriteLogMsg(CString strMsg);
 private :
 	CView* m_pFormImg;
 	CView* m_pFormMtx;

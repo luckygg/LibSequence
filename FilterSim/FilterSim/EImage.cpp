@@ -18,8 +18,25 @@ bool CEImage::OnLoadImage(CString strPath)
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
+		return false;
+	}
+}
+
+bool CEImage::OnSaveImage(CString strPath)
+{
+	try
+	{
+		CT2CA String (strPath);
+		std::string str(String);  
+
+		m_EImgBW8.Save(str);
+
+		return true;
+	}
+	catch (EException& e)
+	{
+		m_strLastErr = (CString)e.What().c_str();
 		return false;
 	}
 }
@@ -40,8 +57,7 @@ bool CEImage::OnDrawImage(CWnd* pCWnd, float fH, float fV)
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return false;
 	}
 }
@@ -72,8 +88,7 @@ bool CEImage::OnDrawROIFrame(CWnd* pCWnd, float fH, float fV)
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return false;
 	}
 }
@@ -96,8 +111,7 @@ bool CEImage::CreateRoi(int nOrgX, int nOrgY, int nWidth, int nHeight, CString s
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return false;
 	}
 }
@@ -121,8 +135,7 @@ bool CEImage::ModifyRoi(CString strName, int nOrgX, int nOrgY, int nWidth, int n
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return false;
 	}
 }
@@ -144,8 +157,7 @@ void CEImage::DeleteRoi(CString strName)
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return;
 	}
 }
@@ -178,8 +190,7 @@ bool CEImage::GetRoiName(int nIdx, CString &strValue)
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return false;
 	}
 }
@@ -196,8 +207,7 @@ bool CEImage::GetWidth(int &nValue)
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return false;
 	}
 }
@@ -214,8 +224,7 @@ bool CEImage::GetHeight(int &nValue)
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return false;
 	}
 }
@@ -230,8 +239,7 @@ bool CEImage::CreatImage(int nWidth, int nHeight, int nBpp)
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return false;
 	}
 }
@@ -245,8 +253,7 @@ bool CEImage::SetImage (EImageBW8 *pImg)
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return false;
 	}
 }
@@ -263,8 +270,7 @@ bool CEImage::SetImageName(CString strName)
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return false;
 	}
 }
@@ -281,8 +287,7 @@ bool CEImage::GetImageName(CString &strValue)
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return false;
 	}
 }
@@ -316,8 +321,7 @@ bool CEImage::HasROI(CString strName)
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return false;
 	}
 }
@@ -340,8 +344,7 @@ EROIBW8* CEImage::GetROI(CString strName)
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return NULL;
 	}
 }
@@ -377,8 +380,7 @@ bool CEImage::GetRoiPlacement(CString strName, int &nOrgX, int &nOrgY, int &nWid
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return false;
 	}
 }

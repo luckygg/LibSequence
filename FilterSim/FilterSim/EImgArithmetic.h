@@ -12,7 +12,13 @@ public:
 	CEImgArithmetic(void);
 	~CEImgArithmetic(void);
 
+private :
+	static CString m_strLastErr;
+
 public :
+	//----- Last Error Message -----//
+	CString GetLastErrMsg() { return m_strLastErr; }
+
 	// In 1
 	static bool Oper_Copy(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, double &dTime);
 	static bool Oper_Invert(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, double &dTime);
@@ -120,7 +126,6 @@ public :
 	static bool Oper_Lesser(CEImage *pIn1, CString strIn1, CEImage *pIn2, CString strIn2, CEImage *pOut, CString strOut, double &dTime);
 	static bool Oper_Lesser(CEImage *pIn, CString strIn, int nY8, CEImage *pOut, CString strOut, double &dTime);
 	static bool Oper_Lesser(int nY8, CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, double &dTime);
-
 
 	// In2 Image¸¸
 	static bool Oper_Overlay(CEImage *pIn1, CString strIn1, CEImage *pIn2, CString strIn2, CEImage *pOut, CString strOut, double &dTime);

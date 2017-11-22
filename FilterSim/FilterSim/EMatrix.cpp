@@ -7,6 +7,7 @@
 
 CEMatrix::CEMatrix(void)
 {
+	m_strLastErr = _T("No Error.");
 }
 
 
@@ -25,8 +26,7 @@ bool CEMatrix::SetTimeoutMicroSec(int nTime)
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return false;
 	}
 }
@@ -49,8 +49,7 @@ bool CEMatrix::OnExecute(EImageBW8 *pSrc, CString &strResult, double &dTime)
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		strResult = _T("None");
 		return false;
 	}
@@ -74,8 +73,7 @@ bool CEMatrix::OnExecute(EROIBW8 *pSrc, CString &strResult, double &dTime)
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		strResult = _T("None");
 		return false;
 	}
@@ -100,8 +98,7 @@ bool CEMatrix::OnDrawResult(CWnd* pCWnd, bool bErr, float fH, float fV)
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return false;
 	}
 }

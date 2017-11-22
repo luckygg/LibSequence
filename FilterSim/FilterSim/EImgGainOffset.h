@@ -12,6 +12,13 @@ public:
 	CEImgGainOffset(void);
 	~CEImgGainOffset(void);
 
+private :
+	static CString m_strLastErr;
+
+public :
+	//----- Last Error Message -----//
+	CString GetLastErrMsg() { return m_strLastErr; }
+
 public :
 	static bool GainOffset(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, float fGain, float fOffset, double &dTime);
 };

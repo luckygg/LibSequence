@@ -1,9 +1,11 @@
 #include "StdAfx.h"
 #include "EImgThreshold.h"
 
+CString CEImgThreshold::m_strLastErr;
 
 CEImgThreshold::CEImgThreshold(void)
 {
+	m_strLastErr = _T("No Error.");
 }
 
 
@@ -58,8 +60,7 @@ bool CEImgThreshold::ThresholdABS(CEImage *pIn, CString strIn, CEImage *pOut, CS
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return false;
 	}
 }
@@ -111,8 +112,7 @@ bool CEImgThreshold::ThresholdRelative(CEImage *pIn, CString strIn, CEImage *pOu
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return false;
 	}
 }
@@ -164,8 +164,7 @@ bool CEImgThreshold::ThresholdMinResidue(CEImage *pIn, CString strIn, CEImage *p
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return false;
 	}
 }
@@ -217,8 +216,7 @@ bool CEImgThreshold::ThresholdMaxEntropy(CEImage *pIn, CString strIn, CEImage *p
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return false;
 	}
 }
@@ -270,8 +268,7 @@ bool CEImgThreshold::ThresholdIsoData(CEImage *pIn, CString strIn, CEImage *pOut
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return false;
 	}
 }
@@ -323,8 +320,7 @@ bool CEImgThreshold::ThresholdDouble(CEImage *pIn, CString strIn, CEImage *pOut,
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return false;
 	}
 }
@@ -376,8 +372,7 @@ bool CEImgThreshold::ThresholdAdaptiveMean(CEImage *pIn, CString strIn, CEImage 
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return false;
 	}
 }
@@ -429,8 +424,7 @@ bool CEImgThreshold::ThresholdAdaptiveMedian(CEImage *pIn, CString strIn, CEImag
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return false;
 	}
 }
@@ -482,8 +476,7 @@ bool CEImgThreshold::ThresholdAdaptiveMiddle(CEImage *pIn, CString strIn, CEImag
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return false;
 	}
 }

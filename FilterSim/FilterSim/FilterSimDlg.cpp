@@ -38,7 +38,7 @@ CFilterSimDlg::CFilterSimDlg(CWnd* pParent /*=NULL*/)
 void CFilterSimDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_MAIN_LC_ITEM, m_wndLc);
+	DDX_Control(pDX, IDC_MAIN_LTC_ITEM, m_wndLc);
 
 	DDX_Radio(pDX, IDC_MAIN_RBTN_INIMG1, m_rbtnIn1);
 	DDX_Radio(pDX, IDC_MAIN_RBTN_INIMG2, m_rbtnIn2);
@@ -52,7 +52,6 @@ BEGIN_MESSAGE_MAP(CFilterSimDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_MAIN_BTN_ADDITEM, &CFilterSimDlg::OnBnClickedBtnAddItem)
 	ON_BN_CLICKED(IDC_MAIN_BTN_DELITEM, &CFilterSimDlg::OnBnClickedBtnDelList)
 	ON_BN_CLICKED(IDC_MAIN_BTN_LOADIMG, &CFilterSimDlg::OnBnClickedBtnLoad)
-	
 	ON_CBN_SELCHANGE(IDC_MAIN_CB_VIEW1, &CFilterSimDlg::OnCbnSelchangeCbView1)
 	ON_CBN_SELCHANGE(IDC_MAIN_CB_VIEW2, &CFilterSimDlg::OnCbnSelchangeCbView2)
 	ON_CBN_SELCHANGE(IDC_MAIN_CB_VIEW3, &CFilterSimDlg::OnCbnSelchangeCbView3)
@@ -293,7 +292,7 @@ void CFilterSimDlg::OnBnClickedBtnLoad()
 
 			if (IsExistName(fileName) == true)
 			{
-				AfxMessageBox(_T("중복되는 이름이 존재합니다."));
+				OnWriteLogMsg(_T("중복되는 이름이 존재합니다."));
 				return;
 			}
 
@@ -302,6 +301,10 @@ void CFilterSimDlg::OnBnClickedBtnLoad()
 			UpdateCBList();
 			
 			m_nImgCnt++;
+
+			CString strLog=_T("");
+			strLog.Format(_T("File Name : %s, Path : %s"), fileName, strPath);
+			OnWriteLogMsg(strLog);
 		}
 	}
 }
@@ -468,7 +471,7 @@ void CFilterSimDlg::OnBnClickedBtnNewImg()
 		
 		if (IsExistName(fileName) == true)
 		{
-			AfxMessageBox(_T("중복되는 이름이 존재합니다."));
+			OnWriteLogMsg(_T("중복되는 이름이 존재합니다."));
 			return;
 		}
 
@@ -477,6 +480,10 @@ void CFilterSimDlg::OnBnClickedBtnNewImg()
 		UpdateCBList();
 
 		m_nImgCnt++;
+
+		CString strLog=_T("");
+		strLog.Format(_T("File Name : %s"), fileName);
+		OnWriteLogMsg(strLog);
 	}
 }
 
@@ -678,13 +685,17 @@ void CFilterSimDlg::OnBnClickedBtnSaveimg()
 
 		try
 		{
+			
 			EImageBW8* img = it->GetImage();
 			img->Save(strPath);
+			CString strLog=_T("");
+			strLog.Format(_T("Image is saved. Name : %s, Path : %s"), fileName, strPath);
+			OnWriteLogMsg(strLog);
 		}
 		catch (EException& e)
 		{
 			CString strErr = (CString)e.What().c_str();
-			AfxMessageBox(strErr);
+			OnWriteLogMsg(strErr);
 		}
 	}
 }
@@ -2423,3 +2434,32 @@ void CFilterSimDlg::SetEnableIOList(bool bIn1Img, bool bIn1Cst, bool bIn2Img, bo
 	GetDlgItem(IDC_MAIN_CB_OUTPUT)->EnableWindow(bOutImg);
 }
 
+void CFilterSimDlg::OnWriteLogMsg(CString strMsg)
+{
+	CListBox* pLb = (CListBox*)GetDlgItem(IDC_MAIN_LTB_LOG);
+	
+	SYSTEMTIME SysTime;
+	GetLocalTime(&SysTime);
+
+	CString strTime=_T("");
+	strTime.Format(_T("[%02d:%02d:%02d:%03d] : "),SysTime.wHour,SysTime.wMinute,SysTime.wSecond,SysTime.wMilliseconds);
+
+	strTime += strMsg;
+
+	pLb->AddString(strTime);
+
+	pLb->SetCurSel(pLb->GetCount()-1);
+
+	CString str; CSize sz; int dx=0;
+	CDC *pDC = pLb->GetDC();
+
+	sz = pDC->GetTextExtent(strMsg);
+
+	if (sz.cx > dx)
+		dx = sz.cx;
+
+	pLb->ReleaseDC(pDC);
+
+	if (pLb->GetHorizontalExtent() < dx)
+		pLb->SetHorizontalExtent(dx);
+}

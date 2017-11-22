@@ -5,10 +5,15 @@ using namespace Euresys::Open_eVision_2_1;
 
 class CEImage
 {
+public :
+	CEImage() {
+		m_strLastErr = _T("No Error.");
+	}
+
 private :
 	EImageBW8 m_EImgBW8;
 	std::vector<EROIBW8> m_vERoiBW8;
-	
+	CString m_strLastErr;
 public :
 	CEImage* GetEImage() { return this; }
 	EImageBW8* GetImage() { return &m_EImgBW8; }
@@ -22,6 +27,7 @@ public :
 	bool CreatImage(int nWidth, int nHeight, int nBpp);
 	bool SetImage (EImageBW8 *pImg);
 	bool OnLoadImage(CString strPath);
+	bool OnSaveImage(CString strPath);
 	bool SetImageName(CString strName);
 	bool GetImageName(CString &strValue);
 	bool GetWidth(int &nValue);
@@ -35,4 +41,7 @@ public :
 	bool ModifyRoi(CString strName, int nOrgX, int nOrgY, int nWidth, int nHeight);
 	bool GetRoiPlacement(CString strName, int &nOrgX, int &nOrgY, int &nWidth, int &nHeight);
 	bool HasROI(CString strName);
+
+	//----- Last Error Message -----//
+	CString GetLastErrMsg() { return m_strLastErr; }
 };

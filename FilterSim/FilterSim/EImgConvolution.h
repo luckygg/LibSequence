@@ -11,7 +11,13 @@ public:
 	CEImgConvolution(void);
 	~CEImgConvolution(void);
 
+private :
+	static CString m_strLastErr;
+
 public :
+	//----- Last Error Message -----//
+	CString GetLastErrMsg() { return m_strLastErr; }
+
 	static bool Uniform		(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, double &dTime);
 	static bool Uniform3x3	(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, double &dTime);
 	static bool Uniform5x5	(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, double &dTime);

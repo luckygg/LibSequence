@@ -1,9 +1,11 @@
 #include "StdAfx.h"
 #include "EImgMorphology.h"
 
+CString CEImgMorphology::m_strLastErr;
 
 CEImgMorphology::CEImgMorphology(void)
 {
+	m_strLastErr = _T("No Error.");
 }
 
 
@@ -58,8 +60,7 @@ bool CEImgMorphology::Erode(CEImage *pIn, CString strIn, CEImage *pOut, CString 
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return false;
 	}
 }
@@ -111,8 +112,7 @@ bool CEImgMorphology::Dilate(CEImage *pIn, CString strIn, CEImage *pOut, CString
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return false;
 	}
 }
@@ -164,8 +164,7 @@ bool CEImgMorphology::Open(CEImage *pIn, CString strIn, CEImage *pOut, CString s
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return false;
 	}
 }
@@ -217,8 +216,7 @@ bool CEImgMorphology::Close(CEImage *pIn, CString strIn, CEImage *pOut, CString 
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return false;
 	}
 }
@@ -270,8 +268,7 @@ bool CEImgMorphology::WhiteTopHat(CEImage *pIn, CString strIn, CEImage *pOut, CS
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return false;
 	}
 }
@@ -323,8 +320,7 @@ bool CEImgMorphology::BlackTopHat(CEImage *pIn, CString strIn, CEImage *pOut, CS
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return false;
 	}
 }
@@ -376,8 +372,7 @@ bool CEImgMorphology::Gradient(CEImage *pIn, CString strIn, CEImage *pOut, CStri
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return false;
 	}
 }
@@ -429,8 +424,7 @@ bool CEImgMorphology::Median3x3(CEImage *pIn, CString strIn, CEImage *pOut, CStr
 	}
 	catch (EException& e)
 	{
-		CString strErr = (CString)e.What().c_str();
-		AfxMessageBox(strErr);
+		m_strLastErr = (CString)e.What().c_str();
 		return false;
 	}
 }

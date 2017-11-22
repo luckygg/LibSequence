@@ -11,6 +11,13 @@ public:
 	CEMatrix(void);
 	~CEMatrix(void);
 
+private :
+	CString m_strLastErr;
+
+public :
+	//----- Last Error Message -----//
+	CString GetLastErrMsg() { return m_strLastErr; }
+
 public :
 	bool SetTimeoutMicroSec(int nTime);
 	bool OnExecute(EImageBW8 *pSrc, CString &strResult, double &dTime);

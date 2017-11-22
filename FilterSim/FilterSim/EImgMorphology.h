@@ -12,6 +12,13 @@ public:
 	CEImgMorphology(void);
 	~CEImgMorphology(void);
 
+private :
+	static CString m_strLastErr;
+
+public :
+	//----- Last Error Message -----//
+	CString GetLastErrMsg() { return m_strLastErr; }
+
 public :
 	static bool Erode		(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, int nHalfKernel, double &dTime);
 	static bool Dilate		(CEImage *pIn, CString strIn, CEImage *pOut, CString strOut, int nHalfKernel, double &dTime);
